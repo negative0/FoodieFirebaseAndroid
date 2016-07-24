@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Velociraptor</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_new_post">NewPostActivity</string>
+    <string name="add_button">Add Button</string>
+    <string name="body">Body</string>
+    <string name="txt_title">Title</string>
+    <string name="txt_add_image">Add Image</string>
+    <string name="remove_image">Remove Image</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nec condimentum ante, quis mattis mi. Proin ut rhoncus libero, ac euismod neque. Ut suscipit, enim a facilisis consequat, orci lacus venenatis orci, at ultricies orci nulla sed ex. In condimentum viverra velit, eget feugiat libero imperdiet vel. Aenean pretium, lectus vitae bibendum bibendum, diam turpis convallis eros, quis tristique leo sapien at ipsum. Praesent eu odio id nulla lobortis auctor. Donec eget dolor eget nisl euismod commodo vel a lacus. Quisque ut justo vitae urna pharetra accumsan. Etiam dignissim neque iaculis mauris viverra, blandit rhoncus odio porttitor. Phasellus nibh arcu.</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="rotate_left">Rotate Left</string>
+    <string name="rotate_right">Rotate Right</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="sign_in">Sign In</string>
+    <string name="or">OR</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="transition_main_image">mainImage</string>
+    <string name="transition_title">titleView</string>
+    <string name="transition_body">bodyView</string>
+    <string name="transition_author">authorView</string>
+    <string name="enter_a_option">Enter a option</string>
+</resources>
