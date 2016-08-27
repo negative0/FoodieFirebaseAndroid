@@ -301,7 +301,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
                             Snackbar.make(getContainer(),"Check your email for further instructions",Snackbar.LENGTH_SHORT).show();
-                            Log.d(TAG,"email sent");
+                            Log.d(TAG,"email sent for password recovery");
                         }
                     }
                 });
