@@ -1,22 +1,33 @@
 package com.fireblaze.evento;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.fireblaze.evento.adapters.CategoryListAdapter;
 import com.fireblaze.evento.adapters.DrawerAdapter;
 import com.fireblaze.evento.models.DrawerItem;
+import com.fireblaze.evento.models.ImageItem;
+import com.fireblaze.evento.viewholders.ImageItemHolder;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,18 +38,29 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
 
     private FragmentPagerAdapter mPagerAdapter;
+    private FirebaseRecyclerAdapter<ImageItem, ImageItemHolder> organizerRecyclerAdapter;
     private ViewPager mViewPager;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     List<DrawerItem> mDrawerItems;
+    RecyclerView organizerRecycler;
+    RecyclerView categoriesRecycler;
+    private DatabaseReference mDatabase;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        showProgressDialog();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         setupNavigation();
+        setupOrganizerList();
+        setupCategoriesRecycler();
+        hideProgressDialog();
+
     }
 
     private void setupViewPager(){
@@ -63,6 +85,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -91,6 +114,42 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
     }
+
+    private void setupOrganizerList(){
+        organizerRecycler = (RecyclerView) findViewById(R.id.recycler_organizers);
+        LinearLayoutManager horizontalLayoutManager =
+                new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
+        Query query = mDatabase.child(Constants.ORGANIZER_IMAGE).limitToFirst(10);
+        organizerRecyclerAdapter = new FirebaseRecyclerAdapter<ImageItem, ImageItemHolder>(ImageItem.class,R.layout.organizer_list_item,
+                ImageItemHolder.class,query) {
+            @Override
+            protected void populateViewHolder(ImageItemHolder viewHolder, ImageItem model, int position) {
+                viewHolder.bindToPost(MainActivity.this,model);
+            }
+        };
+        organizerRecycler.setLayoutManager(horizontalLayoutManager);
+        organizerRecycler.setAdapter(organizerRecyclerAdapter);
+
+    }
+
+    private void setupCategoriesRecycler(){
+        categoriesRecycler = (RecyclerView) findViewById(R.id.recycler_categories);
+        int[] img = {
+                R.drawable.common_full_open_on_phone,
+                R.drawable.common_google_signin_btn_icon_dark_normal,
+                R.drawable.common_google_signin_btn_icon_dark_focused
+        };
+        List<String> names = new ArrayList<>();
+        names.add("Coding");
+        names.add("Arts");
+        names.add("Adventure");
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        CategoryListAdapter adapter = new CategoryListAdapter(MainActivity.this,names,img);
+
+        categoriesRecycler.setLayoutManager(layoutManager);
+        categoriesRecycler.setAdapter(adapter);
+
+    }
     private class DrawerItemClickListener implements ListView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -107,6 +166,27 @@ public class MainActivity extends BaseActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         return super.onPrepareOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(mDrawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        switch (item.getItemId()){
+            case R.id.action_log_out:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(this, LoginActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
     }
 }
 

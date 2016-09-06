@@ -29,4 +29,6 @@
     </string-array>
     <string name="drawer_close">Close</string>
     <string name="drawer_open">Open</string>
+    <string name="menu_log_out">Log Out</string>
+    <string name="categories">Categories</string>
 </resources>
