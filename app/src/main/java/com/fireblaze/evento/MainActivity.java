@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -47,20 +48,26 @@ public class MainActivity extends BaseActivity {
     RecyclerView organizerRecycler;
     RecyclerView categoriesRecycler;
     private DatabaseReference mDatabase;
-
+    private boolean isShowingOrganizerProgressBar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        showProgressDialog();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        getViews();
         setupNavigation();
         setupOrganizerList();
         setupCategoriesRecycler();
-        hideProgressDialog();
 
+
+    }
+    private void getViews(){
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        organizerRecycler = (RecyclerView) findViewById(R.id.recycler_organizers);
+        categoriesRecycler = (RecyclerView) findViewById(R.id.recycler_categories);
     }
 
     private void setupViewPager(){
@@ -91,8 +98,7 @@ public class MainActivity extends BaseActivity {
 
     private void setupNavigation(){
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
         mDrawerItems = new ArrayList<>();
         for(String s : getResources().getStringArray(R.array.drawerTitles)){
             mDrawerItems.add(new DrawerItem(s,R.drawable.common_google_signin_btn_icon_light));
@@ -116,7 +122,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setupOrganizerList(){
-        organizerRecycler = (RecyclerView) findViewById(R.id.recycler_organizers);
+
+       // setOrganizersProgressBar(true);
         LinearLayoutManager horizontalLayoutManager =
                 new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
         Query query = mDatabase.child(Constants.ORGANIZER_IMAGE).limitToFirst(10);
@@ -126,18 +133,41 @@ public class MainActivity extends BaseActivity {
             protected void populateViewHolder(ImageItemHolder viewHolder, ImageItem model, int position) {
                 viewHolder.bindToPost(MainActivity.this,model);
             }
+
         };
         organizerRecycler.setLayoutManager(horizontalLayoutManager);
         organizerRecycler.setAdapter(organizerRecyclerAdapter);
+//        organizerRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+//            @Override
+//            public void onChanged() {
+//                super.onChanged();
+//                setOrganizersProgressBar(false);
+//            }
+//        });
 
+    }
+    private void setOrganizersProgressBar(boolean show) {
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_organizer);
+        if (show) {
+            if (progressBar != null) {
+                progressBar.setVisibility(View.VISIBLE);
+                organizerRecycler.setVisibility(View.GONE);
+                isShowingOrganizerProgressBar = true;
+            }
+        } else{
+                progressBar.setVisibility(View.GONE);
+                organizerRecycler.setVisibility(View.VISIBLE);
+                isShowingOrganizerProgressBar =  false;
+
+        }
     }
 
     private void setupCategoriesRecycler(){
-        categoriesRecycler = (RecyclerView) findViewById(R.id.recycler_categories);
+
         int[] img = {
-                R.drawable.common_full_open_on_phone,
-                R.drawable.common_google_signin_btn_icon_dark_normal,
-                R.drawable.common_google_signin_btn_icon_dark_focused
+                R.drawable.ic_coding,
+                R.drawable.ic_arts,
+                R.drawable.ic_adventure
         };
         List<String> names = new ArrayList<>();
         names.add("Coding");

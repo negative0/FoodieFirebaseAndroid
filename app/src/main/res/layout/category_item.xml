@@ -8,17 +8,20 @@
     android:layout_height="wrap_content">
         <LinearLayout
             android:orientation="vertical"
+            android:padding="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/category_item_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/logo_black"/>
                 <TextView
                     android:id="@+id/category_item_title"
                     android:text="@string/categories"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
         </LinearLayout>

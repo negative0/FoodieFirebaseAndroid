@@ -14,12 +14,22 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-    <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="20dp"
-        android:id="@+id/recycler_organizers"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="200dp">
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="20dp"
+            android:id="@+id/recycler_organizers"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"/>
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:id="@+id/progress_organizer"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+    </FrameLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="10dp"/>
