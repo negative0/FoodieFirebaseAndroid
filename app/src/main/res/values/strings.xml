@@ -31,4 +31,6 @@
     <string name="drawer_open">Open</string>
     <string name="menu_log_out">Log Out</string>
     <string name="categories">Categories</string>
+    <string name="title_activity_about_us">AboutUs</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

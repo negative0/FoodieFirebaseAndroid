@@ -1,6 +1,7 @@
 package com.fireblaze.evento;
 
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +35,8 @@ import com.google.firebase.database.Query;
 import java.util.ArrayList;
 import java.util.List;
 
+import dalvik.annotation.TestTarget;
+
 
 public class MainActivity extends BaseActivity {
 
@@ -48,7 +52,6 @@ public class MainActivity extends BaseActivity {
     RecyclerView organizerRecycler;
     RecyclerView categoriesRecycler;
     private DatabaseReference mDatabase;
-    private boolean isShowingOrganizerProgressBar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +98,13 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.main_menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+    private void launchEventList(String query){
+        Intent intent = new Intent(MainActivity.this,EventListActivity.class);
+        Bundle b = new Bundle();
+        b.putString(EventListActivity.QUERY_KEYWORD,query);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
     private void setupNavigation(){
 
 
@@ -105,7 +114,7 @@ public class MainActivity extends BaseActivity {
         }
         mDrawerList.setAdapter(new DrawerAdapter(this,R.layout.drawer_list_item,mDrawerItems));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-        final CharSequence mTitle = getTitle();
+        //final CharSequence mTitle = getTitle();
         mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.drawer_open,R.string.drawer_close){
             public void onDrawerClosed(View v){
                 super.onDrawerClosed(v);
@@ -122,8 +131,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setupOrganizerList(){
-
-       // setOrganizersProgressBar(true);
+        //Show the progress dialog.
+        setOrganizersProgressBar();
         LinearLayoutManager horizontalLayoutManager =
                 new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
         Query query = mDatabase.child(Constants.ORGANIZER_IMAGE).limitToFirst(10);
@@ -131,38 +140,49 @@ public class MainActivity extends BaseActivity {
                 ImageItemHolder.class,query) {
             @Override
             protected void populateViewHolder(ImageItemHolder viewHolder, ImageItem model, int position) {
-                viewHolder.bindToPost(MainActivity.this,model);
-            }
+                viewHolder.bindToPost(MainActivity.this,model, new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        launchEventList("This is a query");
+                    }
+                });
 
+            }
         };
+
+        organizerRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                setOrganizersProgressBar();
+                organizerRecyclerAdapter.unregisterAdapterDataObserver(this);
+            }
+        });
         organizerRecycler.setLayoutManager(horizontalLayoutManager);
         organizerRecycler.setAdapter(organizerRecyclerAdapter);
-//        organizerRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-//            @Override
-//            public void onChanged() {
-//                super.onChanged();
-//                setOrganizersProgressBar(false);
-//            }
-//        });
 
     }
-    private void setOrganizersProgressBar(boolean show) {
+    public void setOrganizersProgressBar() {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_organizer);
-        if (show) {
-            if (progressBar != null) {
-                progressBar.setVisibility(View.VISIBLE);
-                organizerRecycler.setVisibility(View.GONE);
-                isShowingOrganizerProgressBar = true;
-            }
-        } else{
-                progressBar.setVisibility(View.GONE);
-                organizerRecycler.setVisibility(View.VISIBLE);
-                isShowingOrganizerProgressBar =  false;
-
+        if(progressBar == null){
+            throw new RuntimeException("Progress bar is unexpectedly null");
         }
+        if(progressBar.getVisibility() == View.VISIBLE && organizerRecycler.getVisibility() == View.GONE){
+            progressBar.setVisibility(View.GONE);
+            organizerRecycler.setVisibility(View.VISIBLE);
+            Log.d(TAG, "setOrganizersProgressBar: hiding Progressbar");
+        }else{
+            progressBar.setVisibility(View.VISIBLE);
+            organizerRecycler.setVisibility(View.GONE);
+            Log.d(TAG, "setOrganizersProgressBar: showing Progressbar");
+        }
+
     }
+
 
     private void setupCategoriesRecycler(){
+        if(categoriesRecycler == null)
+            throw new RuntimeException("Categories Recycler is unexpectedly null");
 
         int[] img = {
                 R.drawable.ic_coding,
@@ -194,7 +214,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+       //boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         return super.onPrepareOptionsMenu(menu);
     }
     @Override
@@ -206,6 +226,11 @@ public class MainActivity extends BaseActivity {
             case R.id.action_log_out:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this, LoginActivity.class));
+                finish();
+                Log.d(TAG, "onOptionsItemSelected: logout success");
+                return true;
+            case R.id.action_launch_map:
+                startActivity(new Intent(this, MapActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -1,6 +1,7 @@
 package com.fireblaze.evento.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
         }
     }
 
-    public CategoryListAdapter(Context context, List<String> items,int[] imageIDs) {
+    public CategoryListAdapter(@NonNull Context context,@NonNull List<String> items, int[] imageIDs) {
         this.items = items;
         this.context = context;
         this.imageIDs = imageIDs;

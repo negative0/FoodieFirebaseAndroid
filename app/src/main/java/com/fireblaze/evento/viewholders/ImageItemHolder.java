@@ -1,6 +1,7 @@
 package com.fireblaze.evento.viewholders;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,8 +19,10 @@ public class ImageItemHolder extends RecyclerView.ViewHolder {
     public ImageItemHolder(View itemView) {
         super(itemView);
         imageRes = (ImageView) itemView.findViewById(R.id.item_image);
+
     }
-    public void bindToPost(Context context,ImageItem imageItem){
+    public void bindToPost(Context context, ImageItem imageItem, View.OnClickListener clickListener){
         Glide.with(context).load(imageItem.getResourceURL()).error(R.drawable.logo_black).into(imageRes);
+        imageRes.setOnClickListener(clickListener);
     }
 }
