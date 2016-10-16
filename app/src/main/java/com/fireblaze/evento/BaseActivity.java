@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
  * Created by chait on 5/26/2016.
  */
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements SnackBarContainerInterface {
 
     private ProgressDialog mProgressDialog;
 

@@ -230,7 +230,7 @@ public class MainActivity extends BaseActivity {
                 Log.d(TAG, "onOptionsItemSelected: logout success");
                 return true;
             case R.id.action_launch_map:
-                startActivity(new Intent(this, MapActivity.class));
+                startActivity(new Intent(this, MapsActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -244,4 +244,3 @@ public class MainActivity extends BaseActivity {
         mDrawerToggle.syncState();
     }
 }
-
