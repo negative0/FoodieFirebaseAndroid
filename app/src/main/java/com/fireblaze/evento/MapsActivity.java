@@ -21,7 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, SnackBarContainerInterface {
 
     private GoogleMap mMap;
-    private final int PERMISSION_ACCESS_COARSE_LOCATION = 0001;
+    private final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
 
 
 

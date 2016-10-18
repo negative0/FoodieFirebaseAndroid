@@ -1,7 +1,6 @@
 package com.fireblaze.evento;
 
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -33,9 +32,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import dalvik.annotation.TestTarget;
+import java.util.Map;
 
 
 public class MainActivity extends BaseActivity {
@@ -98,10 +97,11 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.main_menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
-    private void launchEventList(String query){
+    private void launchEventList(String query,String id){
         Intent intent = new Intent(MainActivity.this,EventListActivity.class);
         Bundle b = new Bundle();
         b.putString(EventListActivity.QUERY_KEYWORD,query);
+        b.putString(EventListActivity.ID_KEYWORD,id);
         intent.putExtras(b);
         startActivity(intent);
     }
@@ -135,15 +135,16 @@ public class MainActivity extends BaseActivity {
         setOrganizersProgressBar();
         LinearLayoutManager horizontalLayoutManager =
                 new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
-        Query query = mDatabase.child(Constants.ORGANIZER_IMAGE).limitToFirst(10);
+        Query query = mDatabase.child(Constants.ORGANIZER_KEYWORD).limitToFirst(10);
         organizerRecyclerAdapter = new FirebaseRecyclerAdapter<ImageItem, ImageItemHolder>(ImageItem.class,R.layout.organizer_list_item,
                 ImageItemHolder.class,query) {
             @Override
-            protected void populateViewHolder(ImageItemHolder viewHolder, ImageItem model, int position) {
+            protected void populateViewHolder(ImageItemHolder viewHolder, final ImageItem model, int position) {
                 viewHolder.bindToPost(MainActivity.this,model, new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {
-                        launchEventList("This is a query");
+                        Log.d(TAG,Constants.ORGANIZER_KEYWORD+"/"+model.getName());
+                        launchEventList(Constants.ORGANIZER_KEYWORD+"/"+model.getId(),model.getId());
                     }
                 });
 
@@ -232,6 +233,9 @@ public class MainActivity extends BaseActivity {
             case R.id.action_launch_map:
                 startActivity(new Intent(this, MapsActivity.class));
                 return true;
+            case R.id.action_add_data:
+                addData();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -242,5 +246,23 @@ public class MainActivity extends BaseActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+    }
+    private void addData(){
+
+        String names[] ={
+               "Eklavya",
+                "Texaphyr",
+                "PCP"
+        };
+
+        for(String name : names){
+            String key = mDatabase.child(Constants.ORGANIZER_KEYWORD).push().getKey();
+            ImageItem item = new ImageItem(key,name,"http://placehold.it/350x150");
+            Map<String, Object> postValues = item.toMap();
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put(Constants.ORGANIZER_KEYWORD+"/"+key,postValues);
+            mDatabase.updateChildren(childUpdates);
+        }
+
     }
 }
