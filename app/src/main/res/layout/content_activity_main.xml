@@ -18,12 +18,12 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="wrap_content">
         <android.support.v7.widget.RecyclerView
             android:layout_marginTop="20dp"
             android:id="@+id/recycler_organizers"
             android:layout_width="match_parent"
-            android:layout_height="200dp"/>
+            android:layout_height="wrap_content"/>
         <ProgressBar
             android:layout_width="match_parent"
             android:id="@+id/progress_organizer"

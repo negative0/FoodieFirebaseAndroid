@@ -20,6 +20,7 @@
             app:expandedTitleMarginEnd="64dp"
             android:fitsSystemWindows="true">
             <ImageView
+                android:id="@+id/featured_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:src="@drawable/logo_black"

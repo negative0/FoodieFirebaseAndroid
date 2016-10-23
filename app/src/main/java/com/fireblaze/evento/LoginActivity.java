@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
 import com.fireblaze.evento.fragments.LoginFragment;
 import com.fireblaze.evento.fragments.SignUpFragment;
 import com.fireblaze.evento.models.User;
@@ -135,6 +134,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
     protected void onStart() {
         super.onStart();
         //Check Auth
+        Log.d(TAG,"onStart:getCurrentUser="+mAuth.getCurrentUser());
         if(mAuth.getCurrentUser() != null){
             onAuthSuccess(mAuth.getCurrentUser());
         }
@@ -190,7 +190,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
     }
 
     private void writeNewUser(String userId, String userName){
-        User user = new User(userName);
+        User user = new User(userId,userName);
 
         mDatabase.child("users").child(userId).setValue(user);
     }
@@ -235,6 +235,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         if(result.isSuccess()){
             GoogleSignInAccount acct = result.getSignInAccount();
             AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(),null);
+            Log.d(TAG,"tokenID="+acct.getIdToken());
             mAuth.signInWithCredential(credential)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -246,11 +247,14 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                             }
                         }
                     });
+        } else{
+            Toast.makeText(this,"Sign In failed",Toast.LENGTH_SHORT).show();
+            Log.d(TAG,"signInWithGoogle:onFail "+result.getSignInAccount());
         }
     }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d(TAG,"connectionFailed"+connectionResult.getErrorMessage());
     }
 
     @Override
@@ -301,7 +305,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
                             Snackbar.make(getContainer(),"Check your email for further instructions",Snackbar.LENGTH_SHORT).show();
-                            Log.d(TAG,"email sent for password recovery");
+                            Log.d(TAG,"sendPasswordResetEmail:successful");
                         }
                     }
                 });

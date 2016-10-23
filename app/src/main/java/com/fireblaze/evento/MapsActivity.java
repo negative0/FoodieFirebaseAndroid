@@ -1,27 +1,30 @@
 package com.fireblaze.evento;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
-
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.fireblaze.evento.models.Location;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, SnackBarContainerInterface {
 
     private GoogleMap mMap;
     private final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
+    private LatLng location;
+    private String name;
 
 
 
@@ -31,15 +34,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return findViewById(R.id.map);
     }
 
+    public static void navigate(AppCompatActivity activity,Location location,String name){
+        Intent i = new Intent(activity,MapsActivity.class);
+        i.putExtra("latitude",location.latitude);
+        i.putExtra("longitude",location.longitude);
+        i.putExtra("name",name);
+        activity.startActivity(i);
+    }
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
             case PERMISSION_ACCESS_COARSE_LOCATION:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Snackbar.make(getContainer(), "Location granted", Snackbar.LENGTH_SHORT).show();
-                } else {
+                if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     Snackbar.make(getContainer(),"Need Your Location",Snackbar.LENGTH_INDEFINITE).show();
                 }
         }
@@ -49,11 +57,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        Bundle b = getIntent().getExtras();
+        location = new LatLng(b.getDouble("latitude"),b.getDouble("longitude"));
+        name = b.getString("name");
         //Permission to access the user's location
-     if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED){
-         ActivityCompat.requestPermissions(this,new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION},PERMISSION_ACCESS_COARSE_LOCATION);
-        }
+
+//     if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)
+//            != PackageManager.PERMISSION_GRANTED){
+//         ActivityCompat.requestPermissions(this,new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION},PERMISSION_ACCESS_COARSE_LOCATION);
+//        }
        // googleApiClient = new GoogleApiClient.Builder(this,this,this).addApi(LocationServices.API).build();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -73,15 +85,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(18.5204, 73.8567);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Pune!"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        MapStyleOptions style =  MapStyleOptions.loadRawResourceStyle(this,R.raw.map_style);
+        googleMap.setMapStyle(style);
+        mMap = googleMap;
+        // Add a marker to provided location
+
+        Marker marker = mMap.addMarker(new MarkerOptions().position(location).title(name).snippet("Pune"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
 
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.5204,73.8567),10));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,15));
+        marker.showInfoWindow();
+
     }
 }

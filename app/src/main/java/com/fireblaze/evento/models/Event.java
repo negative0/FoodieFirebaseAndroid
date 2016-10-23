@@ -5,119 +5,152 @@ import com.google.firebase.database.Exclude;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by chait on 7/24/2016.
- */
 
 public class Event {
-    private String uid;
-    private String host;
-    private String hostID;
-    public String title;
-    private String body;
-    private int starCount = 0;
-    private Map<String ,Boolean> stars = new HashMap<>();
-    private String mainImage = null;
-    private String imagePath;
+    public String eventID;
+    public String name;
+    public String description;
+    public String category;
+    public int ratings;
+    public String image;
+    public String venue;
+    public String schedule;
+    public Map<String, Boolean> volunteers = new HashMap<>();
+    public double participationFees;
+    public double prizeAmount;
+    //public Date dateCreated;
+    public String duration;
 
-    public String getUid() {
-        return uid;
+    public String getEventID() {
+        return eventID;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
     }
 
-    public String getHost() {
-        return host;
+    public String getName() {
+        return name;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getHostID() {
-        return hostID;
+    public String getDescription() {
+        return description;
     }
 
-    public void setHostID(String hostID) {
-        this.hostID = hostID;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getTitle() {
-        return title;
+    public String getCategory() {
+        return category;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public String getBody() {
-        return body;
+    public int getRatings() {
+        return ratings;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setRatings(int ratings) {
+        this.ratings = ratings;
     }
 
-    public String getMainImage() {
-        return mainImage;
+    public String getImage() {
+        return image;
     }
 
-    public void setMainImage(String mainImage) {
-        this.mainImage = mainImage;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getVenue() {
+        return venue;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setVenue(String venue) {
+        this.venue = venue;
     }
 
-    public Event(String uid, String host, String title, String body) {
-        this.uid = uid;
-        this.host = host;
-        this.title = title;
-        this.body = body;
+    public String getSchedule() {
+        return schedule;
     }
 
-    public Event(String uid, String host, String title, String body, String mainImage, String imagePath) {
-        this.uid = uid;
-        this.host = host;
-        this.title = title;
-        this.body = body;
-        this.mainImage = mainImage;
-        this.imagePath = imagePath;
+    public void setSchedule(String schedule) {
+        this.schedule = schedule;
+    }
+
+    public Map<String, Boolean> getVolunteers() {
+        return volunteers;
+    }
+
+    public void setVolunteers(Map<String, Boolean> volunteers) {
+        this.volunteers = volunteers;
+    }
+
+    public double getParticipationFees() {
+        return participationFees;
+    }
+
+    public void setParticipationFees(double participationFees) {
+        this.participationFees = participationFees;
+    }
+
+    public double getPrizeAmount() {
+        return prizeAmount;
+    }
+
+    public void setPrizeAmount(double prizeAmount) {
+        this.prizeAmount = prizeAmount;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
     @Exclude
-    public Map<String, Object> toMap(){
-        HashMap<String,Object> result = new HashMap<>();
-        result.put("uid",uid);
-        result.put("host",host);
-        result.put("hostID", hostID);
-        result.put("title",title);
-        result.put("body",body);
-        result.put("starCount",starCount);
-        result.put("stars",stars);
-        if(mainImage != null){
-            result.put("mainImage",mainImage);
-            result.put("imagePath",imagePath);
-        }
-
+    public Map<String ,Object> toMap(){
+        Map<String,Object> result = new HashMap<>();
+        result.put("eventID",eventID);
+        result.put("name",name);
+        result.put("description",description);
+        result.put("category",category);
+        result.put("ratings",ratings);
+        result.put("image",image);
+        result.put("venue",venue);
+        result.put("schedule",schedule);
+        result.put("volunteers",volunteers);
+        result.put("participationFees",participationFees);
+        result.put("prizeAmount",prizeAmount);
+        result.put("duration",duration);
         return result;
     }
 
-    @Exclude
-    public void starClicked(String uid){
-        if(stars.containsKey(uid)){
-            starCount -= 1;
-            stars.remove(uid);
-        } else {
-            starCount += 1;
-            stars.put(uid,true);
-        }
+    public Event(String eventID, String name, String description, String category, int ratings, String image, String venue, String schedule, Map<String, Boolean> volunteers, double participationFees, double prizeAmount, String duration) {
+        this.eventID = eventID;
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.ratings = ratings;
+        this.image = image;
+        this.venue = venue;
+        this.schedule = schedule;
+        this.volunteers = volunteers;
+        this.participationFees = participationFees;
+        this.prizeAmount = prizeAmount;
+        this.duration = duration;
+    }
+
+    public Event() {
+        //Important
     }
 }

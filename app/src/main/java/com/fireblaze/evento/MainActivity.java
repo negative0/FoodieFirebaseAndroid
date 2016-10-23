@@ -25,6 +25,8 @@ import com.fireblaze.evento.adapters.CategoryListAdapter;
 import com.fireblaze.evento.adapters.DrawerAdapter;
 import com.fireblaze.evento.models.DrawerItem;
 import com.fireblaze.evento.models.ImageItem;
+import com.fireblaze.evento.models.Location;
+import com.fireblaze.evento.models.Organizer;
 import com.fireblaze.evento.viewholders.ImageItemHolder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -61,8 +63,6 @@ public class MainActivity extends BaseActivity {
         setupNavigation();
         setupOrganizerList();
         setupCategoriesRecycler();
-
-
     }
     private void getViews(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity {
         setOrganizersProgressBar();
         LinearLayoutManager horizontalLayoutManager =
                 new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
-        Query query = mDatabase.child(Constants.ORGANIZER_KEYWORD).limitToFirst(10);
+        Query query = mDatabase.child(Constants.ORGANIZER_IMAGE).limitToFirst(10);
         organizerRecyclerAdapter = new FirebaseRecyclerAdapter<ImageItem, ImageItemHolder>(ImageItem.class,R.layout.organizer_list_item,
                 ImageItemHolder.class,query) {
             @Override
@@ -254,12 +254,26 @@ public class MainActivity extends BaseActivity {
                 "Texaphyr",
                 "PCP"
         };
+        String emails[] ={
+            "eklavya@eklavya.com",
+            "texaphyr@mit.com",
+            "techno@pcp.com"
+        };
+        Location[] latLngs = {
+                new Location(18.503018,73.795738),
+                new Location(18.510277,73.790180),
+                new Location(18.651713,73.761596)
 
-        for(String name : names){
+        };
+
+        for(int i = 0;i<3;i++){
             String key = mDatabase.child(Constants.ORGANIZER_KEYWORD).push().getKey();
-            ImageItem item = new ImageItem(key,name,"http://placehold.it/350x150");
+            Organizer item = new Organizer(key,names[i],emails[i],"+91 8888888888",latLngs[i],"http://placehold.it/200x200");
+            ImageItem imageItem = new ImageItem(key,names[i],"http://placehold.it/350x150");
             Map<String, Object> postValues = item.toMap();
+            Map<String,Object> imageValues = imageItem.toMap();
             Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put(Constants.ORGANIZER_IMAGE+"/"+key,imageValues);
             childUpdates.put(Constants.ORGANIZER_KEYWORD+"/"+key,postValues);
             mDatabase.updateChildren(childUpdates);
         }
