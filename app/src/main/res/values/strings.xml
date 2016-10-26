@@ -33,4 +33,10 @@
     <string name="categories">Categories</string>
     <string name="title_activity_about_us">AboutUs</string>
     <string name="title_activity_maps">Map</string>
+    <string name="err_name">Please enter the name</string>
+    <string name="err_description">Please describe the event in few words</string>
+    <string name="err_venue">Please enter the venue of the event</string>
+    <string name="err_category">Please enter a valid category</string>
+    <string name="err_prize">Enter the a valid amount</string>
+    <string name="title_activity_organizer_main">OrganizerMainActivity</string>
 </resources>

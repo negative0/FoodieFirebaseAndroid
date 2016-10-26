@@ -18,6 +18,7 @@ public class SignUpFragment extends SignInBaseFragment {
     onSignUpListener signUpListener;
 
     public interface onSignUpListener{
+        void isOrganizer(boolean isOrganizer);
         void onSignUp(String email, String password);
         void onGoogleSignIn();
     }
@@ -45,11 +46,27 @@ public class SignUpFragment extends SignInBaseFragment {
                 signUpListener.onGoogleSignIn();
             }
         });
+        mBecomeOrganizerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isAOrganizer();
+            }
+        });
 
         return rootView;
     }
 
-
+    private void isAOrganizer(){
+        if(!isOrganizer){
+            isOrganizer = true;
+            signUpListener.isOrganizer(true);
+            mBecomeOrganizerButton.setText("Congrats! Click to cancel");
+        } else {
+            isOrganizer = false;
+            signUpListener.isOrganizer(false);
+            mBecomeOrganizerButton.setText("Become a Organizer");
+        }
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-
 import com.fireblaze.evento.R;
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +27,8 @@ public abstract class SignInBaseFragment extends Fragment {
     public EditText mEmailField;
     public EditText mPasswordField;
     public SignInButton mGoogleSignInButton;
+    public Button mBecomeOrganizerButton;
+    public boolean isOrganizer = false;
 
 
 
@@ -42,7 +43,7 @@ public abstract class SignInBaseFragment extends Fragment {
         mEmailField = (EditText) rootView.findViewById(R.id.field_email);
         mPasswordField = (EditText) rootView.findViewById(R.id.field_password);
         mGoogleSignInButton = (SignInButton) rootView.findViewById(R.id.sign_in_google_button);
-
+        mBecomeOrganizerButton = (Button) rootView.findViewById(R.id.become_an_organizer_button);
         return rootView;
     }
 

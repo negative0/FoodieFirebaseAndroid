@@ -230,8 +230,8 @@ public class MainActivity extends BaseActivity {
                 finish();
                 Log.d(TAG, "onOptionsItemSelected: logout success");
                 return true;
-            case R.id.action_launch_map:
-                startActivity(new Intent(this, MapsActivity.class));
+            case R.id.action_new_event:
+                startActivity(new Intent(this, NewEventActivity.class));
                 return true;
             case R.id.action_add_data:
                 addData();

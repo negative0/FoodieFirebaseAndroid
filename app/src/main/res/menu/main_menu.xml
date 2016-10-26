@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_log_out" app:showAsAction="never"
         android:title="@string/menu_log_out" />
-    <item android:id="@+id/action_launch_map" app:showAsAction="ifRoom"
-         android:title="Map Test"/>
+    <item android:id="@+id/action_new_event" app:showAsAction="ifRoom"
+         android:title="New Event"/>
     <item android:id="@+id/action_add_data" app:showAsAction="never"
         android:title="Add data"/>
+
 </menu>

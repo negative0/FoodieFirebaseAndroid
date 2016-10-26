@@ -33,8 +33,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by chait on 6/7/2016.
@@ -55,11 +58,17 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
 
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
+    private boolean isOrganizer = false;
 
 
     @Override
     public View getContainer() {
         return findViewById(R.id.container);
+    }
+
+    @Override
+    public void isOrganizer(boolean isOrganizer) {
+        this.isOrganizer = isOrganizer;
     }
 
     @Override
@@ -119,7 +128,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null){
                     //User Signed in
-                    onAuthSuccess(user);
+                    onAuthSuccess(user,true);
                     Log.d(TAG,"onAuthChanged:signed_In" + user.getUid());
                 } else {
                     Log.d(TAG,"onAuthChanged:signed_out");
@@ -136,7 +145,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         //Check Auth
         Log.d(TAG,"onStart:getCurrentUser="+mAuth.getCurrentUser());
         if(mAuth.getCurrentUser() != null){
-            onAuthSuccess(mAuth.getCurrentUser());
+            onAuthSuccess(mAuth.getCurrentUser(),true);
         }
         mAuth.addAuthStateListener(mAuthListener);
     }
@@ -149,15 +158,37 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         }
     }
 
-    private void onAuthSuccess(FirebaseUser user){
-        String username = usernameFromEmail(user.getEmail());
+    private void onAuthSuccess(FirebaseUser user,boolean isLogin){
+        if(!isLogin){
+            String username = usernameFromEmail(user.getEmail());
+            writeNewUser(user.getUid(),username,isOrganizer);
+            if(isOrganizer) signUpAsOrganizer(); else loginAsUser();
+        } else {
+            mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if(user.isOrganizer) loginAsOrganizer(); else loginAsUser();
+                }
 
-        writeNewUser(user.getUid(),username);
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
+                }
+            });
+        }
+
+    }
+    private void signUpAsOrganizer(){
+        startActivity(new Intent(LoginActivity.this,NewOrganizerActivity.class));
+    }
+    private void loginAsOrganizer(){
+        startActivity(new Intent(LoginActivity.this,OrganizerMainActivity.class));
+        finish();
+    }
+    private void loginAsUser(){
         startActivity(new Intent(LoginActivity.this,MainActivity.class));
         finish();
-
-
     }
 
     private String usernameFromEmail(String email){
@@ -180,7 +211,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                         hideProgressDialog();
 
                         if(task.isSuccessful()){
-                            onAuthSuccess(task.getResult().getUser());
+                            onAuthSuccess(task.getResult().getUser(),true);
                         } else {
                             Toast.makeText(LoginActivity.this, "Sign In Failed",
                                     Toast.LENGTH_SHORT).show();
@@ -189,8 +220,8 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                 });
     }
 
-    private void writeNewUser(String userId, String userName){
-        User user = new User(userId,userName);
+    private void writeNewUser(String userId, String userName,boolean isOrganizer){
+        User user = new User(userId,userName,isOrganizer);
 
         mDatabase.child("users").child(userId).setValue(user);
     }
@@ -207,7 +238,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                         hideProgressDialog();
 
                         if(task.isSuccessful()){
-                            onAuthSuccess(task.getResult().getUser());
+                            onAuthSuccess(task.getResult().getUser(),false);
                         } else {
                             Toast.makeText(LoginActivity.this, "Sign Up Failed",
                                     Toast.LENGTH_SHORT).show();
