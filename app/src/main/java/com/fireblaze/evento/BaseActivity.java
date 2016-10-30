@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
  * Created by chait on 5/26/2016.
  */
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements SnackBarContainerInterface {
 
     private ProgressDialog mProgressDialog;
 
@@ -97,6 +97,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         return TYPE_NOT_CONNECTED;
     }
 
+    public void logOut(){
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+        //Log.d(TAG, "onOptionsItemSelected: logout success");
+    }
     private void setSnackBarMessage(int status,View view){
         String internetStatus;
         int length;

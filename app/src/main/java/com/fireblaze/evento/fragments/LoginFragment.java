@@ -13,6 +13,7 @@ public class LoginFragment extends SignInBaseFragment {
 
     private onLoginListener loginListener;
 
+
     public interface onLoginListener{
         void onLogin(String email, String password);
         void onGoogleSignIn();
@@ -26,6 +27,7 @@ public class LoginFragment extends SignInBaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
 
+        mBecomeOrganizerButton.setVisibility(View.GONE);
         mSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

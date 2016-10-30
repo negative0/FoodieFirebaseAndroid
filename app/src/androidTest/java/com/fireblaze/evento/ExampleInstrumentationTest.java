@@ -1,5 +1,6 @@
 package com.fireblaze.evento;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.MediumTest;
@@ -25,5 +26,9 @@ public class ExampleInstrumentationTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("com.fireblaze.evento", appContext.getPackageName());
+    }
+    @Test
+    public void isLoadingProperly() throws Exception{
+
     }
 }

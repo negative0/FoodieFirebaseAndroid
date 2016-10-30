@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,14 +25,17 @@ import com.fireblaze.evento.adapters.CategoryListAdapter;
 import com.fireblaze.evento.adapters.DrawerAdapter;
 import com.fireblaze.evento.models.DrawerItem;
 import com.fireblaze.evento.models.ImageItem;
+import com.fireblaze.evento.models.Location;
+import com.fireblaze.evento.models.Organizer;
 import com.fireblaze.evento.viewholders.ImageItemHolder;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends BaseActivity {
@@ -48,7 +52,6 @@ public class MainActivity extends BaseActivity {
     RecyclerView organizerRecycler;
     RecyclerView categoriesRecycler;
     private DatabaseReference mDatabase;
-    private boolean isShowingOrganizerProgressBar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +62,6 @@ public class MainActivity extends BaseActivity {
         setupNavigation();
         setupOrganizerList();
         setupCategoriesRecycler();
-
-
     }
     private void getViews(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -95,7 +96,14 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.main_menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+    private void launchEventList(String query,String id){
+        Intent intent = new Intent(MainActivity.this,EventListActivity.class);
+        Bundle b = new Bundle();
+        b.putString(EventListActivity.QUERY_KEYWORD,query);
+        b.putString(EventListActivity.ID_KEYWORD,id);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
     private void setupNavigation(){
 
 
@@ -105,7 +113,7 @@ public class MainActivity extends BaseActivity {
         }
         mDrawerList.setAdapter(new DrawerAdapter(this,R.layout.drawer_list_item,mDrawerItems));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-        final CharSequence mTitle = getTitle();
+        //final CharSequence mTitle = getTitle();
         mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.drawer_open,R.string.drawer_close){
             public void onDrawerClosed(View v){
                 super.onDrawerClosed(v);
@@ -122,47 +130,59 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setupOrganizerList(){
-
-       // setOrganizersProgressBar(true);
+        //Show the progress dialog.
+        setOrganizersProgressBar();
         LinearLayoutManager horizontalLayoutManager =
                 new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
         Query query = mDatabase.child(Constants.ORGANIZER_IMAGE).limitToFirst(10);
         organizerRecyclerAdapter = new FirebaseRecyclerAdapter<ImageItem, ImageItemHolder>(ImageItem.class,R.layout.organizer_list_item,
                 ImageItemHolder.class,query) {
             @Override
-            protected void populateViewHolder(ImageItemHolder viewHolder, ImageItem model, int position) {
-                viewHolder.bindToPost(MainActivity.this,model);
-            }
+            protected void populateViewHolder(ImageItemHolder viewHolder, final ImageItem model, int position) {
+                viewHolder.bindToPost(MainActivity.this,model, new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG,Constants.ORGANIZER_KEYWORD+"/"+model.getName());
+                        launchEventList(Constants.ORGANIZER_KEYWORD+"/"+model.getId(),model.getId());
+                    }
+                });
 
+            }
         };
+
+        organizerRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                setOrganizersProgressBar();
+                organizerRecyclerAdapter.unregisterAdapterDataObserver(this);
+            }
+        });
         organizerRecycler.setLayoutManager(horizontalLayoutManager);
         organizerRecycler.setAdapter(organizerRecyclerAdapter);
-//        organizerRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-//            @Override
-//            public void onChanged() {
-//                super.onChanged();
-//                setOrganizersProgressBar(false);
-//            }
-//        });
 
     }
-    private void setOrganizersProgressBar(boolean show) {
+    public void setOrganizersProgressBar() {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_organizer);
-        if (show) {
-            if (progressBar != null) {
-                progressBar.setVisibility(View.VISIBLE);
-                organizerRecycler.setVisibility(View.GONE);
-                isShowingOrganizerProgressBar = true;
-            }
-        } else{
-                progressBar.setVisibility(View.GONE);
-                organizerRecycler.setVisibility(View.VISIBLE);
-                isShowingOrganizerProgressBar =  false;
-
+        if(progressBar == null){
+            throw new RuntimeException("Progress bar is unexpectedly null");
         }
+        if(progressBar.getVisibility() == View.VISIBLE && organizerRecycler.getVisibility() == View.GONE){
+            progressBar.setVisibility(View.GONE);
+            organizerRecycler.setVisibility(View.VISIBLE);
+            Log.d(TAG, "setOrganizersProgressBar: hiding Progressbar");
+        }else{
+            progressBar.setVisibility(View.VISIBLE);
+            organizerRecycler.setVisibility(View.GONE);
+            Log.d(TAG, "setOrganizersProgressBar: showing Progressbar");
+        }
+
     }
+
 
     private void setupCategoriesRecycler(){
+        if(categoriesRecycler == null)
+            throw new RuntimeException("Categories Recycler is unexpectedly null");
 
         int[] img = {
                 R.drawable.ic_coding,
@@ -194,7 +214,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+       //boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         return super.onPrepareOptionsMenu(menu);
     }
     @Override
@@ -204,8 +224,13 @@ public class MainActivity extends BaseActivity {
         }
         switch (item.getItemId()){
             case R.id.action_log_out:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(this, LoginActivity.class));
+                logOut();
+                return true;
+            case R.id.action_new_event:
+                startActivity(new Intent(this, NewEventActivity.class));
+                return true;
+            case R.id.action_add_data:
+                addData();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -218,5 +243,36 @@ public class MainActivity extends BaseActivity {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
-}
+    private void addData(){
 
+        String names[] ={
+               "Eklavya",
+                "Texaphyr",
+                "PCP"
+        };
+        String emails[] ={
+            "eklavya@eklavya.com",
+            "texaphyr@mit.com",
+            "techno@pcp.com"
+        };
+        Location[] latLngs = {
+                new Location(18.503018,73.795738),
+                new Location(18.510277,73.790180),
+                new Location(18.651713,73.761596)
+
+        };
+
+        for(int i = 0;i<3;i++){
+            String key = mDatabase.child(Constants.ORGANIZER_KEYWORD).push().getKey();
+            Organizer item = new Organizer(key,names[i],emails[i],"+91 8888888888",null,latLngs[i],"http://placehold.it/200x200");
+            ImageItem imageItem = new ImageItem(key,names[i],"http://placehold.it/350x150");
+            Map<String, Object> postValues = item.toMap();
+            Map<String,Object> imageValues = imageItem.toMap();
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put(Constants.ORGANIZER_IMAGE+"/"+key,imageValues);
+            childUpdates.put(Constants.ORGANIZER_KEYWORD+"/"+key,postValues);
+            mDatabase.updateChildren(childUpdates);
+        }
+
+    }
+}

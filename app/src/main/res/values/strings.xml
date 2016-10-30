@@ -31,4 +31,14 @@
     <string name="drawer_open">Open</string>
     <string name="menu_log_out">Log Out</string>
     <string name="categories">Categories</string>
+    <string name="title_activity_about_us">AboutUs</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="err_name">Please enter the name</string>
+    <string name="err_description">Please describe the event in few words</string>
+    <string name="err_venue">Please enter the venue of the event</string>
+    <string name="err_category">Please enter a valid category</string>
+    <string name="err_prize">Enter the a valid amount</string>
+    <string name="title_activity_organizer_main">OrganizerMainActivity</string>
+    <string name="title_activity_select_location">Select Location</string>
+    <string name="new_event">New Event</string>
 </resources>
