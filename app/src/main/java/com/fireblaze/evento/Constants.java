@@ -10,4 +10,5 @@ public class Constants {
     public static final String META_KEYWORD = "meta";
     public static final String ORGANIZER_KEYWORD = "organizer";
     public static final String EVENTS_KEYWORD = "Events";
+    public static final String VERIFICATION_CODE = "07x10x1998";
 }

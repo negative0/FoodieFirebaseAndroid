@@ -1,18 +1,38 @@
 package com.fireblaze.evento;
 
-import android.support.v4.app.FragmentActivity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class SelectLocation extends FragmentActivity implements OnMapReadyCallback {
+import java.io.IOException;
+import java.util.List;
+
+public class SelectLocation extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
+
+    private Button btnSubmit;
+
+    private LatLng location = null;
+
+    private Marker marker;
+
+    List<Address> addressList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,25 +42,59 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        btnSubmit = (Button) findViewById(R.id.btn_submit);
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(location!=null) {
+                    Intent intent = new Intent();
+                    intent.putExtra("point", location);
+                    setResult(NewOrganizerActivity.REQ_GET_LOCATION, intent);
+                    finish();
+                }
+            }
+        });
+
     }
 
+    @Override
+    public void onMapClick(LatLng latLng) {
+        if(location == null) {
+            MarkerOptions options = new MarkerOptions().anchor(0.5f, 0.5f);
+            options.position(latLng);
+            marker = mMap.addMarker(options);
+        } else {
+            marker.setPosition(latLng);
+        }
+        location = latLng;
+    }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMapClickListener(this);
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+
+    }
+
+    public void onMapSearch(View view){
+        EditText locationSearch = (EditText) findViewById(R.id.input_search);
+        String location = locationSearch.getText().toString();
+        if(!location.isEmpty()){
+            Geocoder geocoder = new Geocoder(this);
+            try{
+                addressList = geocoder.getFromLocationName(location,1);
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        Address address = addressList.get(0);
+        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
     }
 }

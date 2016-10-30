@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.fireblaze.evento.fragments.LoginFragment;
 import com.fireblaze.evento.fragments.SignUpFragment;
+import com.fireblaze.evento.models.Organizer;
 import com.fireblaze.evento.models.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -180,10 +181,41 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
 
     }
     private void signUpAsOrganizer(){
+        if(getUid()==null){
+            startActivity(new Intent(LoginActivity.this,LoginActivity.class));
+            finish();
+            return;
+        }
+        Organizer organizer = new Organizer(getUid());
+        mDatabase.child(Constants.ORGANIZER_KEYWORD).child(getUid()).setValue(organizer);
         startActivity(new Intent(LoginActivity.this,NewOrganizerActivity.class));
+        finish();
     }
     private void loginAsOrganizer(){
-        startActivity(new Intent(LoginActivity.this,OrganizerMainActivity.class));
+        mDatabase.child(Constants.ORGANIZER_KEYWORD).child(getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Organizer organizer = dataSnapshot.getValue(Organizer.class);
+                if(organizer != null) {
+                    if (organizer.getIsValid()) {
+                        startActivity(new Intent(LoginActivity.this, OrganizerMainActivity.class));
+                        finish();
+                    } else {
+                        startActivity(new Intent(LoginActivity.this, NewOrganizerActivity.class));
+                        finish();
+                    }
+                } else {
+                    startActivity(new Intent(LoginActivity.this, NewOrganizerActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG,"loginAsOrganizer: onError",databaseError.toException());
+            }
+        });
+
         finish();
     }
     private void loginAsUser(){

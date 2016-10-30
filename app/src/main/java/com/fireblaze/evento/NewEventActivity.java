@@ -1,7 +1,6 @@
 package com.fireblaze.evento;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -74,7 +73,8 @@ public class NewEventActivity extends BaseActivity {
             return;
         if(!validateFees())
             return;
-        String key = mDatabase.child(Constants.EVENTS_KEYWORD).child("orgID1").push().getKey();
+
+        String key = mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).push().getKey();
         Event event = new Event(key,inputName.getText().toString().trim(),
                 inputDescription.getText().toString().trim(),
                 inputCategory.getText().toString().trim(),
@@ -84,8 +84,8 @@ public class NewEventActivity extends BaseActivity {
                 Double.parseDouble(inputFees.getText().toString()),
                 Double.parseDouble(inputPrize.getText().toString()),"1 hr"
                 );
-        mDatabase.child(Constants.EVENTS_KEYWORD).child("orgID1").child(key).setValue(event);
-        Snackbar.make(getContainer(),"Event Added successfully",Snackbar.LENGTH_SHORT).show();
+        mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).child(key).setValue(event);
+        setResult(OrganizerMainActivity.REQ_NEW_ACTIVITY);
         finish();
     }
     private boolean validateCategory(){

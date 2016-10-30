@@ -97,6 +97,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SnackBar
         return TYPE_NOT_CONNECTED;
     }
 
+    public void logOut(){
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+        //Log.d(TAG, "onOptionsItemSelected: logout success");
+    }
     private void setSnackBarMessage(int status,View view){
         String internetStatus;
         int length;

@@ -16,6 +16,16 @@ public class Organizer {
     private Location location;
     private String imageURL;
     private String website;
+    private boolean isValid = false;
+
+    public boolean getIsValid() {
+        return isValid;
+    }
+
+
+    public void setIsValid(boolean valid) {
+        isValid = valid;
+    }
 
     public String getWebsite() {
         return website;
@@ -48,6 +58,7 @@ public class Organizer {
         result.put("phone",phone);
         result.put("location",location);
         result.put("imageURL",imageURL);
+        result.put("isValid",isValid);
         return result;
     }
 
@@ -103,17 +114,21 @@ public class Organizer {
         return bookmarkCount;
     }
 
-    public Organizer(String organizerID, String name, String email, String phone, Location location, String imageURL) {
+    public Organizer(String organizerID, String name, String email, String phone, String website, Location location, String imageURL) {
         this.organizerID = organizerID;
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.website = website;
         this.location = location;
         this.imageURL = imageURL;
     }
 
     public Organizer() {
 
+    }
+    public Organizer(String organizerID){
+        this.organizerID = organizerID;
     }
 
     @Exclude

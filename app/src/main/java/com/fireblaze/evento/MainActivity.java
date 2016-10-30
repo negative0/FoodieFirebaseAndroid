@@ -28,7 +28,6 @@ import com.fireblaze.evento.models.ImageItem;
 import com.fireblaze.evento.models.Location;
 import com.fireblaze.evento.models.Organizer;
 import com.fireblaze.evento.viewholders.ImageItemHolder;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -225,10 +224,7 @@ public class MainActivity extends BaseActivity {
         }
         switch (item.getItemId()){
             case R.id.action_log_out:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(this, LoginActivity.class));
-                finish();
-                Log.d(TAG, "onOptionsItemSelected: logout success");
+                logOut();
                 return true;
             case R.id.action_new_event:
                 startActivity(new Intent(this, NewEventActivity.class));
@@ -268,7 +264,7 @@ public class MainActivity extends BaseActivity {
 
         for(int i = 0;i<3;i++){
             String key = mDatabase.child(Constants.ORGANIZER_KEYWORD).push().getKey();
-            Organizer item = new Organizer(key,names[i],emails[i],"+91 8888888888",latLngs[i],"http://placehold.it/200x200");
+            Organizer item = new Organizer(key,names[i],emails[i],"+91 8888888888",null,latLngs[i],"http://placehold.it/200x200");
             ImageItem imageItem = new ImageItem(key,names[i],"http://placehold.it/350x150");
             Map<String, Object> postValues = item.toMap();
             Map<String,Object> imageValues = imageItem.toMap();

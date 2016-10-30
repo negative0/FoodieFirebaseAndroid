@@ -98,37 +98,6 @@ public class EventListActivity extends BaseActivity {
 
 
 
-        fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            private Fragment f[] = {
-                    new EventFragment(),
-                    new EventFragment(),
-                    new EventFragment()
-
-            };
-            private String titles[] = {
-                    "All events",
-                    "Presentation",
-                    "Games"
-            };
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return titles[position];
-            }
-
-            @Override
-            public Fragment getItem(int position) {
-                return f[position];
-            }
-
-            @Override
-            public int getCount() {
-                return f.length;
-            }
-        };
-        mViewPager.setAdapter(fragmentPagerAdapter);
-        tabs.setupWithViewPager(mViewPager);
-        setupFab();
     }
 
     private void setupViewWithData(Organizer item){
@@ -143,6 +112,42 @@ public class EventListActivity extends BaseActivity {
         if(item.bookmarks.containsKey(getUid())){
             handleBookmark(true);
         }
+        final Bundle bundle = new Bundle();
+        bundle.putString("UID",organizer.getOrganizerID());
+        fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            private Fragment f[] = {
+                    new EventFragment(),
+                    new EventFragment(),
+                    new EventFragment()
+
+            };
+
+            private String titles[] = {
+                    "All events",
+                    "Presentation",
+                    "Games"
+            };
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return titles[position];
+            }
+
+            @Override
+            public Fragment getItem(int position) {
+                if(position == 0)
+                    f[position].setArguments(bundle);
+                return f[position];
+            }
+
+            @Override
+            public int getCount() {
+                return f.length;
+            }
+        };
+        mViewPager.setAdapter(fragmentPagerAdapter);
+        tabs.setupWithViewPager(mViewPager);
+        setupFab();
     }
     private void setupFab(){
         fab.setOnClickListener(new View.OnClickListener() {

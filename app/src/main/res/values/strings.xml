@@ -39,4 +39,6 @@
     <string name="err_category">Please enter a valid category</string>
     <string name="err_prize">Enter the a valid amount</string>
     <string name="title_activity_organizer_main">OrganizerMainActivity</string>
+    <string name="title_activity_select_location">Select Location</string>
+    <string name="new_event">New Event</string>
 </resources>

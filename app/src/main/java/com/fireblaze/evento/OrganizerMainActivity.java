@@ -1,5 +1,6 @@
 package com.fireblaze.evento;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,10 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.firebase.auth.FirebaseAuth;
 
 public class OrganizerMainActivity extends BaseActivity {
     public static final String TAG = OrganizerMainActivity.class.getSimpleName();
+
+    public final static int REQ_NEW_ACTIVITY = 1001;
 
     @Override
     public View getContainer() {
@@ -39,18 +41,29 @@ public class OrganizerMainActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu,menu);
+        getMenuInflater().inflate(R.menu.organizer_menu,menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case REQ_NEW_ACTIVITY:
+                Snackbar.make(getContainer(),"Event Added successfully",Snackbar.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_log_out:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(this, LoginActivity.class));
-                finish();
+                logOut();
                 Log.d(TAG, "onOptionsItemSelected: logout success");
+                return true;
+            case R.id.action_new_event:
+                startActivityForResult(new Intent(this,NewEventActivity.class),REQ_NEW_ACTIVITY);
                 return true;
         }
         return super.onOptionsItemSelected(item);
