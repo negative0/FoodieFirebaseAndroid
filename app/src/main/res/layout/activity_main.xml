@@ -4,9 +4,10 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout">
 
-    <FrameLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:paddingBottom="20dp">
         <!--<android.support.design.widget.FloatingActionButton-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
@@ -18,7 +19,7 @@
             <!--/>-->
 
         <include layout="@layout/content_activity_main"/>
-    </FrameLayout>
+    </android.support.v4.widget.NestedScrollView>
 
 
     <ListView

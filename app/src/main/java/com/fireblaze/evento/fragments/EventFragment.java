@@ -30,7 +30,7 @@ public class EventFragment extends Fragment {
     public static final String CATEGORY_KEYWORD = "Category";
     private RecyclerView.AdapterDataObserver mObserver;
     private View mNoEventsView;
-    private View mListlayout;
+    private View mListLayout;
 
     public EventFragment() {
 
@@ -55,7 +55,7 @@ public class EventFragment extends Fragment {
             View rootView = inflater.inflate(R.layout.fragment_test, container, false);
             mEventsRecycler = (RecyclerView) rootView.findViewById(R.id.recycler_events);
             mNoEventsView = rootView.findViewById(R.id.no_events);
-            mListlayout = rootView.findViewById(R.id.events_list);
+            mListLayout = rootView.findViewById(R.id.events_list);
             Query query;
 
             //Check if category is all events and if true, display all events
@@ -67,7 +67,7 @@ public class EventFragment extends Fragment {
 
             mFirebaseAdapter = new EventListFragmentAdapter(Event.class, R.layout.event_card,
                     EventViewHolder.class, query,getContext());
-            
+
             mObserver = new RecyclerView.AdapterDataObserver() {
                 int items = 0;
                 @Override
@@ -105,10 +105,10 @@ public class EventFragment extends Fragment {
     private void showEvents(boolean show){
         if(show){
             mNoEventsView.setVisibility(View.GONE);
-            mListlayout.setVisibility(View.VISIBLE);
+            mListLayout.setVisibility(View.VISIBLE);
         }else {
             mNoEventsView.setVisibility(View.VISIBLE);
-            mListlayout.setVisibility(View.GONE);
+            mListLayout.setVisibility(View.GONE);
         }
     }
 }
