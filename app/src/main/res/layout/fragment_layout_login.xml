@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp"
-
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:layout_height="match_parent"
+    >
+    <View android:layout_width="match_parent" android:layout_height="20dp"
+        />
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:hint="@string/email"
@@ -22,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:hint="@string/password"
@@ -55,7 +59,6 @@
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_google_button"
-        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <TextView
@@ -72,6 +75,16 @@
         android:background="@color/colorPrimary"
         android:textColor="@android:color/white"
         android:text="Become an Organizer"
+        />
+    <Button
+        android:id="@+id/sign_up_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:onClick="signUp"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:text="Sign Up"
         />
 
 

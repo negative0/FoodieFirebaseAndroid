@@ -90,8 +90,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:hint="Name"/>
+                android:hint="Prize Money"/>
         </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_duration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:inputType="number"
+                android:id="@+id/input_duration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:hint="Prize Money"/>
+        </android.support.design.widget.TextInputLayout>
+        <Button android:id="@+id/btn_upload_image"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload Image"
+            android:background="@color/colorPrimary"
+            android:layout_marginTop="40dp"
+            android:textColor="@android:color/white"/>
         <Button android:id="@+id/btn_submit"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

@@ -3,6 +3,4 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/action_log_out" app:showAsAction="never"
         android:title="@string/menu_log_out" />
-    <item android:id="@+id/action_new_event" app:showAsAction="ifRoom"
-        android:title="@string/new_event"/>
 </menu>

@@ -10,6 +10,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.Toast;
+
+import com.fireblaze.evento.adapters.OrganizerTasksGridAdapter;
 
 
 public class OrganizerMainActivity extends BaseActivity {
@@ -29,14 +34,33 @@ public class OrganizerMainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        GridView mTasksGrid = (GridView) findViewById(R.id.organizer_tasks_grid);
+        mTasksGrid.setAdapter(new OrganizerTasksGridAdapter(this));
+        mTasksGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               switch (position){
+                   case 0:
+                       onNewEvent();
+                       break;
+                   case 1:
+                       Intent intent = new Intent(OrganizerMainActivity.this,EventListActivity.class);
+                       intent.putExtra(EventListActivity.ID_KEYWORD,getUid());
+                       startActivity(intent);
+                       break;
+                   default:
+                       Toast.makeText(OrganizerMainActivity.this,"Item clicked!"+position,Toast.LENGTH_SHORT).show();
+               }
+            }
+        });
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                onNewEvent();
             }
         });
+
     }
 
     @Override
@@ -62,10 +86,17 @@ public class OrganizerMainActivity extends BaseActivity {
                 logOut();
                 Log.d(TAG, "onOptionsItemSelected: logout success");
                 return true;
-            case R.id.action_new_event:
-                startActivityForResult(new Intent(this,NewEventActivity.class),REQ_NEW_ACTIVITY);
-                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        exitApp();
+    }
+
+
+    private void onNewEvent(){
+        startActivityForResult(new Intent(this,NewEventActivity.class),REQ_NEW_ACTIVITY);
     }
 }

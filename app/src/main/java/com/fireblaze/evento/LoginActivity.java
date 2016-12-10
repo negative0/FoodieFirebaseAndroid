@@ -182,8 +182,6 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
     }
     private void signUpAsOrganizer(){
         if(getUid()==null){
-            startActivity(new Intent(LoginActivity.this,LoginActivity.class));
-            finish();
             return;
         }
         Organizer organizer = new Organizer(getUid());
@@ -192,22 +190,29 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         finish();
     }
     private void loginAsOrganizer(){
+
         mDatabase.child(Constants.ORGANIZER_KEYWORD).child(getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                //Create an intent for activity launch and set it as a separate one by clear top
+                Intent intent = new Intent();
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setClass(LoginActivity.this,OrganizerMainActivity.class);
+
                 Organizer organizer = dataSnapshot.getValue(Organizer.class);
                 if(organizer != null) {
+                    //Check if the user is a valid organizer
                     if (organizer.getIsValid()) {
-                        startActivity(new Intent(LoginActivity.this, OrganizerMainActivity.class));
-                        finish();
+                        intent.setClass(LoginActivity.this,OrganizerMainActivity.class);
                     } else {
-                        startActivity(new Intent(LoginActivity.this, NewOrganizerActivity.class));
-                        finish();
+                        intent.setClass(LoginActivity.this,NewOrganizerActivity.class);
                     }
                 } else {
-                    startActivity(new Intent(LoginActivity.this, NewOrganizerActivity.class));
-                    finish();
+                    intent.setClass(LoginActivity.this,NewOrganizerActivity.class);
                 }
+                startActivity(intent);
+                finish();
             }
 
             @Override
@@ -219,7 +224,10 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         finish();
     }
     private void loginAsUser(){
-        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
         finish();
     }
 
@@ -374,5 +382,12 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                 });
     }
 
+    @Override
+    public void onBackPressed() {
+        exitApp();
+    }
 
+    public void signUp(View v){
+        mViewPager.setCurrentItem(1);
+    }
 }

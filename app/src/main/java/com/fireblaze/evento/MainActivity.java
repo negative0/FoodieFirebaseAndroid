@@ -2,6 +2,7 @@ package com.fireblaze.evento;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -52,6 +53,7 @@ public class MainActivity extends BaseActivity {
     RecyclerView organizerRecycler;
     RecyclerView categoriesRecycler;
     private DatabaseReference mDatabase;
+    private boolean exit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,7 +195,8 @@ public class MainActivity extends BaseActivity {
         names.add("Coding");
         names.add("Arts");
         names.add("Adventure");
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
+//        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         CategoryListAdapter adapter = new CategoryListAdapter(MainActivity.this,names,img);
 
         categoriesRecycler.setLayoutManager(layoutManager);
@@ -225,9 +228,6 @@ public class MainActivity extends BaseActivity {
         switch (item.getItemId()){
             case R.id.action_log_out:
                 logOut();
-                return true;
-            case R.id.action_new_event:
-                startActivity(new Intent(this, NewEventActivity.class));
                 return true;
             case R.id.action_add_data:
                 addData();
@@ -274,5 +274,16 @@ public class MainActivity extends BaseActivity {
             mDatabase.updateChildren(childUpdates);
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        exitApp();
+    }
+
+    @Override
+    public void logOut(){
+        organizerRecyclerAdapter.cleanup();
+        super.logOut();
     }
 }

@@ -4,6 +4,7 @@
     <item android:id="@+id/action_log_out" app:showAsAction="never"
         android:title="@string/menu_log_out" />
     <item android:id="@+id/action_show_on_map" app:showAsAction="ifRoom"
+        android:icon="@drawable/map_icon"
          android:title="Map"/>
     <item android:id="@+id/action_add_data" app:showAsAction="never"
         android:title="Add data"/>

@@ -8,17 +8,19 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.drive.query.internal.LogicalFilter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Created by chait on 5/26/2016.
  */
-
 public abstract class BaseActivity extends AppCompatActivity implements SnackBarContainerInterface {
 
     private ProgressDialog mProgressDialog;
@@ -29,6 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SnackBar
     public static int TYPE_NOT_CONNECTED = 0;
     private Snackbar internetStatusSnack;
     private static boolean isConnected = false;
+    private boolean exit = false;
 
     public void showProgressDialog(){
         if(mProgressDialog == null){
@@ -99,7 +102,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SnackBar
 
     public void logOut(){
         FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(this, LoginActivity.class));
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
         finish();
         //Log.d(TAG, "onOptionsItemSelected: logout success");
     }
@@ -143,4 +149,20 @@ public abstract class BaseActivity extends AppCompatActivity implements SnackBar
         unregisterReceiver(broadcastReceiver);
     }
     public abstract View getContainer();
+
+    public void exitApp(){
+        if(exit){
+            finish();
+        }else {
+            exit = true;
+            Toast.makeText(this,"Press back again to exit",Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            },3*1000);
+        }
+    }
+
 }

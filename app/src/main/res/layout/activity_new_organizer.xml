@@ -87,10 +87,14 @@
                 android:textColor="@android:color/white"
                 android:text="Select Location on map"/>
             <Button
+                android:layout_marginTop="10dp"
                 android:id="@+id/button_upload_image"
                 android:text="Upload an image"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:textColor="@android:color/white"
+                />
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_layout_website"
                 android:layout_width="match_parent"

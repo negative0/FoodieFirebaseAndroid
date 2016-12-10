@@ -80,8 +80,8 @@ public class EventListActivity extends BaseActivity {
 
 
         Bundle b = getIntent().getExtras();
-        final String query = b.getString(QUERY_KEYWORD);
-        Log.d(TAG, "onCreate: Query = "+query);
+//        final String query = b.getString(QUERY_KEYWORD);
+//        Log.d(TAG, "onCreate: Query = "+query);
         String id = b.getString(ID_KEYWORD);
         if(id != null)
             mDatabase.child(Constants.ORGANIZER_KEYWORD).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -123,8 +123,8 @@ public class EventListActivity extends BaseActivity {
             };
 
             private String titles[] = {
-                    "All events",
-                    "Presentation",
+                    getString(R.string.all_events),
+                    "Coding",
                     "Games"
             };
 
@@ -135,8 +135,9 @@ public class EventListActivity extends BaseActivity {
 
             @Override
             public Fragment getItem(int position) {
-                if(position == 0)
-                    f[position].setArguments(bundle);
+                Log.d(TAG, "getItem: position: "+position+" title: "+titles[position]);
+                bundle.putString(EventFragment.CATEGORY_KEYWORD,titles[position]);
+                f[position].setArguments(bundle);
                 return f[position];
             }
 

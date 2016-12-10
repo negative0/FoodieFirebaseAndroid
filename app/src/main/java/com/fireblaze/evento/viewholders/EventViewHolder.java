@@ -28,5 +28,6 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
     public void bindToPost(Context context, Event event, View.OnClickListener onClickListener){
         title.setText(event.getName());
         Glide.with(context).load(event.getImage()).into(imageView);
+        imageView.setOnClickListener(onClickListener);
     }
 }

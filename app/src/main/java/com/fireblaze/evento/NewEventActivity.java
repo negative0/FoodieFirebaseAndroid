@@ -15,9 +15,9 @@ import com.google.firebase.database.FirebaseDatabase;
 public class NewEventActivity extends BaseActivity {
 
     private DatabaseReference mDatabase;
-    private EditText inputName,inputDescription,inputCategory,inputVenue,inputFees,inputPrize;
-    private TextInputLayout inputLayoutName,inputLayoutDescription,inputLayoutCategory,inputLayoutVenue,inputLayoutFees,inputLayoutPrize;
-    private Button btnSubmit;
+    private EditText inputName,inputDescription,inputCategory,inputVenue,inputFees,inputPrize,inputDuration;
+    private TextInputLayout inputLayoutName,inputLayoutDescription,inputLayoutCategory,inputLayoutVenue,inputLayoutFees,inputLayoutPrize,inputLayoutDuration;
+    private Button btnSubmit, btnUploadImage;
     private Toolbar toolbar;
 
     @Override
@@ -47,6 +47,7 @@ public class NewEventActivity extends BaseActivity {
         inputVenue = (EditText) findViewById(R.id.input_venue);
         inputFees = (EditText) findViewById(R.id.input_fees);
         inputPrize = (EditText) findViewById(R.id.input_prize);
+        inputDuration = (EditText) findViewById(R.id.input_duration);
         
         inputLayoutName = (TextInputLayout) findViewById(R.id.input_layout_name);
         inputLayoutDescription = (TextInputLayout) findViewById(R.id.input_layout_description);
@@ -54,8 +55,10 @@ public class NewEventActivity extends BaseActivity {
         inputLayoutVenue = (TextInputLayout) findViewById(R.id.input_layout_venue);
         inputLayoutFees = (TextInputLayout) findViewById(R.id.input_layout_fees);
         inputLayoutPrize = (TextInputLayout) findViewById(R.id.input_layout_prize);
+        inputLayoutDuration = (TextInputLayout) findViewById(R.id.input_layout_duration);
         
         btnSubmit = (Button) findViewById(R.id.btn_submit);
+        btnUploadImage = (Button) findViewById(R.id.btn_upload_image);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         
@@ -73,12 +76,15 @@ public class NewEventActivity extends BaseActivity {
             return;
         if(!validateFees())
             return;
+        if(!validateDuration())
+            return;
 
         String key = mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).push().getKey();
         Event event = new Event(key,inputName.getText().toString().trim(),
                 inputDescription.getText().toString().trim(),
                 inputCategory.getText().toString().trim(),
-                0,"http://design.ubuntu.com/wp-content/uploads/logo-ubuntu_st_no%C2%AE-black_orange-hex.png",
+                Integer.parseInt(inputDuration.getText().toString().trim()),
+                "http://design.ubuntu.com/wp-content/uploads/logo-ubuntu_st_no%C2%AE-black_orange-hex.png",
                 inputVenue.getText().toString().trim().toLowerCase(),
                 "NA", null,
                 Double.parseDouble(inputFees.getText().toString()),
@@ -87,6 +93,16 @@ public class NewEventActivity extends BaseActivity {
         mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).child(key).setValue(event);
         setResult(OrganizerMainActivity.REQ_NEW_ACTIVITY);
         finish();
+    }
+    private boolean validateDuration(){
+        if(inputDuration.getText().toString().trim().isEmpty()){
+            inputLayoutDuration.setError(getString(R.string.err_duration));
+            requestFocus(inputCategory);
+            return false;
+        } else {
+            inputLayoutDuration.setErrorEnabled(false);
+        }
+        return true;
     }
     private boolean validateCategory(){
         if(inputCategory.getText().toString().trim().isEmpty()){

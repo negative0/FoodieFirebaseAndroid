@@ -7,6 +7,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.fireblaze.evento.R;
 
 
 public class LoginFragment extends SignInBaseFragment {
@@ -26,7 +29,8 @@ public class LoginFragment extends SignInBaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
-
+        Button mSignUpButton = (Button) rootView.findViewById(R.id.sign_up_button);
+        mSignUpButton.setVisibility(View.VISIBLE);
         mBecomeOrganizerButton.setVisibility(View.GONE);
         mSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
