@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.fireblaze.evento.EventDetailsActivity;
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.models.Event;
 
@@ -23,11 +24,18 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         imageView = (ImageView) itemView.findViewById(R.id.event_image);
         title = (TextView) itemView.findViewById(R.id.text_title);
+        subtitle = (TextView) itemView.findViewById(R.id.text_subtitle);
 
     }
-    public void bindToPost(Context context, Event event, View.OnClickListener onClickListener){
+    public void bindToPost(final Context context, final Event event){
         title.setText(event.getName());
         Glide.with(context).load(event.getImage()).into(imageView);
-        imageView.setOnClickListener(onClickListener);
+        subtitle.setText(event.getDuration());
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventDetailsActivity.navigate(context, event.getEventID());
+            }
+        });
     }
 }

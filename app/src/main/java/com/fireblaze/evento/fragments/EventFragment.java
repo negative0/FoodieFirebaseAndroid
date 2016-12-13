@@ -77,10 +77,7 @@ public class EventFragment extends Fragment {
                     items += itemCount;
                     if(items >= 0){
                         showEvents(true);
-                    } else {
-                        showEvents(false);
                     }
-
                 }
 
                 @Override

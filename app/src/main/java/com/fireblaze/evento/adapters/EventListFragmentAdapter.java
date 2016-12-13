@@ -1,11 +1,13 @@
 package com.fireblaze.evento.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.fireblaze.evento.EventDetailsActivity;
 import com.fireblaze.evento.models.Event;
 import com.fireblaze.evento.viewholders.EventViewHolder;
 import com.google.firebase.database.Query;
@@ -19,14 +21,8 @@ public class EventListFragmentAdapter extends FirebaseRecyclerAdapter<Event, Eve
 
 
     @Override
-    protected void populateViewHolder(EventViewHolder viewHolder, Event model, int position) {
-        viewHolder.bindToPost(mContext, model, new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(mContext, "Event clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
+    protected void populateViewHolder(EventViewHolder viewHolder, final Event model, int position) {
+        viewHolder.bindToPost(mContext, model);
     }
 
     public EventListFragmentAdapter(Class<Event> modelClass, int modelLayout, Class<EventViewHolder> viewHolderClass, Query ref,Context c) {
