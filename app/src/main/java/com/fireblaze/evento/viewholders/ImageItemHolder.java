@@ -1,7 +1,6 @@
 package com.fireblaze.evento.viewholders;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,8 +9,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.models.ImageItem;
-
-import org.w3c.dom.Text;
 
 /**
  * Created by chait on 8/27/2016.

@@ -1,13 +1,8 @@
 package com.fireblaze.evento.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.fireblaze.evento.EventDetailsActivity;
 import com.fireblaze.evento.models.Event;
 import com.fireblaze.evento.viewholders.EventViewHolder;
 import com.google.firebase.database.Query;

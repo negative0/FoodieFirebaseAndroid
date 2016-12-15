@@ -75,6 +75,17 @@
             android:name=".EventDetailsActivity"
             android:label="@string/title_activity_event_details"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SendNotificationActivity"
+            android:label="@string/title_activity_send_notification"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <service android:name=".MyMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -135,4 +135,6 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_send_notification">SendNotification</string>
+    <string name="send_notification">Send Notification</string>
 </resources>
