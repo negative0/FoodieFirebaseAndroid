@@ -96,13 +96,9 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.main_menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
-    private void launchEventList(String query,String id){
-        Intent intent = new Intent(MainActivity.this,EventListActivity.class);
-        Bundle b = new Bundle();
-        b.putString(EventListActivity.QUERY_KEYWORD,query);
-        b.putString(EventListActivity.ID_KEYWORD,id);
-        intent.putExtras(b);
-        startActivity(intent);
+    private void launchEventList(String id){
+        EventListActivity.navigate(MainActivity.this,id);
+
     }
     private void setupNavigation(){
 
@@ -143,7 +139,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         Log.d(TAG,Constants.ORGANIZER_KEYWORD+"/"+model.getName());
-                        launchEventList(Constants.ORGANIZER_KEYWORD+"/"+model.getId(),model.getId());
+                        launchEventList(model.getId());
                     }
                 });
 
@@ -229,6 +225,9 @@ public class MainActivity extends BaseActivity {
                 return true;
             case R.id.action_add_data:
                 //addData();
+                return true;
+            case R.id.action_user:
+                startActivity(new Intent(this,UserActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

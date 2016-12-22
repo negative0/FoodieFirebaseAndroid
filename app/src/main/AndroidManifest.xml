@@ -59,7 +59,7 @@
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".NewEventActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".OrganizerMainActivity"
             android:label="@string/title_activity_organizer_main"
@@ -78,14 +78,36 @@
         <activity
             android:name=".SendNotificationActivity"
             android:label="@string/title_activity_send_notification"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <service android:name=".MyMessagingService"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="myServerKey"
+                android:value="AIzaSyCmhrSM9A8BOZvrRX9EwdRKOPWYHWwFf4A" />
+        </activity>
+
+        <service
+            android:name=".MyMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service
+            android:name=".InstanceIDService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".OrganizerDetails"
+            android:label="@string/title_activity_organizer_details"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UserActivity"
+            android:label="@string/title_activity_user"></activity>
     </application>
 
 </manifest>

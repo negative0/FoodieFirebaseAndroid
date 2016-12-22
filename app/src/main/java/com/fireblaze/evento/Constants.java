@@ -11,4 +11,6 @@ public class Constants {
     public static final String ORGANIZER_KEYWORD = "organizer";
     public static final String EVENTS_KEYWORD = "Events";
     public static final String VERIFICATION_CODE = "07x10x1998";
+    public static final String NOTIFICATION_TOKENS = "NotificationTokens";
+    public static final String BOOKED_EVENTS = "BookedEvents";
 }

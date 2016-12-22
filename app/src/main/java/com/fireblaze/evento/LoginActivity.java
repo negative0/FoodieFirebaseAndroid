@@ -2,6 +2,7 @@ package com.fireblaze.evento;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.fireblaze.evento.fragments.LoginFragment;
 import com.fireblaze.evento.fragments.SignUpFragment;
+import com.fireblaze.evento.models.NotificationToken;
 import com.fireblaze.evento.models.Organizer;
 import com.fireblaze.evento.models.User;
 import com.google.android.gms.auth.api.Auth;
@@ -162,6 +164,8 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
     private void onAuthSuccess(FirebaseUser user,boolean isLogin){
         if(!isLogin){
             String username = usernameFromEmail(user.getEmail());
+           
+            
             writeNewUser(user.getUid(),username,isOrganizer);
             if(isOrganizer) signUpAsOrganizer(); else loginAsUser();
         } else {
@@ -177,6 +181,13 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
 
                 }
             });
+        }
+        SharedPreferences prefs = getSharedPreferences("INSTANCE", MODE_PRIVATE);
+        String token = prefs.getString("TOKEN",null);
+        if(token != null){
+            Log.d(TAG, "onAuthSuccess: Token set");
+            NotificationToken notificationToken = new NotificationToken(token);
+            mDatabase.child(Constants.NOTIFICATION_TOKENS).child(user.getUid()).setValue(notificationToken);
         }
 
     }
@@ -242,7 +253,6 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
     public void onLogin(String email, String password) {
         Log.d(TAG,"onLogin");
         showProgressDialog();
-
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override

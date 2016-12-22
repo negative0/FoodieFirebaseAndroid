@@ -2,7 +2,6 @@ package com.fireblaze.evento;
 
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,7 +17,7 @@ public class NewEventActivity extends BaseActivity {
     private EditText inputName,inputDescription,inputCategory,inputVenue,inputFees,inputPrize,inputDuration;
     private TextInputLayout inputLayoutName,inputLayoutDescription,inputLayoutCategory,inputLayoutVenue,inputLayoutFees,inputLayoutPrize,inputLayoutDuration;
     private Button btnSubmit, btnUploadImage;
-    private Toolbar toolbar;
+    //private Toolbar toolbar;
 
     @Override
     public View getContainer() {
@@ -29,8 +28,8 @@ public class NewEventActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_event);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         getViews();
         btnSubmit.setOnClickListener(new View.OnClickListener() {

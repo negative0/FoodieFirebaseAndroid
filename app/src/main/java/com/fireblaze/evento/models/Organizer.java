@@ -1,7 +1,6 @@
 package com.fireblaze.evento.models;
 
 import com.google.firebase.database.Exclude;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +11,7 @@ public class Organizer {
     private String name;
     private String email;
     private int bookmarkCount = 0;
-    public Map<String ,String> bookmarks = new HashMap<>();
+    public Map<String ,Boolean> bookmarks = new HashMap<>();
     private String phone;
     private Location location;
     private String imageURL;
@@ -40,11 +39,11 @@ public class Organizer {
         this.bookmarkCount = bookmarkCount;
     }
 
-    public Map<String, String> getBookmarks() {
+    public Map<String, Boolean> getBookmarks() {
         return bookmarks;
     }
 
-    public void setBookmarks(Map<String, String> bookmarks) {
+    public void setBookmarks(Map<String, Boolean> bookmarks) {
         this.bookmarks = bookmarks;
     }
 
@@ -139,7 +138,7 @@ public class Organizer {
             bookmarks.remove(uid);
         } else {
             bookmarkCount += 1;
-            bookmarks.put(uid, FirebaseInstanceId.getInstance().getToken());
+            bookmarks.put(uid, true);
         }
     }
 

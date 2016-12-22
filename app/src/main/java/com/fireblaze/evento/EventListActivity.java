@@ -1,5 +1,7 @@
 package com.fireblaze.evento;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -49,6 +51,13 @@ public class EventListActivity extends BaseActivity {
         return findViewById(R.id.activity_event_list);
     }
 
+    public static void navigate(Context context, String id){
+        Intent intent = new Intent(context,EventListActivity.class);
+        Bundle b = new Bundle();
+        b.putString(EventListActivity.ID_KEYWORD,id);
+        intent.putExtras(b);
+        context.startActivity(intent);
+    }
     void getViews(){
         tabs = (TabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.viewpager_events);
@@ -83,6 +92,7 @@ public class EventListActivity extends BaseActivity {
 //        final String query = b.getString(QUERY_KEYWORD);
 //        Log.d(TAG, "onCreate: Query = "+query);
         String id = b.getString(ID_KEYWORD);
+
         if(id != null)
             mDatabase.child(Constants.ORGANIZER_KEYWORD).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

@@ -1,14 +1,18 @@
 package com.fireblaze.evento;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.view.WindowManager;
 
+import com.fireblaze.evento.models.NotificationToken;
 import com.fireblaze.evento.models.Organizer;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,12 +33,57 @@ import java.util.Map;
 
 
 public class SendNotificationActivity extends BaseActivity {
-    Button sendButton;
-    TextView reponseText;
-
+    String title, content;
+    private TextInputEditText textTitle, textContent;
+    private TextInputLayout textLayoutTitle, textLayoutContent;
     final static String TAG = SendNotificationActivity.class.getSimpleName();
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_send_notification);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getViews();
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendNotification();
+                Snackbar.make(view, "Sending Notifications", Snackbar.LENGTH_LONG)
+                        .setAction("OK", null).show();
+            }
+        });
+    }
+
+    private void getViews(){
+        textTitle = (TextInputEditText) findViewById(R.id.input_title);
+        textContent = (TextInputEditText) findViewById(R.id.input_content);
+        textLayoutTitle = (TextInputLayout) findViewById(R.id.input_layout_title);
+        textLayoutContent = (TextInputLayout) findViewById(R.id.input_layout_content);
+    }
+
+    private boolean validateTitle(){
+        if(textTitle.getText().toString().trim().isEmpty()){
+            textLayoutTitle.setError(getString(R.string.err_title));
+            requestFocus(textTitle);
+            return false;
+        } else {
+            textLayoutTitle.setErrorEnabled(false);
+        }
+        return true;
+    }
+    private boolean validateContent(){
+        if(textContent.getText().toString().trim().isEmpty()){
+            textLayoutContent.setError(getString(R.string.err_content));
+            requestFocus(textContent);
+            return false;
+        } else {
+            textLayoutContent.setErrorEnabled(false);
+        }
+        return true;
+    }
     @Override
     public View getContainer() {
         return null;
@@ -42,33 +91,61 @@ public class SendNotificationActivity extends BaseActivity {
 
     class NotifyThread implements Runnable{
         JSONArray array;
-        NotifyThread(JSONArray array){
+        public NotifyThread(JSONArray array) {
             this.array = array;
+
         }
+
         @Override
         public void run() {
             try {
-                pushFCMNotification(array);
+                pushFCMNotification(array,textTitle.getText().toString(),textContent.getText().toString());
             }catch (Exception e){
                 Log.d(TAG, "run: "+ e.toString());
             }
         }
     }
     public void sendNotification(){
+        if(!validateTitle())
+            return;
+        if(!validateContent())
+            return;
+
+
         final JSONArray array = new JSONArray();
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child(Constants.ORGANIZER_KEYWORD).child(getUid());
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        final DatabaseReference mOrganizerReference = FirebaseDatabase.getInstance().getReference().child(Constants.ORGANIZER_KEYWORD).child(getUid());
+        final DatabaseReference mTokensReference = FirebaseDatabase.getInstance().getReference().child(Constants.NOTIFICATION_TOKENS);
+        mOrganizerReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Organizer o = dataSnapshot.getValue(Organizer.class);
-                Map<String , String > map = o.getBookmarks();
-                for(Map.Entry<String, String> e : map.entrySet()){
-                    String value = e.getValue();
-                    array.put(value);
+                Map<String , Boolean > map = o.getBookmarks();
+                final int mapSize = map.size();
+
+                for(Map.Entry<String, Boolean> e: map.entrySet()){
+                    String key = e.getKey();
+
+
+                    mTokensReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.getValue() != null) {
+                                NotificationToken token = dataSnapshot.getValue(NotificationToken.class);
+                                array.put(token.getToken());
+                                if(array.length()== mapSize){
+                                    initThread(array);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
-                NotifyThread nt = new NotifyThread(array);
-                Thread t = new Thread(nt);
-                t.start();
+
             }
 
             @Override
@@ -78,37 +155,26 @@ public class SendNotificationActivity extends BaseActivity {
         });
 
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_notification);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        sendButton = (Button) findViewById(R.id.btn_send);
-        reponseText = (TextView) findViewById(R.id.txt_response);
-
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendNotification();
-            }
-        });
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+    public void initThread(JSONArray array){
+        if(array.length() != 0) {
+            NotifyThread nt = new NotifyThread(array);
+            Thread t = new Thread(nt);
+            t.start();
+        } else {
+            Log.d(TAG, "onDataChange: Array is of size 0");
+        }
     }
 
 
-    public void pushFCMNotification(JSONArray recipients) throws Exception {
 
-        String authKey = "AIzaSyCmhrSM9A8BOZvrRX9EwdRKOPWYHWwFf4A"; // You FCM AUTH key
+
+    public void pushFCMNotification(JSONArray recipients, String title, String content) throws Exception {
+
+        ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+        Bundle bundle = ai.metaData;
+        String authKey = bundle.getString("myServerKey");
+
+        //String authKey = "AIzaSyCmhrSM9A8BOZvrRX9EwdRKOPWYHWwFf4A"; // You FCM AUTH key
         String FMCurl = "https://fcm.googleapis.com/fcm/send";
 
         URL url = new URL(FMCurl);
@@ -123,15 +189,19 @@ public class SendNotificationActivity extends BaseActivity {
         conn.setRequestProperty("Content-Type", "application/json");
 
         JSONObject data = new JSONObject();
-
         JSONObject info = new JSONObject();
-        info.put("title", "FCM Notificatoin Title"); // Notification title
-        info.put("body", "Hello First Test notification"); // Notification body
-        info.put("icon", "firebase-icon.png");
+        JSONObject extraData = new JSONObject();
 
+        info.put("title", title.trim()); // Notification title
+        info.put("body", content.trim()); // Notification body
 
         data.put("notification", info);
         data.put("registration_ids", recipients);
+
+        extraData.put(Constants.ORGANIZER_KEYWORD,getUid());
+
+        data.put("data",extraData);
+
         Log.d(TAG, "pushFCMNotification: request "+ data.toString());
 
         OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -152,6 +222,11 @@ public class SendNotificationActivity extends BaseActivity {
         in.close();
         Log.d(TAG, "pushFCMNotification: "+ response.toString());
 
+    }
+    private void requestFocus(View view){
+        if(view.requestFocus()){
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
 }

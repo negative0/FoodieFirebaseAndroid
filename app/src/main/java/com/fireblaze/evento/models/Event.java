@@ -1,6 +1,13 @@
 package com.fireblaze.evento.models;
 
+import com.fireblaze.evento.Constants;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +27,8 @@ public class Event {
     public double prizeAmount;
     //public Date dateCreated;
     public String duration;
+    Map<String, String> bookings = new HashMap<>();
+    public int bookingsCount;
 
     public String getEventID() {
         return eventID;
@@ -152,5 +161,41 @@ public class Event {
 
     public Event() {
         //Important
+    }
+    public void booked(String UID){
+        //Change the booked count and add userID and bookingID into the
+
+        if(bookings.containsKey(UID)){
+            BookedEvent.unBookEvent(bookings.get(UID));
+            bookingsCount -= 1;
+            bookings.remove(UID);
+        } else {
+            String bookingID = BookedEvent.bookEvent(eventID,UID);
+            bookingsCount += 1;
+            bookings.put(UID,bookingID);
+        }
+
+    }
+    public static void book(String eventID ,final String UID){
+        //Book the event
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Constants.EVENTS_KEYWORD)
+                .child(eventID);
+        ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Event e = mutableData.getValue(Event.class);
+                if(e == null){
+                    return Transaction.success(mutableData);
+                }
+                e.booked(UID);
+                mutableData.setValue(e);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
     }
 }
