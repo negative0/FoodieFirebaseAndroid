@@ -2,9 +2,12 @@ package com.fireblaze.evento;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -43,15 +46,13 @@ public class MainActivity extends BaseActivity {
 
     private FragmentPagerAdapter mPagerAdapter;
     private FirebaseRecyclerAdapter<ImageItem, ImageItemHolder> organizerRecyclerAdapter;
-    private ViewPager mViewPager;
-    private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
+    private View navHeader;
+    NavigationView navigationView;
     private ActionBarDrawerToggle mDrawerToggle;
-    List<DrawerItem> mDrawerItems;
     RecyclerView organizerRecycler;
     RecyclerView categoriesRecycler;
     private DatabaseReference mDatabase;
-    private boolean exit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,25 +67,15 @@ public class MainActivity extends BaseActivity {
     private void getViews(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        //mDrawerList = (ListView) findViewById(R.id.left_drawer);
         organizerRecycler = (RecyclerView) findViewById(R.id.recycler_organizers);
         categoriesRecycler = (RecyclerView) findViewById(R.id.recycler_categories);
+
+        //new
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navHeader = navigationView.getHeaderView(0);
     }
 
-    private void setupViewPager(){
-        //An adapter that will return a fragment for each section
-        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return null;
-            }
-
-            @Override
-            public int getCount() {
-                return 0;
-            }
-        };
-        mViewPager.setAdapter(mPagerAdapter);    }
 
     @Override
     public View getContainer() {
@@ -100,29 +91,42 @@ public class MainActivity extends BaseActivity {
         EventListActivity.navigate(MainActivity.this,id);
 
     }
-    private void setupNavigation(){
+    private void setupNavigation() {
 
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.nav_account:
+                        startActivity(new Intent(MainActivity.this,UserActivity.class));
+                        return true;
 
-        mDrawerItems = new ArrayList<>();
-        for(String s : getResources().getStringArray(R.array.drawerTitles)){
-            mDrawerItems.add(new DrawerItem(s,R.drawable.common_google_signin_btn_icon_light));
-        }
-        mDrawerList.setAdapter(new DrawerAdapter(this,R.layout.drawer_list_item,mDrawerItems));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-        //final CharSequence mTitle = getTitle();
-        mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.drawer_open,R.string.drawer_close){
-            public void onDrawerClosed(View v){
+                }
+                if (item.isChecked()) {
+                    item.setChecked(false);
+
+                } else {
+                    item.setChecked(true);
+                }
+                return true;
+            }
+        });
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+            public void onDrawerClosed(View v) {
                 super.onDrawerClosed(v);
 
-                invalidateOptionsMenu();
             }
-            public void onDrawerOpened(View v){
+
+            public void onDrawerOpened(View v) {
                 super.onDrawerOpened(v);
-                invalidateOptionsMenu();
+
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
+        mDrawerToggle.syncState();
     }
 
     private void setupOrganizerList(){
@@ -197,17 +201,6 @@ public class MainActivity extends BaseActivity {
         categoriesRecycler.setAdapter(adapter);
 
     }
-    private class DrawerItemClickListener implements ListView.OnItemClickListener{
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
-
-    }
-    private void selectItem(int position){
-        Toast.makeText(MainActivity.this,"Drawer item selected "+position,Toast.LENGTH_SHORT).show();
-        mDrawerLayout.closeDrawer(mDrawerList);
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -275,6 +268,10 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawers();
+            return;
+        }
         exitApp();
     }
 
