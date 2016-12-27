@@ -12,6 +12,7 @@
     <permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".MyApplication"
@@ -20,9 +21,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
+        <activity android:name=".activities.MainActivity" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,17 +32,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".EventListActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".activities.EventListActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AboutUsActivity"
+            android:name=".activities.AboutUsActivity"
             android:label="@string/title_activity_about_us"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MapActivity" />
+        <activity android:name=".activities.MapActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -55,28 +56,28 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".activities.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".NewEventActivity"
+            android:name=".activities.NewEventActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".OrganizerMainActivity"
+            android:name=".activities.OrganizerMainActivity"
             android:label="@string/title_activity_organizer_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".NewOrganizerActivity"
+            android:name=".activities.NewOrganizerActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SelectLocation"
             android:label="@string/title_activity_select_location" />
-        <activity android:name=".CategoryActivity" />
+        <activity android:name=".activities.CategoryActivity" />
         <activity
-            android:name=".EventDetailsActivity"
+            android:name=".activities.EventDetailsActivity"
             android:label="@string/title_activity_event_details"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SendNotificationActivity"
+            android:name=".activities.SendNotificationActivity"
             android:label="@string/title_activity_send_notification"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -102,12 +103,26 @@
         </service>
 
         <activity
-            android:name=".OrganizerDetails"
+            android:name=".activities.OrganizerDetailsActivity"
             android:label="@string/title_activity_organizer_details"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".UserActivity"
-            android:label="@string/title_activity_user"></activity>
+            android:name=".activities.UserActivity"
+            android:label="@string/title_activity_user" />
+        <activity android:name=".activities.ChangeUserNameActivity"
+            android:label="Change Name">
+            <intent-filter>
+                <action android:name="com.fireblaze.evento.CHANGE_USER_NAME"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.ChangeEmailActivity"
+            android:label="Change Email">
+            <intent-filter>
+                <action android:name="com.fireblaze.evento.CHANGE_EMAIL"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

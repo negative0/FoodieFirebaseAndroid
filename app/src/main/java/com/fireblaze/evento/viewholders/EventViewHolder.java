@@ -7,8 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.fireblaze.evento.EventDetailsActivity;
 import com.fireblaze.evento.R;
+import com.fireblaze.evento.activities.EventDetailsActivity;
 import com.fireblaze.evento.models.Event;
 
 /**
@@ -34,7 +34,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventDetailsActivity.navigate(context, event.getEventID());
+                EventDetailsActivity.navigate(context, event.getEventID(), event.organizerID);
             }
         });
     }

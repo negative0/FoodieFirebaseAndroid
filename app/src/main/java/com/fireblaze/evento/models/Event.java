@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class Event {
     public String eventID;
+    public String organizerID;
     public String name;
     public String description;
     public String category;
@@ -126,10 +127,13 @@ public class Event {
         this.duration = duration;
     }
 
+
+
     @Exclude
     public Map<String ,Object> toMap(){
         Map<String,Object> result = new HashMap<>();
         result.put("eventID",eventID);
+        result.put("organizerID",organizerID);
         result.put("name",name);
         result.put("description",description);
         result.put("category",category);
@@ -144,8 +148,9 @@ public class Event {
         return result;
     }
 
-    public Event(String eventID, String name, String description, String category, int ratings, String image, String venue, String schedule, Map<String, Boolean> volunteers, double participationFees, double prizeAmount, String duration) {
+    public Event(String eventID, String organizerID, String name, String description, String category, int ratings, String image, String venue, String schedule, Map<String, Boolean> volunteers, double participationFees, double prizeAmount, String duration) {
         this.eventID = eventID;
+        this.organizerID= organizerID;
         this.name = name;
         this.description = description;
         this.category = category;
@@ -176,9 +181,10 @@ public class Event {
         }
 
     }
-    public static void book(String eventID ,final String UID){
+    public void book(final String UID){
         //Book the event
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Constants.EVENTS_KEYWORD)
+                .child(organizerID)
                 .child(eventID);
         ref.runTransaction(new Transaction.Handler() {
             @Override

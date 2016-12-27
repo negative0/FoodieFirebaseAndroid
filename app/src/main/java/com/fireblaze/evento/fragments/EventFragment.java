@@ -27,6 +27,7 @@ public class EventFragment extends Fragment {
     private EventListFragmentAdapter mFirebaseAdapter;
     private String UID = null;
     private String category = null;
+    public static final String ORGANIZER_ID_KEYWORD = "ORGANIZER_ID";
     public static final String CATEGORY_KEYWORD = "Category";
     private RecyclerView.AdapterDataObserver mObserver;
     private View mNoEventsView;
@@ -42,9 +43,9 @@ public class EventFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         if(getArguments()!= null){
-            UID = getArguments().getString("UID");
+            UID = getArguments().getString(ORGANIZER_ID_KEYWORD);
             category = (String) getArguments().get(CATEGORY_KEYWORD);
-            Log.d(TAG, "onCreate: UID="+UID+"category = "+category);
+            //Log.d(TAG, "onCreate: UID="+UID+"category = "+category);
         }
     }
 
