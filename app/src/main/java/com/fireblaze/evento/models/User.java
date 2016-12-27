@@ -1,10 +1,6 @@
 package com.fireblaze.evento.models;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 @IgnoreExtraProperties
@@ -15,11 +11,7 @@ public class User {
     public String accountType;
     public boolean isVolunteer;
     public boolean isOrganizer;
-    public Map<String , Boolean> bookingsMap = new HashMap<>();
-    @Exclude
-    public static final String ACCOUNT_TYPE_USER = "USER";
-    @Exclude
-    public static final String ACCOUNT_TYPE_ORGANIZER = "ORGANIZER";
+
 
 
     public User(){

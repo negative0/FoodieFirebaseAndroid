@@ -1,4 +1,4 @@
-package com.fireblaze.evento;
+package com.fireblaze.evento.activities;
 
 
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.fireblaze.evento.R;
 import com.fireblaze.evento.adapters.OrganizerTasksGridAdapter;
 
 

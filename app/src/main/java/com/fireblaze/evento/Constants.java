@@ -13,4 +13,5 @@ public class Constants {
     public static final String VERIFICATION_CODE = "07x10x1998";
     public static final String NOTIFICATION_TOKENS = "NotificationTokens";
     public static final String BOOKED_EVENTS = "BookedEvents";
+    public static final String USERS_KEYWORD = "users";
 }

@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class NotificationToken {
     public String token;
+    public boolean receiveNotifications;
 
     public String getToken() {
         return token;
@@ -20,13 +21,20 @@ public class NotificationToken {
         this.token = token;
     }
 
+    public NotificationToken(String token, boolean receiveNotifications) {
+        this.token = token;
+        this.receiveNotifications = receiveNotifications;
+    }
+
     public NotificationToken(String token) {
         this.token = token;
+        receiveNotifications = true;
     }
     @Exclude
     public Map<String,Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
         result.put("token",token);
+        result.put("receiveNotifications",receiveNotifications);
         return result;
     }
 

@@ -1,4 +1,4 @@
-package com.fireblaze.evento;
+package com.fireblaze.evento.activities;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.fireblaze.evento.Constants;
+import com.fireblaze.evento.R;
 import com.fireblaze.evento.models.NotificationToken;
 import com.fireblaze.evento.models.Organizer;
 import com.google.firebase.database.DataSnapshot;
@@ -127,7 +129,6 @@ public class SendNotificationActivity extends BaseActivity {
 
 
                     mTokensReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
-
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if(dataSnapshot.getValue() != null) {

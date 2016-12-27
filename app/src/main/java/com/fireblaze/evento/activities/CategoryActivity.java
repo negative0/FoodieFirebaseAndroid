@@ -1,10 +1,11 @@
-package com.fireblaze.evento;
+package com.fireblaze.evento.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.fireblaze.evento.R;
 import com.fireblaze.evento.adapters.CategoryListAdapter;
 
 import java.util.ArrayList;
