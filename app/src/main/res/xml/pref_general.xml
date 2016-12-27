@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+
+
+    <Preference
+        android:key="text_name"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_display_name"
+        android:summary="Change Display Name">
+        <intent
+            android:action="com.fireblaze.evento.CHANGE_USER_NAME"/>
+    </Preference>
+
+    <Preference
+        android:key="text_email"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_display_email"
+        android:summary="Change Email Address">
+        <intent
+            android:action="com.fireblaze.evento.CHANGE_EMAIL"/>
+    </Preference>
+
+    <com.fireblaze.evento.views.PasswordDialogPreference
+        android:title="Change Password"
+        android:positiveButtonText="Change"
+        android:negativeButtonText="@string/cancel"
+        />
+    <com.fireblaze.evento.views.DeleteAccountDialogPreference
+        android:title="Delete Account"
+        android:positiveButtonText="Delete"
+        android:negativeButtonText="@string/cancel" />
+
+</PreferenceScreen>
