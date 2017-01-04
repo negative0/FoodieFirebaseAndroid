@@ -1,19 +1,29 @@
 package com.fireblaze.evento.models;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
 import com.fireblaze.evento.Constants;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class Event {
+    public static class MyConstants{
+        public static final String ORGANIZER_ID = "organizerID";
+    }
     public String eventID;
     public String organizerID;
     public String name;
@@ -168,7 +178,7 @@ public class Event {
         //Important
     }
     public void booked(String UID){
-        //Change the booked count and add userID and bookingID into the
+        //Change the booked count and add userID and bookingID into the db
 
         if(bookings.containsKey(UID)){
             BookedEvent.unBookEvent(bookings.get(UID));
@@ -200,6 +210,32 @@ public class Event {
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
+    }
+    public static void deleteEvent(final String eventID){
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ref.child(Constants.EVENTS_KEYWORD)
+                .child(eventID).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Query query = ref.child(Constants.BOOKED_EVENTS).orderByChild("eventID")
+                        .equalTo(eventID);
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                            snapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("Event", "onCancelled: ",databaseError.toException() );
+                    }
+                });
+
 
             }
         });

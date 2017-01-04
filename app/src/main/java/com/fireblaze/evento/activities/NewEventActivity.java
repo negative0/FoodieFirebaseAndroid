@@ -1,17 +1,9 @@
 package com.fireblaze.evento.activities;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -20,25 +12,18 @@ import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.databinding.ActivityNewEventBinding;
 import com.fireblaze.evento.models.Event;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.ByteArrayOutputStream;
 
 public class NewEventActivity extends BaseActivity {
     public static final String TAG = NewEventActivity.class.getName();
     private DatabaseReference mDatabase;
     ActivityNewEventBinding binding;
-    private final int REQ_SELECT_IMAGE = 2;
-    private final int REQ_PERMISSION_EXTERNAL_STORAGE_FOR_IMAGE = 3;
-    private StorageReference mStorage;
+    private final int REQ_UPLOAD_IMAGE = 4;
 
-    private Bitmap mainImageBitmap;
+    String imagePath;
 
     @Override
     public View getContainer() {
@@ -56,10 +41,21 @@ public class NewEventActivity extends BaseActivity {
                 submitForm();
             }
         });
+        binding.btnUploadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getImageFromGallery();
+            }
+        });
+    }
+    private void getImageFromGallery(){
+        Intent i = new Intent(NewEventActivity.this,UploadImageActivity.class);
+        i.putExtra(UploadImageActivity.UPLOAD_PATH_KEYWORD,
+                "/"+Constants.EVENT_IMAGE+"/"+getUid());
+        startActivityForResult(i,REQ_UPLOAD_IMAGE);
     }
     private void getViews(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mStorage = FirebaseStorage.getInstance().getReference();
         
      }
     private void submitForm(){
@@ -77,27 +73,40 @@ public class NewEventActivity extends BaseActivity {
             return;
         if(!validateDuration())
             return;
-        if(isStoragePermissionGranted())
-            uploadImage(getImageUri(this,mainImageBitmap));
+        if(!validateImage())
+            return;
 
+        uploadNewEvent(imagePath);
     }
 
-    private void uploadNewEvent(Uri imagePath){
+    private void uploadNewEvent(String imagePath){
         String key = mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).push().getKey();
         Event event = new Event(key,getUid(),binding.inputName.getText().toString().trim(),
                 binding.inputDescription.getText().toString().trim(),
                 binding.inputCategory.getText().toString().trim(),
                 Integer.parseInt(binding.inputDuration.getText().toString().trim()),
-                imagePath.toString(),
+                imagePath,
                 binding.inputVenue.getText().toString().trim().toLowerCase(),
                 "NA", null,
                 Double.parseDouble(binding.inputFees.getText().toString()),
                 Double.parseDouble(binding.inputPrize.getText().toString()),
                 binding.inputDuration.toString()
         );
-        mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).child(key).setValue(event);
-        setResult(OrganizerMainActivity.REQ_NEW_ACTIVITY);
-        finish();
+        mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).child(key).setValue(event)
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    setResult(RESULT_OK);
+                    finish();
+                } else
+                    Toast.makeText(NewEventActivity.this,"Error",Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+    private boolean validateImage(){
+        return imagePath!=null;
     }
     private boolean validateDuration(){
         if(binding.inputDuration.getText().toString().trim().isEmpty()){
@@ -197,66 +206,18 @@ public class NewEventActivity extends BaseActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == REQ_PERMISSION_EXTERNAL_STORAGE_FOR_IMAGE ){
-            if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-                //resume the task of uploading image
-                Log.d(TAG, "onRequestPermissionsResult: Permission granted, resuming task");
-                uploadImage(getImageUri(this, mainImageBitmap));
-            }else {
-                Toast.makeText(this,"Need to grant permission to use external storage",Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    private void uploadImage(Uri fileUri){
-        if(fileUri == null){
-            Toast.makeText(this,"Error",Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if(mainImageBitmap != null){
-            showProgressDialog();
-            StorageReference ref =  mStorage.child(Constants.ORGANIZER_IMAGE).child(getUid()).child(fileUri.getLastPathSegment());
-            ref.putFile(fileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Log.d(TAG, "onSuccess: upload succeeded");
-                    Uri imagePath = taskSnapshot.getMetadata().getDownloadUrl();
-                    uploadNewEvent(imagePath);
-                    hideProgressDialog();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case REQ_UPLOAD_IMAGE:
+                if(resultCode == RESULT_OK && data != null){
+                    imagePath = data.getStringExtra(UploadImageActivity.DOWNLOAD_URL_RESULT);
+                    Toast.makeText(NewEventActivity.this,"Upload Complete",Toast.LENGTH_SHORT).show();
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    hideProgressDialog();
-                    Toast.makeText(NewEventActivity.this,"Upload Failed",Toast.LENGTH_SHORT).show();
-                }
-            });
+                break;
         }
     }
 
-    public boolean isStoragePermissionGranted(){
-        if(Build.VERSION.SDK_INT >=23)
-            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
-                Log.d(TAG, "isStoragePermissionGranted: permission granted");
-                return true;
-            } else {
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_PERMISSION_EXTERNAL_STORAGE_FOR_IMAGE);
-                return false;
-            }
-        else {
-
-            // Automatically allowed permission if sdk <=23
-            return true;
-        }
-    }
-    private Uri getImageUri(Context context, Bitmap inImage){
-
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG,100,bytes);
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "tempImage", null);
-        return Uri.parse(path);
-
-    }
 }

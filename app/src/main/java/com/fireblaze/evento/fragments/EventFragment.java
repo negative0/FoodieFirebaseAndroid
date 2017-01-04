@@ -29,6 +29,8 @@ public class EventFragment extends Fragment {
     private String category = null;
     public static final String ORGANIZER_ID_KEYWORD = "ORGANIZER_ID";
     public static final String CATEGORY_KEYWORD = "Category";
+    public static final String IS_ORGANIZER_KEYWORD = "IsOrganizer";
+
     private RecyclerView.AdapterDataObserver mObserver;
     private View mNoEventsView;
     private View mListLayout;
@@ -60,7 +62,9 @@ public class EventFragment extends Fragment {
             Query query;
 
             //Check if category is all events and if true, display all events
-            if(getString(R.string.all_events).equals(category))
+            String categories[] = getResources().getStringArray(R.array.event_categories);
+            Log.d(TAG, "onCreateView: category = "+ category);
+            if(categories[0].equals(category))
                 query = mDatabase.child(Constants.EVENTS_KEYWORD).child(UID).limitToFirst(10);
             else
                 query = mDatabase.child(Constants.EVENTS_KEYWORD).child(UID).orderByChild("category").equalTo(category);

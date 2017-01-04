@@ -6,6 +6,7 @@ package com.fireblaze.evento;
 
 public class Constants {
     public static final String ORGANIZER_IMAGE = "OrganizerImages";
+    public static final String EVENT_IMAGE = "EventImages";
     public static final String CATEGORIES = "Categories";
     public static final String META_KEYWORD = "meta";
     public static final String ORGANIZER_KEYWORD = "organizer";

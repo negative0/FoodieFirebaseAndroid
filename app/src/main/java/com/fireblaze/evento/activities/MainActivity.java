@@ -1,10 +1,8 @@
 package com.fireblaze.evento.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -29,23 +27,16 @@ import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.adapters.CategoryListAdapter;
 import com.fireblaze.evento.models.ImageItem;
-import com.fireblaze.evento.models.Location;
-import com.fireblaze.evento.models.Organizer;
 import com.fireblaze.evento.other.CircleTransform;
 import com.fireblaze.evento.viewholders.ImageItemHolder;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends BaseActivity {
@@ -79,7 +70,7 @@ public class MainActivity extends BaseActivity {
         organizerRecycler = (RecyclerView) findViewById(R.id.recycler_organizers);
         categoriesRecycler = (RecyclerView) findViewById(R.id.recycler_categories);
 
-        //new
+        //Navigation menu
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navHeader = navigationView.getHeaderView(0);
     }
@@ -255,6 +246,7 @@ public class MainActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
 
+
         }
     }
 
@@ -262,38 +254,6 @@ public class MainActivity extends BaseActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
-    }
-    private void addData(){
-
-        String names[] ={
-               "Eklavya",
-                "Texaphyr",
-                "PCP"
-        };
-        String emails[] ={
-            "eklavya@eklavya.com",
-            "texaphyr@mit.com",
-            "techno@pcp.com"
-        };
-        Location[] latLngs = {
-                new Location(18.503018,73.795738),
-                new Location(18.510277,73.790180),
-                new Location(18.651713,73.761596)
-
-        };
-
-        for(int i = 0;i<3;i++){
-            String key = mDatabase.child(Constants.ORGANIZER_KEYWORD).push().getKey();
-            Organizer item = new Organizer(key,names[i],emails[i],"+91 8888888888",null,latLngs[i],"http://placehold.it/200x200");
-            ImageItem imageItem = new ImageItem(key,names[i],"http://placehold.it/350x150");
-            Map<String, Object> postValues = item.toMap();
-            Map<String,Object> imageValues = imageItem.toMap();
-            Map<String, Object> childUpdates = new HashMap<>();
-            childUpdates.put(Constants.ORGANIZER_IMAGE+"/"+key,imageValues);
-            childUpdates.put(Constants.ORGANIZER_KEYWORD+"/"+key,postValues);
-            mDatabase.updateChildren(childUpdates);
-        }
-
     }
 
     @Override
@@ -322,38 +282,8 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void userDataChange(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null){
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            final String newName = prefs.getString("text_name",null);
-            final String newEmail = prefs.getString("text_email",null);
-            if(name!=null && !name.equals(newName) && newName!=null){
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(newName)
-                        .build();
-
-                user.updateProfile(profileUpdates)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful())
-                                    Log.d(TAG, "onComplete: name changed "+ newName);
-                            }
-                        });
-                if(email!=null && !email.equals(newEmail) && newEmail != null)
-                    user.updateEmail(newEmail)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    Log.d(TAG, "onComplete: Email Changed");
-                                    logOut();
-                                    Toast.makeText(MainActivity.this,"Please login with your new email",Toast.LENGTH_LONG).show();
-                                }
-                            });
-            }
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

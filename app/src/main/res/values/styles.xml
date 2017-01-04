@@ -23,5 +23,6 @@
     <style name="ButtonStyle" parent="android:Widget.Holo.Button">
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_marginTop">@dimen/button_vertical_margin</item>
     </style>
 </resources>

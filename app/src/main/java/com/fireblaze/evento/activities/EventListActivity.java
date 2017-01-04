@@ -99,7 +99,10 @@ public class EventListActivity extends BaseActivity {
             mDatabase.child(Constants.ORGANIZER_KEYWORD).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    setupViewWithData(dataSnapshot.getValue(Organizer.class));
+                    Organizer o = dataSnapshot.getValue(Organizer.class);
+                    if(o.getOrganizerID().equals(getUid()))
+                        organizerMode();
+                    setupViewWithData(o);
                 }
 
                 @Override
@@ -146,6 +149,7 @@ public class EventListActivity extends BaseActivity {
             public Fragment getItem(int position) {
                 Log.d(TAG, "getItem: position: "+position+" title: "+titles[position]);
                 bundle.putString(EventFragment.CATEGORY_KEYWORD,titles[position]);
+                Log.d(TAG, "getItem: title"+bundle.getString(EventFragment.CATEGORY_KEYWORD));
                 f[position].setArguments(bundle);
                 return f[position];
             }
@@ -219,6 +223,9 @@ public class EventListActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.action_show_info:
+                OrganizerDetailsActivity.navigate(this,organizer.getOrganizerID());
+                return true;
             case R.id.action_log_out:
                 return true;
             case R.id.action_show_on_map:
@@ -226,6 +233,11 @@ public class EventListActivity extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void organizerMode(){
+        fab.setVisibility(View.GONE);
+
     }
 
 

@@ -17,12 +17,21 @@
     <Preference
         android:key="text_email"
         android:selectAllOnFocus="true"
-        android:singleLine="true"
         android:title="@string/pref_title_display_email"
         android:summary="Change Email Address">
         <intent
             android:action="com.fireblaze.evento.CHANGE_EMAIL"/>
     </Preference>
+    <Preference
+        android:key="profile_image"
+        android:title="My profile Image"
+        android:summary="Change my profile image">
+        <!--<intent-->
+            <!--android:action="com.fireblaze.evento.UPLOAD_IMAGE">-->
+        <!--</intent>-->
+    </Preference>
+
+
 
     <com.fireblaze.evento.views.PasswordDialogPreference
         android:title="Change Password"

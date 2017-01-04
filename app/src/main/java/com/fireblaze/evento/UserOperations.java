@@ -2,6 +2,7 @@ package com.fireblaze.evento;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -48,5 +50,23 @@ public class UserOperations {
         }
         
     }
+    public static String getUid(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user!= null) {
+            return user.getUid();
+        }
+        return null;
+    }
+    public static void updateProfileImage(String imagePath){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null) {
+            UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
+                    .setPhotoUri(Uri.parse(imagePath))
+                    .build();
+            user.updateProfile(request);
+
+        }
+    }
+
 
 }

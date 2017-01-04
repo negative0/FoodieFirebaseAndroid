@@ -2,46 +2,43 @@ package com.fireblaze.evento.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
-import com.fireblaze.evento.adapters.CategoryListAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.fireblaze.evento.models.Event;
+import com.fireblaze.evento.viewholders.EventViewHolder;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 public class CategoryActivity extends AppCompatActivity {
 
-    RecyclerView categoriesRecycler;
+    private RecyclerView categoriesRecycler;
+    private FirebaseRecyclerAdapter<Event, EventViewHolder> mAdapter;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
+        Query query;
+        query = mDatabase.child(Constants.EVENTS_KEYWORD);
+
+        mAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(Event.class,
+                R.layout.event_card, EventViewHolder.class,  query) {
+            @Override
+            protected void populateViewHolder(EventViewHolder viewHolder, Event model, int position) {
+                viewHolder.bindToPost(CategoryActivity.this, model);
+            }
+
+        };
 
         categoriesRecycler = (RecyclerView) findViewById(R.id.category_recycler);
-        setupCategoriesRecycler();
     }
 
-    private void setupCategoriesRecycler(){
-        if(categoriesRecycler == null)
-            throw new RuntimeException("Categories Recycler is unexpectedly null");
-
-        int[] img = {
-                R.drawable.ic_coding,
-                R.drawable.ic_arts,
-                R.drawable.ic_adventure
-        };
-        List<String> names = new ArrayList<>();
-        names.add("Coding");
-        names.add("Arts");
-        names.add("Adventure");
-        GridLayoutManager layoutManager = new GridLayoutManager(CategoryActivity.this,2);
-        CategoryListAdapter adapter = new CategoryListAdapter(CategoryActivity.this,names,img);
-
-        categoriesRecycler.setLayoutManager(layoutManager);
-        categoriesRecycler.setAdapter(adapter);
-
-    }
 }

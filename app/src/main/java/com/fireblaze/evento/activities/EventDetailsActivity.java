@@ -3,6 +3,7 @@ package com.fireblaze.evento.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -24,10 +25,10 @@ public class EventDetailsActivity extends BaseActivity {
     public static final String ORGANIZER_ID_KEYWORD = "ORGANIZER_ID";
     private DatabaseReference mBookedEventsDatabase, mDatabase;
     private TextView mDetailsTextView;
-    Event myEvent;
+    private Event myEvent;
 
 
-    public static void navigate(Context activity, String eventID, String organizerID){
+    public static void navigate(@NonNull Context activity, @NonNull String eventID, @NonNull String organizerID){
         Intent i = new Intent(activity,EventDetailsActivity.class);
         i.putExtra(EVENT_ID_KEYWORD,eventID);
         i.putExtra(ORGANIZER_ID_KEYWORD,organizerID);

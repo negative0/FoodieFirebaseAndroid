@@ -18,9 +18,13 @@ import android.preference.PreferenceFragment;
 import android.preference.RingtonePreference;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
+import com.fireblaze.evento.UserOperations;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -40,6 +44,7 @@ import java.util.List;
 public class UserActivity extends AppCompatPreferenceActivity {
 
     public static final String TAG = UserActivity.class.getName();
+    static final int REQ_UPLOAD_IMAGE = 1;
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -189,6 +194,7 @@ public class UserActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
 
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -201,7 +207,20 @@ public class UserActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("text_email"));
             bindPreferenceSummaryToValue(findPreference("text_name"));
+            findPreference("profile_image").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(getActivity(), UploadImageActivity.class);
+
+                    intent.putExtra(UploadImageActivity.UPLOAD_PATH_KEYWORD,"/"+ Constants.USERS_KEYWORD+"/"+ UserOperations.getUid());
+                    getActivity().startActivityForResult(intent,REQ_UPLOAD_IMAGE);
+
+                    return true;
+
+                }
+            });
         }
+
 
 
         @Override
@@ -257,6 +276,7 @@ public class UserActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
 
+
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
@@ -272,6 +292,21 @@ public class UserActivity extends AppCompatPreferenceActivity {
                 return true;
             }
             return super.onOptionsItemSelected(item);
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case REQ_UPLOAD_IMAGE:
+                if(resultCode == RESULT_OK && data!= null){
+                    String imagePath = data.getStringExtra(UploadImageActivity.DOWNLOAD_URL_RESULT);
+                    Log.d(TAG, "onActivityResult: imagePath="+imagePath);
+                    if(imagePath != null){
+                        UserOperations.updateProfileImage(imagePath);
+                        Toast.makeText(UserActivity.this,"Upload Complete",Toast.LENGTH_SHORT).show();
+                    }
+                }
         }
     }
 }

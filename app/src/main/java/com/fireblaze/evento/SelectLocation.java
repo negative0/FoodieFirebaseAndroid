@@ -60,20 +60,14 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
             }
         });
 
-        if(isLocationPermissionGranted())
-            try {
-                mMap.setMyLocationEnabled(true);
-            }catch (SecurityException e){
-                e.printStackTrace();
-            }
 
     }
     private boolean isLocationPermissionGranted(){
         if(Build.VERSION.SDK_INT >= 23){
-            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 return true;
             } else {
-                ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
+                ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION);
                 return false;
             }
         } else
@@ -97,7 +91,7 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         mMap = googleMap;
         mMap.setOnMapClickListener(this);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
 
@@ -126,7 +120,7 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == PERMISSION_LOCATION){
             if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                if(ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED)
+                if(ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED)
                     mMap.setMyLocationEnabled(true);
             }
         }

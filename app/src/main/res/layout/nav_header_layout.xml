@@ -24,10 +24,12 @@
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             app:srcCompat="@android:drawable/sym_def_app_icon"/>
         <TextView
+            android:textColor="#ffffff"
             android:id="@+id/nav_header_text_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
+            android:textColor="#ffffff"
             android:id="@+id/nav_header_text_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

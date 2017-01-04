@@ -7,10 +7,10 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
-    <permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> -->
     <permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -109,20 +109,26 @@
         <activity
             android:name=".activities.UserActivity"
             android:label="@string/title_activity_user" />
-        <activity android:name=".activities.ChangeUserNameActivity"
+        <activity
+            android:name=".activities.ChangeUserNameActivity"
             android:label="Change Name">
             <intent-filter>
-                <action android:name="com.fireblaze.evento.CHANGE_USER_NAME"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.fireblaze.evento.CHANGE_USER_NAME" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ChangeEmailActivity"
+        <activity
+            android:name=".activities.ChangeEmailActivity"
             android:label="Change Email">
             <intent-filter>
-                <action android:name="com.fireblaze.evento.CHANGE_EMAIL"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.fireblaze.evento.CHANGE_EMAIL" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.UploadImageActivity"></activity>
+        <activity android:name=".activities.BookedEventsList"></activity>
     </application>
 
 </manifest>

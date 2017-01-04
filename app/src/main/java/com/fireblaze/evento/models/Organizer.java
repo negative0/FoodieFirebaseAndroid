@@ -122,6 +122,7 @@ public class Organizer {
         this.website = website;
         this.location = location;
         this.imageURL = imageURL;
+        this.isValid = true;
     }
 
     public Organizer() {

@@ -1,18 +1,10 @@
 package com.fireblaze.evento.activities;
 
-import android.Manifest;
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
@@ -29,16 +21,9 @@ import com.fireblaze.evento.models.ImageItem;
 import com.fireblaze.evento.models.Location;
 import com.fireblaze.evento.models.Organizer;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,15 +31,12 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
 
     public final String TAG = NewOrganizerActivity.class.getName();
     private ActivityNewOrganizerBinding binding;
-    private StorageReference mStorage;
     private DatabaseReference mDatabase;
     private Location selectedLocation = null;
+    private String imagePath;
 
-    private Bitmap mainImageBitmap;
-
-    private final int REQ_SELECT_IMAGE = 2;
     public static final int REQ_GET_LOCATION = 1001;
-    private final int REQ_PERMISSION_EXTERNAL_STORAGE_FOR_IMAGE = 3;
+    private final int REQ_UPLOAD_IMAGE = 4;
 
 
     @Override
@@ -64,7 +46,7 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
     
     private void getViews(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mStorage = FirebaseStorage.getInstance().getReference();
+        //mStorage = FirebaseStorage.getInstance().getReference();
 
     }
     
@@ -88,18 +70,22 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
             case R.id.btn_submit:
                 submitForm();
                 break;
-            case R.id.button_location:
+            case R.id.btn_set_location:
                 getLocation();
                 break;
-            case R.id.button_upload_image:
+            case R.id.btn_upload_image:
                 getImageFromGallery();
                 break;
         }
     }
 
     private void getImageFromGallery(){
-        Intent galleryIntent = new  Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent,REQ_SELECT_IMAGE);
+        Intent i = new Intent(NewOrganizerActivity.this,UploadImageActivity.class);
+        i.putExtra(UploadImageActivity.UPLOAD_PATH_KEYWORD,
+                "/"+Constants.ORGANIZER_IMAGE+"/"+getUid());
+        startActivityForResult(i,REQ_UPLOAD_IMAGE);
+//        Intent galleryIntent = new  Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        startActivityForResult(galleryIntent,REQ_SELECT_IMAGE);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -110,87 +96,30 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
                 selectedLocation = new Location(point);
                 Toast.makeText(this,"point:"+point.toString(),Toast.LENGTH_SHORT).show();
                 break;
-            case REQ_SELECT_IMAGE:
+            case REQ_UPLOAD_IMAGE:
                 if(resultCode == RESULT_OK && data != null){
-                    //Get image from data
-                    Uri selectedImage = data.getData();
-                    if(selectedImage != null){
-                        try {
-                            mainImageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
-                        }catch (IOException e){
-                            e.printStackTrace();
-                        }
-                    }
+                    Bundle b = data.getExtras();
+                    imagePath = b.getString(UploadImageActivity.DOWNLOAD_URL_RESULT);
+                    Toast.makeText(NewOrganizerActivity.this,"imagePath="+imagePath,Toast.LENGTH_SHORT).show();
                 }
-                break;
         }
     }
 
-    private Uri getImageUri(Context context,Bitmap inImage){
-
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG,100,bytes);
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "tempImage", null);
-        return Uri.parse(path);
-
-    }
-
-    private void uploadImage(Uri fileUri){
-        if(fileUri == null){
-            Toast.makeText(this,"Error",Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if(mainImageBitmap != null){
-            showProgressDialog();
-            StorageReference ref =  mStorage.child(Constants.ORGANIZER_IMAGE).child(getUid()).child(fileUri.getLastPathSegment());
-            ref.putFile(fileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Log.d(TAG, "onSuccess: upload succeeded");
-                    Uri imagePath = taskSnapshot.getMetadata().getDownloadUrl();
-                    uploadNewOrganizer(imagePath);
-                    hideProgressDialog();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    hideProgressDialog();
-                    Toast.makeText(NewOrganizerActivity.this,"Upload Failed",Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-    public boolean isStoragePermissionGranted(){
-        if(Build.VERSION.SDK_INT >=23)
-            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
-                Log.d(TAG, "isStoragePermissionGranted: permission granted");
-                return true;
-            } else {
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_PERMISSION_EXTERNAL_STORAGE_FOR_IMAGE);
-                return false;
-            }
-        else {
-
-            // Automatically allowed permission if sdk <=23
-            return true;
-        }
-    }
     private void getLocation() {
         startActivityForResult(new Intent(NewOrganizerActivity.this,SelectLocation.class),REQ_GET_LOCATION);
     }
 
-    private void uploadNewOrganizer(Uri imagePath){
+    private void uploadNewOrganizer(String imagePath){
         Organizer organizer = new Organizer(getUid(),
                 binding.inputName.getText().toString().trim(),
                 binding.inputEmail.getText().toString().trim(),
                 binding.inputPhone.getText().toString().trim(),
                 binding.inputWebsite.getText().toString().trim(),
                 selectedLocation,
-                imagePath.toString());
-        organizer.setIsValid(true);
+                imagePath);
+
         ImageItem imageItem = new ImageItem(getUid(),binding.inputName.getText().toString().trim(),
-                imagePath.toString());
+                imagePath);
         Map<String, Object> postValues = organizer.toMap();
         Map<String,Object> imageValues = imageItem.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
@@ -215,9 +144,9 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
             return;
 
         //Upload image to Firebase Storage and also call uploadNewOrganizer when image is successfully uploaded
-        if(isStoragePermissionGranted())
-            uploadImage(getImageUri(this, mainImageBitmap));
-
+//        if(isStoragePermissionGranted())
+//            uploadImage(getImageUri(this, mainImageBitmap));
+        uploadNewOrganizer(imagePath);
 
     }
     private boolean validateName(){
@@ -294,17 +223,5 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == REQ_PERMISSION_EXTERNAL_STORAGE_FOR_IMAGE ){
-            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                //resume the task of uploading image
-                Log.d(TAG, "onRequestPermissionsResult: Permission granted, resuming task");
-                uploadImage(getImageUri(this, mainImageBitmap));
-            }else {
-                Toast.makeText(this,"Need to grant permission to use external storage",Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+
 }
