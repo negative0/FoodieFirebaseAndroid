@@ -2,13 +2,13 @@ package com.fireblaze.evento.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fireblaze.evento.R;
@@ -24,8 +24,8 @@ public abstract class SignInBaseFragment extends Fragment {
 
     public Button mSignInButton;
     public TextView mForgotPasswordText;
-    public EditText mEmailField;
-    public EditText mPasswordField;
+    public TextInputEditText mEmailField;
+    public TextInputEditText mPasswordField;
     public SignInButton mGoogleSignInButton;
     public Button mBecomeOrganizerButton;
     public boolean isOrganizer = false;
@@ -40,8 +40,8 @@ public abstract class SignInBaseFragment extends Fragment {
         //Get Views
         mSignInButton = (Button) rootView.findViewById(R.id.btn_sign_in);
         mForgotPasswordText = (TextView) rootView.findViewById(R.id.text_forgot_password);
-        mEmailField = (EditText) rootView.findViewById(R.id.field_email);
-        mPasswordField = (EditText) rootView.findViewById(R.id.field_password);
+        mEmailField = (TextInputEditText) rootView.findViewById(R.id.field_email);
+        mPasswordField = (TextInputEditText) rootView.findViewById(R.id.field_password);
         mGoogleSignInButton = (SignInButton) rootView.findViewById(R.id.sign_in_google_button);
         mBecomeOrganizerButton = (Button) rootView.findViewById(R.id.become_an_organizer_button);
         return rootView;

@@ -1,4 +1,4 @@
-package com.fireblaze.evento;
+package com.fireblaze.evento.activities;
 
 
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.fireblaze.evento.R;
 import com.fireblaze.evento.adapters.OrganizerTasksGridAdapter;
 
 
@@ -39,13 +40,18 @@ public class OrganizerMainActivity extends BaseActivity {
         mTasksGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               switch (position){
+               Intent intent;
+                switch (position){
                    case 0:
                        onNewEvent();
                        break;
                    case 1:
-                       Intent intent = new Intent(OrganizerMainActivity.this,EventListActivity.class);
+                       intent = new Intent(OrganizerMainActivity.this,EventListActivity.class);
                        intent.putExtra(EventListActivity.ID_KEYWORD,getUid());
+                       startActivity(intent);
+                       break;
+                   case 2:
+                       intent = new Intent(OrganizerMainActivity.this,SendNotificationActivity.class);
                        startActivity(intent);
                        break;
                    default:

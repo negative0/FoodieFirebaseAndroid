@@ -1,5 +1,7 @@
-package com.fireblaze.evento;
+package com.fireblaze.evento.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +18,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.fireblaze.evento.Constants;
+import com.fireblaze.evento.R;
 import com.fireblaze.evento.fragments.EventFragment;
 import com.fireblaze.evento.models.Organizer;
 import com.google.firebase.database.DataSnapshot;
@@ -38,7 +42,7 @@ public class EventListActivity extends BaseActivity {
     private ImageView featuredImage;
     private Organizer organizer;
 
-    public static final String QUERY_KEYWORD = "QueryString";
+    public static final String ORGANIZER_ID = "ORGANIZER_ID";
     public static final String ID_KEYWORD = "KeyString";
 
     private boolean isBookmarked=false;
@@ -49,6 +53,13 @@ public class EventListActivity extends BaseActivity {
         return findViewById(R.id.activity_event_list);
     }
 
+    public static void navigate(Context context, String id){
+        Intent intent = new Intent(context,EventListActivity.class);
+        Bundle b = new Bundle();
+        b.putString(EventListActivity.ID_KEYWORD,id);
+        intent.putExtras(b);
+        context.startActivity(intent);
+    }
     void getViews(){
         tabs = (TabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.viewpager_events);
@@ -83,11 +94,15 @@ public class EventListActivity extends BaseActivity {
 //        final String query = b.getString(QUERY_KEYWORD);
 //        Log.d(TAG, "onCreate: Query = "+query);
         String id = b.getString(ID_KEYWORD);
+        showProgressDialog();
         if(id != null)
             mDatabase.child(Constants.ORGANIZER_KEYWORD).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    setupViewWithData(dataSnapshot.getValue(Organizer.class));
+                    Organizer o = dataSnapshot.getValue(Organizer.class);
+                    if(o.getOrganizerID().equals(getUid()))
+                        organizerMode();
+                    setupViewWithData(o);
                 }
 
                 @Override
@@ -113,7 +128,7 @@ public class EventListActivity extends BaseActivity {
             handleBookmark(true);
         }
         final Bundle bundle = new Bundle();
-        bundle.putString("UID",organizer.getOrganizerID());
+        bundle.putString(EventFragment.ORGANIZER_ID_KEYWORD,organizer.getOrganizerID());
         fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private Fragment f[] = {
                     new EventFragment(),
@@ -122,11 +137,8 @@ public class EventListActivity extends BaseActivity {
 
             };
 
-            private String titles[] = {
-                    getString(R.string.all_events),
-                    "Coding",
-                    "Games"
-            };
+            private String titles[] =
+                    getResources().getStringArray(R.array.event_categories);
 
             @Override
             public CharSequence getPageTitle(int position) {
@@ -137,6 +149,7 @@ public class EventListActivity extends BaseActivity {
             public Fragment getItem(int position) {
                 Log.d(TAG, "getItem: position: "+position+" title: "+titles[position]);
                 bundle.putString(EventFragment.CATEGORY_KEYWORD,titles[position]);
+                Log.d(TAG, "getItem: title"+bundle.getString(EventFragment.CATEGORY_KEYWORD));
                 f[position].setArguments(bundle);
                 return f[position];
             }
@@ -149,6 +162,7 @@ public class EventListActivity extends BaseActivity {
         mViewPager.setAdapter(fragmentPagerAdapter);
         tabs.setupWithViewPager(mViewPager);
         setupFab();
+        hideProgressDialog();
     }
     private void setupFab(){
         fab.setOnClickListener(new View.OnClickListener() {
@@ -209,6 +223,9 @@ public class EventListActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.action_show_info:
+                OrganizerDetailsActivity.navigate(this,organizer.getOrganizerID());
+                return true;
             case R.id.action_log_out:
                 return true;
             case R.id.action_show_on_map:
@@ -216,6 +233,11 @@ public class EventListActivity extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void organizerMode(){
+        fab.setVisibility(View.GONE);
+
     }
 
 

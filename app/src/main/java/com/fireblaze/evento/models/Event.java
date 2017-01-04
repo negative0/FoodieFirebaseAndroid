@@ -1,13 +1,31 @@
 package com.fireblaze.evento.models;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.fireblaze.evento.Constants;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class Event {
+    public static class MyConstants{
+        public static final String ORGANIZER_ID = "organizerID";
+    }
     public String eventID;
+    public String organizerID;
     public String name;
     public String description;
     public String category;
@@ -20,6 +38,8 @@ public class Event {
     public double prizeAmount;
     //public Date dateCreated;
     public String duration;
+    Map<String, String> bookings = new HashMap<>();
+    public int bookingsCount;
 
     public String getEventID() {
         return eventID;
@@ -117,10 +137,13 @@ public class Event {
         this.duration = duration;
     }
 
+
+
     @Exclude
     public Map<String ,Object> toMap(){
         Map<String,Object> result = new HashMap<>();
         result.put("eventID",eventID);
+        result.put("organizerID",organizerID);
         result.put("name",name);
         result.put("description",description);
         result.put("category",category);
@@ -135,8 +158,9 @@ public class Event {
         return result;
     }
 
-    public Event(String eventID, String name, String description, String category, int ratings, String image, String venue, String schedule, Map<String, Boolean> volunteers, double participationFees, double prizeAmount, String duration) {
+    public Event(String eventID, String organizerID, String name, String description, String category, int ratings, String image, String venue, String schedule, Map<String, Boolean> volunteers, double participationFees, double prizeAmount, String duration) {
         this.eventID = eventID;
+        this.organizerID= organizerID;
         this.name = name;
         this.description = description;
         this.category = category;
@@ -152,5 +176,68 @@ public class Event {
 
     public Event() {
         //Important
+    }
+    public void booked(String UID){
+        //Change the booked count and add userID and bookingID into the db
+
+        if(bookings.containsKey(UID)){
+            BookedEvent.unBookEvent(bookings.get(UID));
+            bookingsCount -= 1;
+            bookings.remove(UID);
+        } else {
+            String bookingID = BookedEvent.bookEvent(eventID,UID);
+            bookingsCount += 1;
+            bookings.put(UID,bookingID);
+        }
+
+    }
+    public void book(final String UID){
+        //Book the event
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Constants.EVENTS_KEYWORD)
+                .child(organizerID)
+                .child(eventID);
+        ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Event e = mutableData.getValue(Event.class);
+                if(e == null){
+                    return Transaction.success(mutableData);
+                }
+                e.booked(UID);
+                mutableData.setValue(e);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
+    }
+    public static void deleteEvent(final String eventID){
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ref.child(Constants.EVENTS_KEYWORD)
+                .child(eventID).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Query query = ref.child(Constants.BOOKED_EVENTS).orderByChild("eventID")
+                        .equalTo(eventID);
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                            snapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("Event", "onCancelled: ",databaseError.toException() );
+                    }
+                });
+
+
+            }
+        });
     }
 }

@@ -122,6 +122,7 @@ public class Organizer {
         this.website = website;
         this.location = location;
         this.imageURL = imageURL;
+        this.isValid = true;
     }
 
     public Organizer() {
@@ -138,7 +139,7 @@ public class Organizer {
             bookmarks.remove(uid);
         } else {
             bookmarkCount += 1;
-            bookmarks.put(uid,true);
+            bookmarks.put(uid, true);
         }
     }
 

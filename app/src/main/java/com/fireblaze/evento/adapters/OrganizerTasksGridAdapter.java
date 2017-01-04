@@ -1,17 +1,14 @@
 package com.fireblaze.evento.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fireblaze.evento.R;
-import com.google.android.gms.vision.text.Text;
 
 
 /**

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_log_out" app:showAsAction="never"
-        android:title="@string/menu_log_out" />
+    <item android:id="@+id/action_show_info" app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="Info"/>
     <item android:id="@+id/action_show_on_map" app:showAsAction="ifRoom"
         android:icon="@drawable/map_icon"
          android:title="Map"/>
-    <item android:id="@+id/action_add_data" app:showAsAction="never"
-        android:title="Add data"/>
+    <item android:id="@+id/action_log_out" app:showAsAction="never"
+        android:title="@string/menu_log_out" />
 </menu>

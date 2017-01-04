@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.fireblaze.evento.activities.NewOrganizerActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,6 +37,8 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
 
     List<Address> addressList = null;
 
+    public static final int PERMISSION_LOCATION = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +60,18 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
             }
         });
 
+
+    }
+    private boolean isLocationPermissionGranted(){
+        if(Build.VERSION.SDK_INT >= 23){
+            if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION);
+                return false;
+            }
+        } else
+            return true;
     }
 
     @Override
@@ -74,10 +91,10 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         mMap = googleMap;
         mMap.setOnMapClickListener(this);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
         }
-        mMap.setMyLocationEnabled(true);
+
 
     }
 
@@ -96,5 +113,16 @@ public class SelectLocation extends FragmentActivity implements OnMapReadyCallba
         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == PERMISSION_LOCATION){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                if(ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED)
+                    mMap.setMyLocationEnabled(true);
+            }
+        }
     }
 }

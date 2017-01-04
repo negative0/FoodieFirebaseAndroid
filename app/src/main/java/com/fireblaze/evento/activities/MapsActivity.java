@@ -1,4 +1,4 @@
-package com.fireblaze.evento;
+package com.fireblaze.evento.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.fireblaze.evento.R;
+import com.fireblaze.evento.SnackBarContainerInterface;
 import com.fireblaze.evento.models.Location;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

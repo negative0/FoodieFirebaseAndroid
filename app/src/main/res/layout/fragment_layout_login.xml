@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
+        <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
@@ -25,7 +25,7 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <EditText
+    <android.support.design.widget.TextInputEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
@@ -46,8 +46,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/btn_sign_in"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white"
         android:text="@string/sign_in"/>
     <TextView
         android:layout_width="wrap_content"
@@ -72,8 +70,6 @@
         android:id="@+id/become_an_organizer_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white"
         android:text="Become an Organizer"
         />
     <Button
@@ -82,8 +78,6 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:onClick="signUp"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white"
         android:text="Sign Up"
         />
 
