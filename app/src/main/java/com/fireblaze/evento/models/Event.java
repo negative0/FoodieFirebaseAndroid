@@ -21,9 +21,6 @@ import java.util.Map;
 
 
 public class Event {
-    public static class MyConstants{
-        public static final String ORGANIZER_ID = "organizerID";
-    }
     private String eventID;
     private String organizerID;
     private String name;
