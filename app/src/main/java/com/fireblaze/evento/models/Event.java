@@ -24,22 +24,22 @@ public class Event {
     public static class MyConstants{
         public static final String ORGANIZER_ID = "organizerID";
     }
-    public String eventID;
-    public String organizerID;
-    public String name;
-    public String description;
-    public String category;
-    public int ratings;
-    public String image;
-    public String venue;
-    public String schedule;
-    public Map<String, Boolean> volunteers = new HashMap<>();
-    public double participationFees;
-    public double prizeAmount;
-    //public Date dateCreated;
-    public String duration;
-    Map<String, String> bookings = new HashMap<>();
-    public int bookingsCount;
+    private String eventID;
+    private String organizerID;
+    private String name;
+    private String description;
+    private String category;
+    private int ratings;
+    private String image;
+    private String venue;
+    private String schedule;
+    private Map<String, Boolean> volunteers = new HashMap<>();
+    private double participationFees;
+    private double prizeAmount;
+    //private Date dateCreated;
+    private String duration;
+    private Map<String, String> bookings = new HashMap<>();
+    private int bookingsCount;
 
     public String getEventID() {
         return eventID;
@@ -137,7 +137,9 @@ public class Event {
         this.duration = duration;
     }
 
-
+    public String getOrganizerID() {
+        return organizerID;
+    }
 
     @Exclude
     public Map<String ,Object> toMap(){
@@ -185,7 +187,7 @@ public class Event {
             bookingsCount -= 1;
             bookings.remove(UID);
         } else {
-            String bookingID = BookedEvent.bookEvent(eventID,UID);
+            String bookingID = BookedEvent.bookEvent(eventID,UID,organizerID);
             bookingsCount += 1;
             bookings.put(UID,bookingID);
         }
@@ -214,6 +216,7 @@ public class Event {
             }
         });
     }
+
     public static void deleteEvent(final String eventID){
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         ref.child(Constants.EVENTS_KEYWORD)
@@ -239,5 +242,13 @@ public class Event {
 
             }
         });
+    }
+
+    public Map<String, String> getBookings() {
+        return bookings;
+    }
+
+    public int getBookingsCount() {
+        return bookingsCount;
     }
 }

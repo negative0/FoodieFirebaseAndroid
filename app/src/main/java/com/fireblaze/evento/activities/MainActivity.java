@@ -125,6 +125,9 @@ public class MainActivity extends BaseActivity {
                     case R.id.nav_account:
                         startActivityForResult(new Intent(MainActivity.this,UserActivity.class),REQ_SETTINGS);
                         return true;
+                    case R.id.nav_booked_events:
+                        BookedEventsListActivity.navigate(MainActivity.this);
+                        return true;
                 }
                 if (item.isChecked()) {
                     item.setChecked(false);
