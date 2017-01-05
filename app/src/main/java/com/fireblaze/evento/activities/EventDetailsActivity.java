@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
@@ -26,8 +24,7 @@ public class EventDetailsActivity extends BaseActivity {
 
     public static final String EVENT_ID_KEYWORD = "EVENT_ID";
     public static final String ORGANIZER_ID_KEYWORD = "ORGANIZER_ID";
-    private DatabaseReference mBookedEventsDatabase, mDatabase;
-    private TextView mDetailsTextView;
+    private DatabaseReference mDatabase;
     private Event myEvent;
     private Toolbar toolbar;
     ActivityEventDetailsBinding binding;
@@ -66,15 +63,14 @@ public class EventDetailsActivity extends BaseActivity {
 
     }
 
+
     private void setupView(){
         binding.content.textName.setText(myEvent.getName());
         binding.content.textBookingCount.setText(String.valueOf(myEvent.getBookingsCount()));
         binding.content.textEventDetails.setText(myEvent.getDescription());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
         toolbar.setTitle(myEvent.getName());
-        fab.setOnClickListener(new View.OnClickListener() {
+        binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String bookedStatus;
@@ -101,7 +97,7 @@ public class EventDetailsActivity extends BaseActivity {
 
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mBookedEventsDatabase = mDatabase.child(Constants.BOOKED_EVENTS);
+//        mBookedEventsDatabase = mDatabase.child(Constants.BOOKED_EVENTS);
 
 
 

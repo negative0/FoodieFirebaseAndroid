@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -47,10 +48,11 @@ public class MainActivity extends BaseActivity {
     private FirebaseRecyclerAdapter<ImageItem, ImageItemHolder> organizerRecyclerAdapter;
     private DrawerLayout mDrawerLayout;
     private View navHeader;
-    NavigationView navigationView;
+    private NavigationView navigationView;
     private ActionBarDrawerToggle mDrawerToggle;
-    RecyclerView organizerRecycler;
-    RecyclerView categoriesRecycler;
+    private RecyclerView organizerRecycler;
+    private RecyclerView categoriesRecycler;
+    private Button btnShowAll;
     private DatabaseReference mDatabase;
     public static final int REQ_SETTINGS = 1;
 
@@ -63,6 +65,7 @@ public class MainActivity extends BaseActivity {
         setupNavigation();
         setupOrganizerList();
         setupCategoriesRecycler();
+
     }
     private void getViews(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -70,6 +73,7 @@ public class MainActivity extends BaseActivity {
         organizerRecycler = (RecyclerView) findViewById(R.id.recycler_organizers);
         categoriesRecycler = (RecyclerView) findViewById(R.id.recycler_categories);
 
+        btnShowAll = (Button) findViewById(R.id.btn_show_all);
         //Navigation menu
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navHeader = navigationView.getHeaderView(0);
@@ -154,6 +158,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setupOrganizerList(){
+        btnShowAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,OrganizerListActivity.class));
+            }
+        });
         //Show the progress dialog.
         setOrganizersProgressBar();
         LinearLayoutManager horizontalLayoutManager =

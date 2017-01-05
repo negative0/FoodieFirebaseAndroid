@@ -62,8 +62,8 @@ public class OrganizerTasksGridAdapter extends BaseAdapter {
     };
     private String[] names ={
             "New Event",
-            "Database",
-            "Money",
+            "View My page",
+            "Send Notifications",
             "Analytics"
     };
 

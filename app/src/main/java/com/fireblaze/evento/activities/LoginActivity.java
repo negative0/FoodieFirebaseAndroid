@@ -347,11 +347,15 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
     }
 
     private void showForgotPasswordDialog(@Nullable final String email){
+        LayoutInflater inflater = getLayoutInflater();
+        final View v = inflater.inflate(R.layout.dialog_forgot_password,null);
+        final EditText emailTextView = (EditText) v.findViewById(R.id.field_email);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setPositiveButton("RESET", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sendPasswordResetEmail(email);
+                sendPasswordResetEmail(emailTextView.getText().toString());
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -362,8 +366,8 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
 
 
         final AlertDialog dialog = builder.create();
-        LayoutInflater inflater = getLayoutInflater();
-        final View v = inflater.inflate(R.layout.dialog_forgot_password,null);
+
+
 
         dialog.setView(v);
         dialog.setTitle("Forgot Password?");
@@ -381,6 +385,10 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
     }
 
     private void sendPasswordResetEmail(String email){
+        if(email.isEmpty()){
+            Toast.makeText(LoginActivity.this,"Please enter your email!",Toast.LENGTH_SHORT).show();
+            return;
+        }
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
         auth.sendPasswordResetEmail(email)

@@ -130,7 +130,8 @@
         </activity>
         <activity android:name=".activities.UploadImageActivity" />
         <activity android:name=".activities.BookedEventsListActivity" />
-        <activity android:name=".activities.BookmarksDetailsActivity"></activity>
+        <activity android:name=".activities.BookmarksDetailsActivity" />
+        <activity android:name=".activities.OrganizerListActivity"></activity>
     </application>
 
 </manifest>

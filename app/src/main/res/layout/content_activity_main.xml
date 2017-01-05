@@ -15,7 +15,7 @@
         android:text="Organizers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
+        android:id="@+id/textOrganizerTitle"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
     <FrameLayout
         android:layout_width="match_parent"
@@ -33,6 +33,14 @@
             android:layout_height="wrap_content"
             android:visibility="gone"/>
     </FrameLayout>
+    <Button
+        android:id="@+id/btn_show_all"
+        android:textColor="#000000"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:text="Show All"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"/>
 
     <View
         android:layout_width="match_parent"

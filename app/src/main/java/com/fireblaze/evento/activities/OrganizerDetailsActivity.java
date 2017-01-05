@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -20,16 +19,22 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
-public class OrganizerDetailsActivity extends AppCompatActivity {
+public class OrganizerDetailsActivity extends BaseActivity implements View.OnClickListener{
 
     ActivityOrganizerDetailsBinding binding;
     DatabaseReference mDatabase;
 
     public static final String ORGANIZER_ID = "organizerID";
+    private String organizerID;
 
-
+    @Override
+    public View getContainer() {
+        return binding.getRoot();
+    }
 
     public static void navigate(Context context, String organizerID){
         Intent i = new Intent(context,OrganizerDetailsActivity.class);
@@ -45,6 +50,7 @@ public class OrganizerDetailsActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         Bundle b = getIntent().getExtras();
         final String organizerID;
+
         if(b== null){
             throw new RuntimeException("bundle is null");
         }
@@ -79,9 +85,13 @@ public class OrganizerDetailsActivity extends AppCompatActivity {
         });
     }
     private void setupView(Organizer o){
+        organizerID = o.getOrganizerID();
         binding.content.textTitle.setText(o.getName());
         binding.content.textEmail.setText(o.getEmail());
+        binding.content.contact.setText(o.getPhone());
+        binding.content.website.setText(o.getWebsite());
         binding.content.textBookmarkCount.setText(String.valueOf(o.getBookmarkCount()));
+        binding.content.btnBecomeVolunteer.setOnClickListener(this);
         setupImages();
     }
     private void setupImages(){
@@ -97,4 +107,33 @@ public class OrganizerDetailsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.btn_become_volunteer){
+            mDatabase.child(Constants.ORGANIZER_KEYWORD).child(organizerID).runTransaction(
+                    new Transaction.Handler() {
+                        @Override
+                        public Transaction.Result doTransaction(MutableData mutableData) {
+                            Organizer o = mutableData.getValue(Organizer.class);
+                            if(o == null){
+                                return Transaction.success(mutableData);
+                            }
+                            if(o.getVolunteers().containsKey(getUid())){
+                                Snackbar.make(getContainer(), "Consider volunteering next time!",Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                Snackbar.make(getContainer(),"You are now a volunteer", Snackbar.LENGTH_SHORT).show();
+                            }
+                            o.becomeVolunteer(getUid());
+                            mutableData.setValue(o);
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                        }
+                    }
+            );
+        }
+    }
 }

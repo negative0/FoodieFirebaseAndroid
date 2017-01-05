@@ -21,7 +21,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_send_notification" />
+    <include
+        android:id="@+id/content"
+        layout="@layout/content_send_notification" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

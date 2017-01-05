@@ -15,17 +15,19 @@ import com.fireblaze.evento.models.ImageItem;
  */
 
 public class ImageItemHolder extends RecyclerView.ViewHolder {
+    private View item;
     private ImageView imageRes;
     private TextView title;
     public ImageItemHolder(View itemView) {
         super(itemView);
         imageRes = (ImageView) itemView.findViewById(R.id.item_image);
         title = (TextView) itemView.findViewById(R.id.title);
+        item = itemView;
 
     }
     public void bindToPost(Context context, ImageItem imageItem, View.OnClickListener clickListener){
         Glide.with(context).load(imageItem.getResourceURL()).error(R.drawable.logo_black).into(imageRes);
-        imageRes.setOnClickListener(clickListener);
+        item.setOnClickListener(clickListener);
         title.setText(imageItem.getName());
     }
 }

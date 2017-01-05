@@ -30,12 +30,13 @@ public class Event {
     private String image;
     private String venue;
     private String schedule;
-    private Map<String, Boolean> volunteers = new HashMap<>();
+
     private double participationFees;
     private double prizeAmount;
     //private Date dateCreated;
     private String duration;
     private Map<String, String> bookings = new HashMap<>();
+
     private int bookingsCount;
 
     public String getEventID() {
@@ -102,13 +103,7 @@ public class Event {
         this.schedule = schedule;
     }
 
-    public Map<String, Boolean> getVolunteers() {
-        return volunteers;
-    }
 
-    public void setVolunteers(Map<String, Boolean> volunteers) {
-        this.volunteers = volunteers;
-    }
 
     public double getParticipationFees() {
         return participationFees;
@@ -134,6 +129,14 @@ public class Event {
         this.duration = duration;
     }
 
+    public Map<String, String> getBookings() {
+        return bookings;
+    }
+
+    public int getBookingsCount() {
+        return bookingsCount;
+    }
+
     public String getOrganizerID() {
         return organizerID;
     }
@@ -150,29 +153,26 @@ public class Event {
         result.put("image",image);
         result.put("venue",venue);
         result.put("schedule",schedule);
-        result.put("volunteers",volunteers);
         result.put("participationFees",participationFees);
         result.put("prizeAmount",prizeAmount);
         result.put("duration",duration);
         return result;
     }
 
-    public Event(String eventID, String organizerID, String name, String description, String category, int ratings, String image, String venue, String schedule, Map<String, Boolean> volunteers, double participationFees, double prizeAmount, String duration) {
+    public Event(String eventID, String organizerID, String name, String description, String category, String image, String venue, String schedule, double participationFees, double prizeAmount, String duration) {
         this.eventID = eventID;
         this.organizerID= organizerID;
         this.name = name;
         this.description = description;
         this.category = category;
-        this.ratings = ratings;
+
         this.image = image;
         this.venue = venue;
         this.schedule = schedule;
-        this.volunteers = volunteers;
         this.participationFees = participationFees;
         this.prizeAmount = prizeAmount;
         this.duration = duration;
     }
-
     public Event() {
         //Important
     }
@@ -190,6 +190,7 @@ public class Event {
         }
 
     }
+
     public void book(final String UID){
         //Book the event
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Constants.EVENTS_KEYWORD)
@@ -213,6 +214,7 @@ public class Event {
             }
         });
     }
+
 
     public static void deleteEvent(final String eventID){
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
@@ -239,13 +241,5 @@ public class Event {
 
             }
         });
-    }
-
-    public Map<String, String> getBookings() {
-        return bookings;
-    }
-
-    public int getBookingsCount() {
-        return bookingsCount;
     }
 }

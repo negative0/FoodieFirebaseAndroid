@@ -1,7 +1,6 @@
 package com.fireblaze.evento.activities;
 
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
+
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
@@ -30,14 +33,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-
-
-public class SendNotificationActivity extends BaseActivity {
-    String title, content;
+public class SendNotificationActivity extends BaseActivity implements AdapterView.OnItemSelectedListener{
+    String content;
     private TextInputEditText textTitle, textContent;
     private TextInputLayout textLayoutTitle, textLayoutContent;
+    private Spinner spinner;
+    private int userType = 1;
     final static String TAG = SendNotificationActivity.class.getSimpleName();
 
     @Override
@@ -47,7 +52,10 @@ public class SendNotificationActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getViews();
+        setupView();
 
+    }
+    private void setupView(){
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,13 +65,21 @@ public class SendNotificationActivity extends BaseActivity {
                         .setAction("OK", null).show();
             }
         });
-    }
+        spinner.setOnItemSelectedListener(this);
+        List<String> cat = new ArrayList<>();
+        cat.add("Users");
+        cat.add("Volunteers");
 
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, cat);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
+    }
     private void getViews(){
         textTitle = (TextInputEditText) findViewById(R.id.input_title);
         textContent = (TextInputEditText) findViewById(R.id.input_content);
         textLayoutTitle = (TextInputLayout) findViewById(R.id.input_layout_title);
         textLayoutContent = (TextInputLayout) findViewById(R.id.input_layout_content);
+        spinner = (Spinner) findViewById(R.id.spinner);
     }
 
     private boolean validateTitle(){
@@ -113,29 +129,33 @@ public class SendNotificationActivity extends BaseActivity {
         if(!validateContent())
             return;
 
-
-        final JSONArray array = new JSONArray();
+        final List<NotificationToken> tokens = new ArrayList<>();
         final DatabaseReference mOrganizerReference = FirebaseDatabase.getInstance().getReference().child(Constants.ORGANIZER_KEYWORD).child(getUid());
         final DatabaseReference mTokensReference = FirebaseDatabase.getInstance().getReference().child(Constants.NOTIFICATION_TOKENS);
         mOrganizerReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Organizer o = dataSnapshot.getValue(Organizer.class);
-                Map<String , Boolean > map = o.getBookmarks();
+                Map<String, Boolean> map;
+                if(userType == 1){
+                    map = o.getBookmarks();
+                }else {
+                    map = o.getVolunteers();
+                }
+
                 final int mapSize = map.size();
 
                 for(Map.Entry<String, Boolean> e: map.entrySet()){
                     String key = e.getKey();
-
 
                     mTokensReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if(dataSnapshot.getValue() != null) {
                                 NotificationToken token = dataSnapshot.getValue(NotificationToken.class);
-                                array.put(token.getToken());
-                                if(array.length()== mapSize){
-                                    initThread(array);
+                                tokens.add(token);
+                                if(tokens.size()== mapSize){
+                                    initThread(tokens);
                                 }
                             }
                         }
@@ -156,13 +176,19 @@ public class SendNotificationActivity extends BaseActivity {
         });
 
     }
-    public void initThread(JSONArray array){
-        if(array.length() != 0) {
+    public void initThread(List<NotificationToken> list){
+
+        JSONArray array = new JSONArray();
+        for(NotificationToken token : list){
+            if(token.isReceiveNotifications())
+                array.put(token.getToken());
+        }
+        if(array.length() <= 0) {
             NotifyThread nt = new NotifyThread(array);
             Thread t = new Thread(nt);
             t.start();
         } else {
-            Log.d(TAG, "onDataChange: Array is of size 0");
+            Toast.makeText(SendNotificationActivity.this,"No Recipients",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -171,11 +197,15 @@ public class SendNotificationActivity extends BaseActivity {
 
     public void pushFCMNotification(JSONArray recipients, String title, String content) throws Exception {
 
-        ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-        Bundle bundle = ai.metaData;
-        String authKey = bundle.getString("myServerKey");
+//        ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+//        Bundle bundle = ai.metaData;
+        String authKey = "AIzaSyCmhrSM9A8BOZvrRX9EwdRKOPWYHWwFf4A"; // You FCM AUTH key
+        //String authKey = bundle.getString("myServerKey");
 
-        //String authKey = "AIzaSyCmhrSM9A8BOZvrRX9EwdRKOPWYHWwFf4A"; // You FCM AUTH key
+        Toast.makeText(SendNotificationActivity.this,"Error",Toast.LENGTH_SHORT).show();
+
+
+
         String FMCurl = "https://fcm.googleapis.com/fcm/send";
 
         URL url = new URL(FMCurl);
@@ -230,6 +260,16 @@ public class SendNotificationActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        userType = i+1;
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+        //Auto generated
+    }
 }
  //   private void sendNotification(){
 //        HttpURLConnection connection;

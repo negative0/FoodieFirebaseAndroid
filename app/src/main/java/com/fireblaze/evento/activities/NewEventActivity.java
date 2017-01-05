@@ -84,10 +84,9 @@ public class NewEventActivity extends BaseActivity {
         Event event = new Event(key,getUid(),binding.inputName.getText().toString().trim(),
                 binding.inputDescription.getText().toString().trim(),
                 binding.inputCategory.getText().toString().trim(),
-                Integer.parseInt(binding.inputDuration.getText().toString().trim()),
                 imagePath,
                 binding.inputVenue.getText().toString().trim().toLowerCase(),
-                "NA", null,
+                "NA",
                 Double.parseDouble(binding.inputFees.getText().toString()),
                 Double.parseDouble(binding.inputPrize.getText().toString()),
                 binding.inputDuration.toString()
