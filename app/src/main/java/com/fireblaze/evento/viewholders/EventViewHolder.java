@@ -44,7 +44,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventDetailsActivity.navigate(context, event.getEventID(), event.getOrganizerID());
+                EventDetailsActivity.navigate(context, event.getEventID());
             }
         });
         itemView.setTag(event.getEventID());

@@ -80,11 +80,7 @@
         <activity
             android:name=".activities.SendNotificationActivity"
             android:label="@string/title_activity_send_notification"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="myServerKey"
-                android:value="AIzaSyCmhrSM9A8BOZvrRX9EwdRKOPWYHWwFf4A" />
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <service
             android:name=".MyMessagingService"

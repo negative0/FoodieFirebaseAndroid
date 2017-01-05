@@ -23,6 +23,7 @@ import java.util.Map;
 public class Event {
     private String eventID;
     private String organizerID;
+    private String indexCategoryOrganizer;
     private String name;
     private String description;
     private String category;
@@ -162,6 +163,7 @@ public class Event {
     public Event(String eventID, String organizerID, String name, String description, String category, String image, String venue, String schedule, double participationFees, double prizeAmount, String duration) {
         this.eventID = eventID;
         this.organizerID= organizerID;
+        this.indexCategoryOrganizer = category+"+"+organizerID;
         this.name = name;
         this.description = description;
         this.category = category;
@@ -241,5 +243,9 @@ public class Event {
 
             }
         });
+    }
+
+    public String getIndexCategoryOrganizer() {
+        return indexCategoryOrganizer;
     }
 }

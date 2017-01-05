@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
@@ -30,10 +31,9 @@ public class EventDetailsActivity extends BaseActivity {
     ActivityEventDetailsBinding binding;
 
 
-    public static void navigate(@NonNull Context activity, @NonNull String eventID, @NonNull String organizerID){
+    public static void navigate(@NonNull Context activity, @NonNull String eventID){
         Intent i = new Intent(activity,EventDetailsActivity.class);
         i.putExtra(EVENT_ID_KEYWORD,eventID);
-        i.putExtra(ORGANIZER_ID_KEYWORD,organizerID);
         activity.startActivity(i);
     }
     @Override
@@ -43,14 +43,18 @@ public class EventDetailsActivity extends BaseActivity {
         getViews();
 
         final String eventID = getIntent().getStringExtra(EVENT_ID_KEYWORD);
-        final String organizerID = getIntent().getStringExtra(ORGANIZER_ID_KEYWORD);
         showProgressDialog();
-        mDatabase.child(Constants.EVENTS_KEYWORD).child(organizerID).child(eventID)
+        mDatabase.child(Constants.EVENTS_KEYWORD).child(eventID)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         myEvent = dataSnapshot.getValue(Event.class);
-                        setupView();
+                        if(myEvent != null)
+                            setupView();
+                        else {
+                            Toast.makeText(EventDetailsActivity.this,"Error Occurred!",Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
                     }
 
                     @Override

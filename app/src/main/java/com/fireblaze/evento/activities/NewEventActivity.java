@@ -80,7 +80,7 @@ public class NewEventActivity extends BaseActivity {
     }
 
     private void uploadNewEvent(String imagePath){
-        String key = mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).push().getKey();
+        String key = mDatabase.child(Constants.EVENTS_KEYWORD).push().getKey();
         Event event = new Event(key,getUid(),binding.inputName.getText().toString().trim(),
                 binding.inputDescription.getText().toString().trim(),
                 binding.inputCategory.getText().toString().trim(),
@@ -89,9 +89,9 @@ public class NewEventActivity extends BaseActivity {
                 "NA",
                 Double.parseDouble(binding.inputFees.getText().toString()),
                 Double.parseDouble(binding.inputPrize.getText().toString()),
-                binding.inputDuration.toString()
+                binding.inputDuration.getText().toString().trim()
         );
-        mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).child(key).setValue(event)
+        mDatabase.child(Constants.EVENTS_KEYWORD).child(key).setValue(event)
         .addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

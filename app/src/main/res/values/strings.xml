@@ -41,7 +41,7 @@
     <string name="title_activity_event_details">EventDetailsActivity</string>
     <string name="no_events">Nothing here yet! Coming soon</string>
     <string-array name="event_categories">
-        <item>All Events</item>
+        <item>All</item>
         <item>Coding</item>
         <item>Games</item>
     </string-array>

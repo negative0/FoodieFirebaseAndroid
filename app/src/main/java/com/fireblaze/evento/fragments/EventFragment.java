@@ -51,6 +51,15 @@ public class EventFragment extends Fragment {
         }
     }
 
+    public static EventFragment create(String uid, String category){
+        EventFragment fragment = new EventFragment();
+        Bundle b = new Bundle();
+        b.putString(ORGANIZER_ID_KEYWORD,uid);
+        b.putString(CATEGORY_KEYWORD,category);
+        fragment.setArguments(b);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,9 +74,13 @@ public class EventFragment extends Fragment {
             String categories[] = getResources().getStringArray(R.array.event_categories);
             Log.d(TAG, "onCreateView: category = "+ category);
             if(categories[0].equals(category))
-                query = mDatabase.child(Constants.EVENTS_KEYWORD).child(UID).limitToFirst(10);
-            else
-                query = mDatabase.child(Constants.EVENTS_KEYWORD).child(UID).orderByChild("category").equalTo(category);
+                query = mDatabase.child(Constants.EVENTS_KEYWORD).orderByChild("organizerID").equalTo(UID);
+            //query = mDatabase.child(Constants.EVENTS_KEYWORD).child(UID).limitToFirst(10);
+            else{
+                String queryString = category+"+"+UID;
+                query = mDatabase.child(Constants.EVENTS_KEYWORD).orderByChild("indexCategoryOrganizer").equalTo(queryString);
+            }
+                //query = mDatabase.child(Constants.EVENTS_KEYWORD).child(UID).orderByChild("category").equalTo(category);
 
 
             mFirebaseAdapter = new EventListFragmentAdapter(Event.class, R.layout.event_card,

@@ -10,25 +10,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fireblaze.evento.R;
-
-import java.util.List;
+import com.fireblaze.evento.activities.CategoryActivity;
 
 
 public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapter.MyViewHolder> {
-    int[] imageIDs;
-    List<String> items;
-    Context context;
+    private int[] imageIDs;
+    private String[]  items;
+    private Context context;
     public class MyViewHolder extends RecyclerView.ViewHolder{
         TextView txt_title;
         ImageView image;
+        View item;
         MyViewHolder(View v){
             super(v);
+            item = v;
             txt_title = (TextView) v.findViewById(R.id.category_item_title);
             image = (ImageView) v.findViewById(R.id.category_item_image);
         }
     }
 
-    public CategoryListAdapter(@NonNull Context context,@NonNull List<String> items, int[] imageIDs) {
+    public CategoryListAdapter(@NonNull Context context,@NonNull String[] items, int[] imageIDs) {
         this.items = items;
         this.context = context;
         this.imageIDs = imageIDs;
@@ -38,21 +39,28 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.category_item,parent,false);
+
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
 
-
-        holder.txt_title.setText(items.get(position));
+        holder.txt_title.setText(items[position]);
         holder.image.setImageResource(imageIDs[position]);
+        holder.item.setId(position);
+        holder.item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CategoryActivity.navigate(context,items[view.getId()]);
+            }
+        });
 
 
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return items.length;
     }
 }

@@ -36,9 +36,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class MainActivity extends BaseActivity {
 
@@ -219,17 +216,15 @@ public class MainActivity extends BaseActivity {
             throw new RuntimeException("Categories Recycler is unexpectedly null");
 
         int[] img = {
-                R.drawable.ic_coding,
                 R.drawable.ic_arts,
+                R.drawable.ic_coding,
                 R.drawable.ic_adventure
         };
-        List<String> names = new ArrayList<>();
-        names.add("Coding");
-        names.add("Arts");
-        names.add("Adventure");
+        //List<String> names = new ArrayList<>();
+        String categories[] =  getResources().getStringArray(R.array.event_categories);
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
 //        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-        CategoryListAdapter adapter = new CategoryListAdapter(MainActivity.this,names,img);
+        CategoryListAdapter adapter = new CategoryListAdapter(MainActivity.this,categories,img);
 
         categoriesRecycler.setLayoutManager(layoutManager);
         categoriesRecycler.setAdapter(adapter);
