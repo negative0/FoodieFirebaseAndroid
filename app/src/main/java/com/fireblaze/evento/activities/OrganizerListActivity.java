@@ -1,5 +1,7 @@
 package com.fireblaze.evento.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,14 +20,19 @@ import com.google.firebase.database.Query;
 
 public class OrganizerListActivity extends BaseActivity {
     public static final String TAG = OrganizerListActivity.class.getSimpleName();
-    ActivityOrganizerListBinding binding;
+    private ActivityOrganizerListBinding binding;
     private DatabaseReference mDatabase;
     private FirebaseRecyclerAdapter<ImageItem, ImageItemHolder> mAdapter;
     @Override
     public View getContainer() {
-        return null;
+        return binding.getRoot();
     }
 
+
+    public static void navigate(Context context){
+        Intent i = new Intent(context,OrganizerListActivity.class);
+        context.startActivity(i);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +46,7 @@ public class OrganizerListActivity extends BaseActivity {
         Query q = mDatabase.child(Constants.ORGANIZER_IMAGE);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         mAdapter = new FirebaseRecyclerAdapter<ImageItem, ImageItemHolder>(ImageItem.class,
-                R.layout.organizer_list_item1,ImageItemHolder.class,q) {
+                R.layout.organizer_list_item_horizontal,ImageItemHolder.class,q) {
             @Override
             protected void populateViewHolder(ImageItemHolder viewHolder, final ImageItem model, int position) {
                 viewHolder.bindToPost(OrganizerListActivity.this, model, new View.OnClickListener() {

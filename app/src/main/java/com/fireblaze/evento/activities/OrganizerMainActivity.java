@@ -80,7 +80,8 @@ public class OrganizerMainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case REQ_NEW_ACTIVITY:
-                Snackbar.make(getContainer(),"Event Added successfully",Snackbar.LENGTH_SHORT).show();
+                if(resultCode == RESULT_OK)
+                    Snackbar.make(getContainer(),"Event Added successfully",Snackbar.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -91,6 +92,9 @@ public class OrganizerMainActivity extends BaseActivity {
             case R.id.action_log_out:
                 logOut();
                 Log.d(TAG, "onOptionsItemSelected: logout success");
+                return true;
+            case R.id.action_user:
+                startActivity(new Intent(this,UserActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -103,6 +107,7 @@ public class OrganizerMainActivity extends BaseActivity {
 
 
     private void onNewEvent(){
-        startActivityForResult(new Intent(this,NewEventActivity.class),REQ_NEW_ACTIVITY);
+        NewEventActivity.navigate(this);
+        //startActivityForResult(new Intent(this,NewEventActivity.class),REQ_NEW_ACTIVITY);
     }
 }

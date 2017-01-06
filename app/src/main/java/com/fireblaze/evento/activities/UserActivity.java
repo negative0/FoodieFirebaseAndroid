@@ -124,7 +124,7 @@ public class UserActivity extends AppCompatPreferenceActivity {
 
         String key = preference.getKey();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null)
+        if(user != null && key != null)
             switch (key){
                 case "text_name":
                     preference.setSummary(user.getDisplayName());
@@ -249,7 +249,7 @@ public class UserActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+           // bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
         }
 
         @Override

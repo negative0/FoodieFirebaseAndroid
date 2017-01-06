@@ -2,6 +2,7 @@ package com.fireblaze.evento.viewholders;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.activities.EventDetailsActivity;
+import com.fireblaze.evento.activities.NewEventActivity;
 import com.fireblaze.evento.models.Event;
 
 /**
@@ -20,13 +22,14 @@ import com.fireblaze.evento.models.Event;
 public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener,
         MenuItem.OnMenuItemClickListener
 {
-
+    public static final String TAG = EventViewHolder.class.getSimpleName();
     private TextView title;
     private TextView subtitle;
     private ImageView imageView;
     private View itemView;
     private boolean isOrganizer;
     private Event myEvent;
+    private Context mContext;
     public EventViewHolder(View itemView) {
         super(itemView);
         imageView = (ImageView) itemView.findViewById(R.id.event_image);
@@ -52,6 +55,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
             itemView.setOnCreateContextMenuListener(this);
         }
         myEvent = event;
+        mContext = context;
 
     }
 
@@ -62,13 +66,24 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
     @Override
     public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
         contextMenu.setHeaderTitle("Select an action");
-        contextMenu.add(0,view.getId(),0,"Delete");
+        contextMenu.add("Edit");
+        contextMenu.add("Delete");
         contextMenu.getItem(0).setOnMenuItemClickListener(this);
+        contextMenu.getItem(1).setOnMenuItemClickListener(this);
+        Log.d(TAG, "onCreateContextMenu: tag=" + view.getTag());
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        Event.deleteEvent(myEvent.getEventID());
+        switch (item.getItemId()){
+            case 0:
+                NewEventActivity.navigate(mContext,myEvent.getEventID());
+                break;
+            case 1:
+                Event.deleteEvent(myEvent.getEventID());
+                break;
+
+        }
         return false;
     }
 }

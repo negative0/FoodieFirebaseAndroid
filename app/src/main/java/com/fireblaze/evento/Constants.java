@@ -15,4 +15,5 @@ public class Constants {
     public static final String NOTIFICATION_TOKENS = "NotificationTokens";
     public static final String BOOKED_EVENTS = "BookedEvents";
     public static final String USERS_KEYWORD = "users";
+    public static final String USER_ID = "userID";
 }

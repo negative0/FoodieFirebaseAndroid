@@ -93,7 +93,7 @@ public class EventFragment extends Fragment {
                     super.onItemRangeInserted(positionStart, itemCount);
                     Log.d(TAG, "onItemRangeInserted: itemCount:"+itemCount);
                     items += itemCount;
-                    if(items >= 0){
+                    if(items > 0){
                         showEvents(true);
                     }
                 }
@@ -102,7 +102,7 @@ public class EventFragment extends Fragment {
                 public void onItemRangeRemoved(int positionStart, int itemCount) {
                     super.onItemRangeRemoved(positionStart, itemCount);
                     items -= itemCount;
-                    if(itemCount <= 0)
+                    if(items <= 0)
                         showEvents(false);
                 }
             };

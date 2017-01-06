@@ -215,6 +215,7 @@ public class EventListActivity extends BaseActivity {
                 OrganizerDetailsActivity.navigate(this,organizer.getOrganizerID());
                 return true;
             case R.id.action_log_out:
+                logOut();
                 return true;
             case R.id.action_show_on_map:
                 MapsActivity.navigate(this,organizer.getLocation(),organizer.getName());

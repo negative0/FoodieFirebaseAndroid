@@ -35,18 +35,20 @@ public class BookedEventsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_booked_events_list);
-        getSupportActionBar().setTitle("Booked Events");
+        if(getSupportActionBar() != null)
+            getSupportActionBar().setTitle("Booked Events");
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        Query q = mDatabase.child(Constants.BOOKED_EVENTS).orderByChild("userID").equalTo(UserOperations.getUid());
+        Query q = mDatabase.child(Constants.BOOKED_EVENTS).orderByChild(Constants.USER_ID).equalTo(UserOperations.getUid());
         mAdapter = new FirebaseRecyclerAdapter<BookedEvent, BookedEventViewHolder>(BookedEvent.class,
                 R.layout.booked_event_item,BookedEventViewHolder.class, q) {
             @Override
             protected void populateViewHolder(final BookedEventViewHolder viewHolder, final BookedEvent model, int position) {
-                mDatabase.child(Constants.EVENTS_KEYWORD).child(model.getOrganizerID()).child(model.getEventID())
+                mDatabase.child(Constants.EVENTS_KEYWORD).child(model.getEventID())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Event event = dataSnapshot.getValue(Event.class);
+                                if(event != null)
                                 viewHolder.bindToPost(BookedEventsListActivity.this,model,event);
                             }
 
@@ -63,4 +65,5 @@ public class BookedEventsListActivity extends AppCompatActivity {
         binding.recycler.setAdapter(mAdapter);
 
     }
+
 }

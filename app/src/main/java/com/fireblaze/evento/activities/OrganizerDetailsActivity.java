@@ -1,14 +1,15 @@
 package com.fireblaze.evento.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
@@ -45,8 +46,8 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_organizer_details);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        setSupportActionBar(binding.toolbar);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         Bundle b = getIntent().getExtras();
         final String organizerID;
@@ -75,14 +76,7 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
 
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
     }
     private void setupView(Organizer o){
         organizerID = o.getOrganizerID();
@@ -93,6 +87,25 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
         binding.content.textBookmarkCount.setText(String.valueOf(o.getBookmarkCount()));
         binding.content.btnBecomeVolunteer.setOnClickListener(this);
         setupImages();
+        final String emailId = o.getEmail();
+        binding.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMail(emailId);
+            }
+        });
+    }
+
+    private void sendMail(String email){
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String []{email});
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(OrganizerDetailsActivity.this,"There is no email client installed!",Toast.LENGTH_SHORT).show();
+        }
     }
     private void setupImages(){
         String [] images = {
@@ -136,4 +149,5 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
             );
         }
     }
+
 }

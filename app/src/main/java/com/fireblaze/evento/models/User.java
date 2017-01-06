@@ -9,7 +9,7 @@ public class User {
     public String userID;
     public String name;
     public String accountType;
-    public boolean isVolunteer;
+    //public boolean isVolunteer;
     public boolean isOrganizer;
 
 
@@ -26,5 +26,21 @@ public class User {
         this.userID = userID;
         this.name = name;
         this.isOrganizer = isOrganizer;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public boolean isOrganizer() {
+        return isOrganizer;
     }
 }

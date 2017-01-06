@@ -196,7 +196,6 @@ public class Event {
     public void book(final String UID){
         //Book the event
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Constants.EVENTS_KEYWORD)
-                .child(organizerID)
                 .child(eventID);
         ref.runTransaction(new Transaction.Handler() {
             @Override

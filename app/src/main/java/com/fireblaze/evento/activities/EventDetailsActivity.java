@@ -43,6 +43,12 @@ public class EventDetailsActivity extends BaseActivity {
         getViews();
 
         final String eventID = getIntent().getStringExtra(EVENT_ID_KEYWORD);
+        if(eventID==null){
+            Toast.makeText(this,"Error",Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+
+        }
         showProgressDialog();
         mDatabase.child(Constants.EVENTS_KEYWORD).child(eventID)
                 .addValueEventListener(new ValueEventListener() {
@@ -72,6 +78,7 @@ public class EventDetailsActivity extends BaseActivity {
         binding.content.textName.setText(myEvent.getName());
         binding.content.textBookingCount.setText(String.valueOf(myEvent.getBookingsCount()));
         binding.content.textEventDetails.setText(myEvent.getDescription());
+        binding.content.textEventVenue.setText(myEvent.getVenue());
 
         toolbar.setTitle(myEvent.getName());
         binding.fab.setOnClickListener(new View.OnClickListener() {
