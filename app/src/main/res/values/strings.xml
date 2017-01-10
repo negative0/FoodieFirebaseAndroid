@@ -232,4 +232,5 @@
     <string name="upload_image">Upload Image</string>
     <string name="create_event">Create Event</string>
     <string name="select_image">Select Image</string>
+    <string name="edit_my_account">Edit my account</string>
 </resources>

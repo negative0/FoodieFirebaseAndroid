@@ -71,6 +71,12 @@ public class MainActivity extends BaseActivity {
         navHeader = binding.navView.getHeaderView(0);
     }
     private void setupNavHeader(){
+        navHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(MainActivity.this,UserActivity.class),REQ_SETTINGS);
+            }
+        });
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
             String name = user.getDisplayName();

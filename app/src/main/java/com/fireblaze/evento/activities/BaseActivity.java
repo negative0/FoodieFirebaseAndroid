@@ -29,7 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SnackBar
     public static int TYPE_WIFI = 1;
     public static int TYPE_MOBILE = 2;
     public static int TYPE_NOT_CONNECTED = 0;
-    private Snackbar internetStatusSnack;
+    private static Snackbar internetStatusSnack;
     private static boolean isConnected = false;
     private boolean exit = false;
 

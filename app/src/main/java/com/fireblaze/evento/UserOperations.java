@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fireblaze.evento.activities.LoginActivity;
 import com.fireblaze.evento.models.User;
@@ -31,14 +32,15 @@ public class UserOperations {
 
         if(user != null){
             final String UID = user.getUid();
-            mDatabase.child(Constants.EVENTS_KEYWORD).child(UID).addListenerForSingleValueEvent(
+            mDatabase.child(Constants.USERS_KEYWORD).child(UID).addListenerForSingleValueEvent(
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             User user1 = dataSnapshot.getValue(User.class);
                             if(user1 != null){
                                 performDeletion(context, user, user1.isOrganizer(), mDatabase);
-                            }
+                            } else
+                                Toast.makeText(context,"Failed!",Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -53,6 +55,10 @@ public class UserOperations {
     }
     private static void performDeletion(final Context context, final FirebaseUser user,final boolean isOrganizer,final DatabaseReference ref){
         final String UID = user.getUid();
+        if(isOrganizer){
+            ref.child(Constants.ORGANIZER_KEYWORD).child(UID).setValue(null);
+            ref.child(Constants.ORGANIZER_IMAGE).child(UID).setValue(null);
+        }
         user.delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -71,10 +77,6 @@ public class UserOperations {
                                             context.startActivity(intent);
                                         }
                                     });
-                            if(isOrganizer){
-                                ref.child(Constants.ORGANIZER_KEYWORD).child(UID).setValue(null);
-                                ref.child(Constants.ORGANIZER_IMAGE).child(UID).setValue(null);
-                            }
                         }
                     }
                 });

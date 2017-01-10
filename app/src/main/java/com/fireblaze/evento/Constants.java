@@ -16,4 +16,5 @@ public class Constants {
     public static final String BOOKED_EVENTS = "BookedEvents";
     public static final String USERS_KEYWORD = "users";
     public static final String USER_ID = "userID";
+    public static final String TEAM_KEYWORD = "Team";
 }

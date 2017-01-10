@@ -1,9 +1,11 @@
 package com.fireblaze.evento.activities;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.util.Patterns;
@@ -21,8 +23,11 @@ import com.fireblaze.evento.models.ImageItem;
 import com.fireblaze.evento.models.Location;
 import com.fireblaze.evento.models.Organizer;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +40,35 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
     private Location selectedLocation = null;
     private String imagePath;
 
+    public static final String IS_EDIT = "isEdit";
+    public static final String ORGANZIER_ID = "organizerID";
+
     public static final int REQ_GET_LOCATION = 1001;
     private final int REQ_UPLOAD_IMAGE = 4;
 
+    public static void navigate(Context context,String organizerID , boolean isEdit){
+        if(context == null){
+            return;
+        }
+        Intent i = new Intent(context,NewOrganizerActivity.class);
+        if(organizerID != null && isEdit) {
+            i.putExtra(IS_EDIT, true);
+            i.putExtra(ORGANZIER_ID, organizerID);
+        } else {
+            Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        context.startActivity(i);
+
+    }
+    public static void navigate(Context context){
+        if(context == null){
+            return;
+        }
+        Intent i = new Intent(context, NewOrganizerActivity.class);
+        context.startActivity(i);
+
+    }
 
     @Override
     public View getContainer() {
@@ -57,6 +88,11 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
 
         setSupportActionBar(binding.toolbar);
         getViews();
+
+        if(getIntent().getBooleanExtra(IS_EDIT,false)){
+            String organizerID = getIntent().getStringExtra(ORGANZIER_ID);
+            editOrganizer(organizerID);
+        }
 
         //Set onClickListeners
         binding.btnSubmit.setOnClickListener(this);
@@ -86,6 +122,38 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
         startActivityForResult(i,REQ_UPLOAD_IMAGE);
 //        Intent galleryIntent = new  Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 //        startActivityForResult(galleryIntent,REQ_SELECT_IMAGE);
+    }
+
+    private void editOrganizer(@NonNull String organizerID){
+        showProgressDialog();
+
+        mDatabase.child(Constants.ORGANIZER_KEYWORD).child(organizerID)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Organizer organizer = dataSnapshot.getValue(Organizer.class);
+                        if(organizer != null){
+                            setupViewForEdit(organizer);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+        hideProgressDialog();
+    }
+
+    private void setupViewForEdit(Organizer o){
+        binding.inputName.setText(o.getName());
+        binding.inputEmail.setText(o.getEmail());
+        binding.inputPhone.setText(o.getPhone());
+        binding.inputWebsite.setText(o.getWebsite());
+        imagePath = o.getImageURL();
+        selectedLocation = o.getLocation();
+
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -143,9 +211,6 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
         if(!validateWebsite())
             return;
 
-        //Upload image to Firebase Storage and also call uploadNewOrganizer when image is successfully uploaded
-//        if(isStoragePermissionGranted())
-//            uploadImage(getImageUri(this, mainImageBitmap));
         uploadNewOrganizer(imagePath);
 
     }

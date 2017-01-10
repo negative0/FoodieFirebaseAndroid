@@ -115,7 +115,7 @@ public class EventDetailsActivity extends BaseActivity {
     }
     @Override
     public View getContainer() {
-        return null;
+        return binding.getRoot();
     }
 
     @Override

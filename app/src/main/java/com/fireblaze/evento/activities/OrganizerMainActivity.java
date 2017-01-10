@@ -96,6 +96,8 @@ public class OrganizerMainActivity extends BaseActivity {
             case R.id.action_user:
                 startActivity(new Intent(this,UserActivity.class));
                 return true;
+            case R.id.action_edit_organizer_account:
+                NewOrganizerActivity.navigate(this,getUid(),true);
         }
         return super.onOptionsItemSelected(item);
     }

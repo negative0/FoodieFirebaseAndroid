@@ -149,10 +149,12 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         super.onStart();
         //Check Auth
         Log.d(TAG,"onStart:getCurrentUser="+mAuth.getCurrentUser());
+        showProgressDialog();
         if(mAuth.getCurrentUser() != null){
             onAuthSuccess(mAuth.getCurrentUser(),true);
         }
         mAuth.addAuthStateListener(mAuthListener);
+        hideProgressDialog();
     }
 
     @Override
@@ -199,7 +201,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         }
         Organizer organizer = new Organizer(getUid());
         mDatabase.child(Constants.ORGANIZER_KEYWORD).child(getUid()).setValue(organizer);
-        startActivity(new Intent(LoginActivity.this,NewOrganizerActivity.class));
+        NewOrganizerActivity.navigate(LoginActivity.this);
         finish();
     }
     private void loginAsOrganizer(){
