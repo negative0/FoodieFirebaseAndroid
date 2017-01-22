@@ -56,6 +56,7 @@ public class SignUpFragment extends SignInBaseFragment {
         return rootView;
     }
 
+
     private void isAOrganizer(){
         if(!isOrganizer){
             isOrganizer = true;

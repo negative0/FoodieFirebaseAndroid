@@ -16,7 +16,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -34,12 +37,23 @@ public class Event {
 
     private double participationFees;
     private double prizeAmount;
-    //private Date dateCreated;
+    //private CustomDate dateCreated;
     private String duration;
     private Map<String, String> bookings = new HashMap<>();
 
     private int bookingsCount;
+    private long dateScheduleStartTimestamp;
 
+    public long getDateScheduleEndTimestamp() {
+        return dateScheduleEndTimestamp;
+    }
+
+    public void setDateScheduleEndTimestamp(long dateScheduleEndTimestamp) {
+        this.dateScheduleEndTimestamp = dateScheduleEndTimestamp;
+    }
+
+    private long dateScheduleEndTimestamp;
+    private long dateCreatedTimestamp;
     public String getEventID() {
         return eventID;
     }
@@ -167,14 +181,15 @@ public class Event {
         this.name = name;
         this.description = description;
         this.category = category;
-
         this.image = image;
         this.venue = venue;
         this.schedule = schedule;
         this.participationFees = participationFees;
         this.prizeAmount = prizeAmount;
         this.duration = duration;
+        dateCreatedTimestamp = System.currentTimeMillis();
     }
+
     public Event() {
         //Important
     }
@@ -244,7 +259,28 @@ public class Event {
         });
     }
 
+    public long getDateScheduleStartTimestamp() {
+        return dateScheduleStartTimestamp;
+    }
+
+    public void setDateScheduleStartTimestamp(long dateScheduleStartTimestamp) {
+        this.dateScheduleStartTimestamp = dateScheduleStartTimestamp;
+    }
+
+    public long getDateCreatedTimestamp() {
+        return dateCreatedTimestamp;
+    }
+
+    public void setDateCreatedTimestamp(long dateCreatedTimestamp) {
+        this.dateCreatedTimestamp = dateCreatedTimestamp;
+    }
+
     public String getIndexCategoryOrganizer() {
         return indexCategoryOrganizer;
+    }
+
+    public String getCreatedDateString(){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy | HH:mm", Locale.ENGLISH);
+        return simpleDateFormat.format(new Date(dateCreatedTimestamp));
     }
 }

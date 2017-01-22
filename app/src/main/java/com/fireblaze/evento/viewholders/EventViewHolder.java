@@ -2,7 +2,6 @@ package com.fireblaze.evento.viewholders;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.fireblaze.evento.R;
+import com.fireblaze.evento.activities.EventAttendeesListActivity;
 import com.fireblaze.evento.activities.EventDetailsActivity;
 import com.fireblaze.evento.activities.NewEventActivity;
 import com.fireblaze.evento.models.Event;
@@ -66,11 +66,13 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
     @Override
     public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
         contextMenu.setHeaderTitle("Select an action");
-        contextMenu.add("Edit");
-        contextMenu.add("Delete");
+        contextMenu.add(0,0,0,"Edit");
+        contextMenu.add(1,1,1,"Delete");
+        contextMenu.add(2,2,2,"View Attendees");
         contextMenu.getItem(0).setOnMenuItemClickListener(this);
         contextMenu.getItem(1).setOnMenuItemClickListener(this);
-        Log.d(TAG, "onCreateContextMenu: tag=" + view.getTag());
+        contextMenu.getItem(2).setOnMenuItemClickListener(this);
+
     }
 
     @Override
@@ -81,6 +83,9 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
                 break;
             case 1:
                 Event.deleteEvent(myEvent.getEventID());
+                break;
+            case 2:
+                EventAttendeesListActivity.navigate(mContext,myEvent.getBookings());
                 break;
 
         }

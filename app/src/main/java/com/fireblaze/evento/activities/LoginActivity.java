@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -68,7 +67,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
 
     @Override
     public View getContainer() {
-        return findViewById(R.id.container);
+        return findViewById(R.id.viewPager);
     }
 
     @Override
@@ -112,8 +111,8 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mViewPager.setAdapter(mFragmentPagerAdapter);
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.setupWithViewPager(mViewPager);
+//        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+//        tabs.setupWithViewPager(mViewPager);
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -133,7 +132,10 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null){
                     //User Signed in
-                    onAuthSuccess(user,true);
+                    if (user.getProviderData().size()>1){
+                        onAuthSuccess(user,false,true);
+                    } else
+                        onAuthSuccess(user,false,false);
                     Log.d(TAG,"onAuthChanged:signed_In" + user.getUid());
                 } else {
                     Log.d(TAG,"onAuthChanged:signed_out");
@@ -151,7 +153,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         Log.d(TAG,"onStart:getCurrentUser="+mAuth.getCurrentUser());
         showProgressDialog();
         if(mAuth.getCurrentUser() != null){
-            onAuthSuccess(mAuth.getCurrentUser(),true);
+            onAuthSuccess(mAuth.getCurrentUser(),true,false);
         }
         mAuth.addAuthStateListener(mAuthListener);
         hideProgressDialog();
@@ -165,19 +167,38 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         }
     }
 
-    private void onAuthSuccess(FirebaseUser user,boolean isLogin){
-        if(!isLogin){
-            String username = usernameFromEmail(user.getEmail());
-           
-            
-            writeNewUser(user.getUid(),username,isOrganizer);
-            if(isOrganizer) signUpAsOrganizer(); else loginAsUser();
-        } else {
-            mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void onAuthSuccess(final FirebaseUser firebaseUser, boolean isLogin, boolean isGoogle){
+        if(isGoogle){
+            mDatabase.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
-                    if(user.isOrganizer) loginAsOrganizer(); else loginAsUser();
+                    if(user != null)
+                        if(user.isOrganizer) loginAsOrganizer(); else loginAsUser();
+                    else {
+                        writeNewUser(firebaseUser.getUid(), firebaseUser.getEmail(), isOrganizer);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        } else if(!isLogin){
+
+            writeNewUser(firebaseUser.getUid(),firebaseUser.getEmail(),isOrganizer);
+            if(isOrganizer) signUpAsOrganizer(); else loginAsUser();
+        }
+        else {
+            mDatabase.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if(user != null)
+                        if(user.isOrganizer) loginAsOrganizer(); else loginAsUser();
+
                 }
 
                 @Override
@@ -191,7 +212,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         if(token != null){
             Log.d(TAG, "onAuthSuccess: Token set");
             NotificationToken notificationToken = new NotificationToken(token);
-            mDatabase.child(Constants.NOTIFICATION_TOKENS).child(user.getUid()).setValue(notificationToken);
+            mDatabase.child(Constants.NOTIFICATION_TOKENS).child(firebaseUser.getUid()).setValue(notificationToken);
         }
 
     }
@@ -239,6 +260,34 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
         finish();
     }
     private void loginAsUser(){
+        mDatabase.child(Constants.USERS_KEYWORD).child(getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.isValid()){
+                    startMainActivity();
+                } else {
+                    startNewUserActivity();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+                Toast.makeText(LoginActivity.this,"Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //finish();
+    }
+    private void startNewUserActivity(){
+        Intent intent = new Intent(this,NewUserActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
+    private void startMainActivity(){
         Intent intent = new Intent(this,MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -265,7 +314,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                         hideProgressDialog();
 
                         if(task.isSuccessful()){
-                            onAuthSuccess(task.getResult().getUser(),true);
+                            onAuthSuccess(task.getResult().getUser(),true,false);
                         } else {
                             Toast.makeText(LoginActivity.this, "Sign In Failed",
                                     Toast.LENGTH_SHORT).show();
@@ -274,8 +323,8 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                 });
     }
 
-    private void writeNewUser(String userId, String userName,boolean isOrganizer){
-        User user = new User(userId,userName,isOrganizer);
+    private void writeNewUser(String userId, String emailID,boolean isOrganizer){
+        User user = new User(userId,emailID,isOrganizer);
 
         mDatabase.child("users").child(userId).setValue(user);
     }
@@ -292,7 +341,7 @@ public class LoginActivity extends BaseActivity implements LoginFragment.onLogin
                         hideProgressDialog();
 
                         if(task.isSuccessful()){
-                            onAuthSuccess(task.getResult().getUser(),false);
+                            onAuthSuccess(task.getResult().getUser(),false,false);
                         } else {
                             Toast.makeText(LoginActivity.this, "Sign Up Failed",
                                     Toast.LENGTH_SHORT).show();

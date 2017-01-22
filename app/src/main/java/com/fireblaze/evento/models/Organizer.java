@@ -19,6 +19,7 @@ public class Organizer {
     private String imageURL;
     private String website;
     private boolean isValid = false;
+    private long dateCreated;
 
     public boolean getIsValid() {
         return isValid;
@@ -139,6 +140,7 @@ public class Organizer {
         this.location = location;
         this.imageURL = imageURL;
         this.isValid = true;
+        dateCreated = System.currentTimeMillis();
     }
 
     public Organizer() {

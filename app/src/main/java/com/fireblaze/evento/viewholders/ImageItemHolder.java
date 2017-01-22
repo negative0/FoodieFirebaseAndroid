@@ -29,5 +29,7 @@ public class ImageItemHolder extends RecyclerView.ViewHolder {
         Glide.with(context).load(imageItem.getResourceURL()).error(R.drawable.logo_black).into(imageRes);
         item.setOnClickListener(clickListener);
         title.setText(imageItem.getName());
+
+
     }
 }

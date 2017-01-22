@@ -50,7 +50,7 @@
                             <ImageView
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
-                                android:src="@drawable/ic_bookmark_white_24dp"/>
+                                android:src="@drawable/ic_star_rate_black_18dp"/>
                             <TextView
                                 android:id="@+id/textBookingCount"
                                 android:layout_gravity="center_horizontal"

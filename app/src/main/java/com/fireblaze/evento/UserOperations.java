@@ -98,6 +98,28 @@ public class UserOperations {
 
         }
     }
+    public static void updateName(String name){
+        if(name == null || name.isEmpty()){
+            return;
+        }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null) {
+            UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(name)
+                    .build();
+            user.updateProfile(request);
 
 
+        }
+    }
+
+    public static String getEmailId(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String email;
+        if(user != null){
+            email = user.getEmail();
+            return email;
+        }
+        return null;
+    }
 }

@@ -229,7 +229,6 @@ public class MainActivity extends BaseActivity {
         //List<String> names = new ArrayList<>();
         String categories[] =  getResources().getStringArray(R.array.event_categories);
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
-//        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         CategoryListAdapter adapter = new CategoryListAdapter(MainActivity.this,categories,img);
 
         categoriesRecycler.setLayoutManager(layoutManager);

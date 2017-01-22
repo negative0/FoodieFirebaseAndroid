@@ -39,6 +39,8 @@ public class UploadImageActivity extends BaseActivity implements View.OnClickLis
     private final int REQ_SELECT_IMAGE = 2;
     public static final String UPLOAD_PATH_KEYWORD = "uploadPath";
     public static final String DOWNLOAD_URL_RESULT = "downloadUrl";
+    public static final String REQ_UPLOAD_IMAGE = "uploadImage";
+
     String path;
     private boolean uploadUserImage = false;
 
@@ -74,6 +76,7 @@ public class UploadImageActivity extends BaseActivity implements View.OnClickLis
         else {
             path = b.getString(UPLOAD_PATH_KEYWORD, "");
         }
+        binding.btnUploadImage.setEnabled(false);
 
         binding.btnSelectImage.setOnClickListener(this);
         binding.btnUploadImage.setOnClickListener(this);
@@ -159,6 +162,7 @@ public class UploadImageActivity extends BaseActivity implements View.OnClickLis
                         try {
                             mainImageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
                             binding.image.setImageBitmap(mainImageBitmap);
+                            binding.btnUploadImage.setEnabled(true);
                         }catch (IOException e){
                             e.printStackTrace();
                         }

@@ -183,7 +183,7 @@ public class SendNotificationActivity extends BaseActivity implements AdapterVie
             if(token.isReceiveNotifications())
                 array.put(token.getToken());
         }
-        if(array.length() <= 0) {
+        if(array.length() >= 0) {
             NotifyThread nt = new NotifyThread(array);
             Thread t = new Thread(nt);
             t.start();
@@ -197,12 +197,8 @@ public class SendNotificationActivity extends BaseActivity implements AdapterVie
 
     public void pushFCMNotification(JSONArray recipients, String title, String content) throws Exception {
 
-//        ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-//        Bundle bundle = ai.metaData;
-        String authKey = "AIzaSyCmhrSM9A8BOZvrRX9EwdRKOPWYHWwFf4A"; // You FCM AUTH key
-        //String authKey = bundle.getString("myServerKey");
 
-        Toast.makeText(SendNotificationActivity.this,"Error",Toast.LENGTH_SHORT).show();
+        String authKey = "AIzaSyCmhrSM9A8BOZvrRX9EwdRKOPWYHWwFf4A"; // You FCM AUTH key
 
 
 

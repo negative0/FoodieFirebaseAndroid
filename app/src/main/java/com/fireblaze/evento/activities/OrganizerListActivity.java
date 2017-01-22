@@ -38,6 +38,10 @@ public class OrganizerListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_organizer_list);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        if(getSupportActionBar()!= null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("All organizers");
+        }
         setupView();
 
 

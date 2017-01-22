@@ -1,9 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <ImageView
+        android:layout_height="150dp"
+        app:srcCompat="@drawable/trends"
+        android:id="@+id/imageView"
+        tools:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:scaleType="centerInside"
+        android:layout_width="match_parent" />
+
+    <TextView
+        android:text="EventO"
+        android:layout_marginTop="20dp"
+        android:textSize="30sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal" />
+    <TextView
+        android:textAlignment="center"
+
+        android:text="The Best Event Management App \n...Ever Created"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+    <ProgressBar
+        android:layout_marginTop="60dp"
+        android:layout_gravity="center_horizontal"
+
+        style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/sign_in"/>
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2" />
 </LinearLayout>

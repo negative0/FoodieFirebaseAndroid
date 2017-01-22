@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.databinding.ActivityEventDetailsBinding;
@@ -79,9 +80,12 @@ public class EventDetailsActivity extends BaseActivity {
         binding.content.textBookingCount.setText(String.valueOf(myEvent.getBookingsCount()));
         binding.content.textEventDetails.setText(myEvent.getDescription());
         binding.content.textEventVenue.setText(myEvent.getVenue());
+        binding.content.textCreatedDate.setText(myEvent.getCreatedDateString());
+        binding.content.textCategory.setText(myEvent.getCategory());
+        Glide.with(this).load(myEvent.getImage()).into(binding.content.mainImage);
 
-        toolbar.setTitle(myEvent.getName());
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+        toolbar.setTitle("");
+        binding.content.btnBookNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String bookedStatus;

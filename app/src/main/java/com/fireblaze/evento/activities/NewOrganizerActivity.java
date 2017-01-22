@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.SelectLocation;
+import com.fireblaze.evento.UserOperations;
 import com.fireblaze.evento.databinding.ActivityNewOrganizerBinding;
 import com.fireblaze.evento.models.ImageItem;
 import com.fireblaze.evento.models.Location;
@@ -41,7 +42,7 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
     private String imagePath;
 
     public static final String IS_EDIT = "isEdit";
-    public static final String ORGANZIER_ID = "organizerID";
+    public static final String ORGANIZER_ID = "organizerID";
 
     public static final int REQ_GET_LOCATION = 1001;
     private final int REQ_UPLOAD_IMAGE = 4;
@@ -53,7 +54,7 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
         Intent i = new Intent(context,NewOrganizerActivity.class);
         if(organizerID != null && isEdit) {
             i.putExtra(IS_EDIT, true);
-            i.putExtra(ORGANZIER_ID, organizerID);
+            i.putExtra(ORGANIZER_ID, organizerID);
         } else {
             Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show();
             return;
@@ -90,9 +91,13 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
         getViews();
 
         if(getIntent().getBooleanExtra(IS_EDIT,false)){
-            String organizerID = getIntent().getStringExtra(ORGANZIER_ID);
+            String organizerID = getIntent().getStringExtra(ORGANIZER_ID);
             editOrganizer(organizerID);
         }
+        // Set userEmail in email field
+        String email = UserOperations.getEmailId();
+        if(email != null)
+            binding.inputEmail.setText(email);
 
         //Set onClickListeners
         binding.btnSubmit.setOnClickListener(this);
@@ -152,7 +157,6 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
         binding.inputWebsite.setText(o.getWebsite());
         imagePath = o.getImageURL();
         selectedLocation = o.getLocation();
-
 
     }
     @Override
