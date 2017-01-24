@@ -3,6 +3,7 @@ package com.fireblaze.evento.activities;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -44,6 +45,8 @@ public class NewUserActivity extends BaseActivity {
             return;
         if(!validatePhone())
             return;
+        if(!validateCollege())
+            return;
 
         writeNewUser();
         startActivity(new Intent(NewUserActivity.this, MainActivity.class));
@@ -51,26 +54,37 @@ public class NewUserActivity extends BaseActivity {
 
     }
     private boolean validateCollege(){
-        String college = binding.textCollege.toString().trim();
+        String college = binding.textCollege.getText().toString().trim();
         if(college.isEmpty()){
             binding.textInputCollege.setError("Please enter a college name");
             requestFocus(binding.textCollege);
             return false;
+        } else if(college.length() <5) {
+            binding.textInputCollege.setError("Please enter atleast 5 characters");
+            requestFocus(binding.textCollege);
+            return false;
+        } else {
+            binding.textInputCollege.setErrorEnabled(false);
         }
         return true;
     }
     private boolean validatePhone(){
-        String phone = binding.textPhone.toString().trim();
+        String phone = binding.textPhone.getText().toString().trim();
 
         if(phone.isEmpty()){
             binding.textInputPhone.setError("Please enter a phone number");
             requestFocus(binding.textPhone);
             return false;
-        } else if(phone.length() != 10){
-            binding.textInputPhone.setError("Please enter a number with exactly 10 digits");
+        } else if(!Patterns.PHONE.matcher(phone).matches()){
+            binding.textInputPhone.setError("Please enter a valid number");
             requestFocus(binding.textPhone);
             return false;
-        } else {
+        }else if(phone.length() != 10){
+            binding.textInputPhone.setError("Please enter exactly 10 digits");
+            requestFocus(binding.textPhone);
+            return false;
+        }
+        else {
             binding.textInputPhone.setErrorEnabled(false);
         }
         return true;
