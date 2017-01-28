@@ -8,6 +8,7 @@ import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.fireblaze.evento.Constants;
@@ -36,8 +37,14 @@ public class QRCodeScanActivity extends AppCompatActivity implements ZXingScanne
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         super.onCreate(savedInstanceState);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Scan a Student's QR Code");
+        }
+
         mScannerView = new ZXingScannerView(this);
         mScannerView.setResultHandler(this);
         List<BarcodeFormat> list = new ArrayList<>();
@@ -126,5 +133,15 @@ public class QRCodeScanActivity extends AppCompatActivity implements ZXingScanne
     protected void onStop() {
         super.onStop();
         mScannerView.stopCamera();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
