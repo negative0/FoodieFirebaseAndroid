@@ -32,7 +32,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
 
     }
-    public void bindToPost(final Context context, User user){
+    public void bindToPost(final Context context, User user, boolean isPresent){
         if(user== null){
             throw new IllegalArgumentException("User invalid");
         }
@@ -42,7 +42,10 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         email.setText(user.getEmailID());
         phone.setText(user.getPhone());
         college.setText(user.getCollegeName());
+        if(!isPresent)
+            imageEmail.setVisibility(View.GONE);
         imageEmail.setOnClickListener(this);
+
         imageCall.setOnClickListener(this);
     }
 

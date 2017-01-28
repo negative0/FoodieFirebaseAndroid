@@ -82,6 +82,12 @@ public class EventDetailsActivity extends BaseActivity {
         binding.content.textEventVenue.setText(myEvent.getVenue());
         binding.content.textCreatedDate.setText(myEvent.getCreatedDateString());
         binding.content.textCategory.setText(myEvent.getCategory());
+        String fees = "" + myEvent.getParticipationFees();
+        String prize = "Prizes:\\nFirst prize:" + myEvent.getPrizeAmount();
+        binding.content.textFees.setText(fees);
+        binding.content.textPrize.setText(prize);
+
+
         Glide.with(this).load(myEvent.getImage()).into(binding.content.mainImage);
 
         toolbar.setTitle("");

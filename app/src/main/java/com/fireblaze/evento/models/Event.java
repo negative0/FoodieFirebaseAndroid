@@ -40,8 +40,9 @@ public class Event {
     //private CustomDate dateCreated;
     private String duration;
     private Map<String, String> bookings = new HashMap<>();
-
-    private int bookingsCount;
+    private Map<String, Boolean> presentMap = new HashMap<>();
+    private int presentCount=0;
+    private int bookingsCount=0;
     private long dateScheduleStartTimestamp;
 
     public long getDateScheduleEndTimestamp() {
@@ -54,6 +55,15 @@ public class Event {
 
     private long dateScheduleEndTimestamp;
     private long dateCreatedTimestamp;
+
+    public Map<String, Boolean> getPresentMap() {
+        return presentMap;
+    }
+
+    public int getPresentCount() {
+        return presentCount;
+    }
+
     public String getEventID() {
         return eventID;
     }
@@ -279,8 +289,47 @@ public class Event {
         return indexCategoryOrganizer;
     }
 
+    @Exclude
     public String getCreatedDateString(){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy | HH:mm", Locale.ENGLISH);
         return simpleDateFormat.format(new Date(dateCreatedTimestamp));
+    }
+
+    @Exclude
+    public void present(String uid){
+        if(bookings.containsKey(uid)){
+            if(!presentMap.containsKey(uid)){
+                presentCount+=1;
+                presentMap.put(uid,true);
+            } else {
+                presentCount -=1;
+                presentMap.remove(uid);
+            }
+        }
+    }
+    @Exclude
+    public static void markPresent(String eventID, final String uid){
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ref.child(Constants.EVENTS_KEYWORD).child(eventID).runTransaction(
+                new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+                        Event event = mutableData.getValue(Event.class);
+                        if(event == null){
+                            return Transaction.success(mutableData);
+                        }
+                        event.present(uid);
+                        mutableData.setValue(event);
+                        return Transaction.success(mutableData);
+
+                    }
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                    }
+                }
+        );
+
     }
 }

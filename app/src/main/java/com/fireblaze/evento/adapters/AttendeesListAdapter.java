@@ -27,11 +27,13 @@ public class AttendeesListAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     private String[] keys;
     private Context context;
+    private boolean[] presentArray;
 
-    public AttendeesListAdapter(@NonNull Context context, String[] items) {
+    public AttendeesListAdapter(@NonNull Context context, String[] items, boolean[] presentArray) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         keys = items;
         this.context = context;
+        this.presentArray = presentArray;
 
     }
 
@@ -44,13 +46,14 @@ public class AttendeesListAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     @Override
     public void onBindViewHolder(final UserViewHolder holder, int position) {
+        final int p = position;
         mDatabase.child(Constants.USERS_KEYWORD).child(keys[position])
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
                         if(user != null){
-                            holder.bindToPost(context,user);
+                            holder.bindToPost(context,user,presentArray[p]);
                         }
                     }
 

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -48,6 +49,11 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
         binding = DataBindingUtil.setContentView(this,R.layout.activity_organizer_details);
 
         setSupportActionBar(binding.toolbar);
+        if(getSupportActionBar() != null){
+            binding.toolbar.setTitle("");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
         mDatabase = FirebaseDatabase.getInstance().getReference();
         Bundle b = getIntent().getExtras();
         final String organizerID;
@@ -150,4 +156,12 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

@@ -13,6 +13,7 @@ import com.fireblaze.evento.R;
 import com.fireblaze.evento.activities.EventAttendeesListActivity;
 import com.fireblaze.evento.activities.EventDetailsActivity;
 import com.fireblaze.evento.activities.NewEventActivity;
+import com.fireblaze.evento.activities.QRCodeScanActivity;
 import com.fireblaze.evento.models.Event;
 
 /**
@@ -69,9 +70,11 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
         contextMenu.add(0,0,0,"Edit");
         contextMenu.add(1,1,1,"Delete");
         contextMenu.add(2,2,2,"View Attendees");
+        contextMenu.add(3,3,3,"Scan QR Code");
         contextMenu.getItem(0).setOnMenuItemClickListener(this);
         contextMenu.getItem(1).setOnMenuItemClickListener(this);
         contextMenu.getItem(2).setOnMenuItemClickListener(this);
+        contextMenu.getItem(3).setOnMenuItemClickListener(this);
 
     }
 
@@ -85,7 +88,11 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
                 Event.deleteEvent(myEvent.getEventID());
                 break;
             case 2:
-                EventAttendeesListActivity.navigate(mContext,myEvent.getBookings());
+                EventAttendeesListActivity.navigate(mContext,myEvent.getBookings(),myEvent.getPresentMap());
+                break;
+            case 3:
+                QRCodeScanActivity.navigate(mContext,myEvent.getEventID());
+
                 break;
 
         }

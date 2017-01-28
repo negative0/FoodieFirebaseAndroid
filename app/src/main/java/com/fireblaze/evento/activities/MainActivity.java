@@ -250,7 +250,9 @@ public class MainActivity extends BaseActivity {
             case R.id.action_log_out:
                 logOut();
                 return true;
-            case R.id.action_add_data:
+            case R.id.action_generate_qr_code:
+                QRCodeActivity.navigate(this,getUid());
+                //startActivity(new Intent(this,QRCodeActivity.class));
                 //addData();
                 return true;
             case R.id.action_user:

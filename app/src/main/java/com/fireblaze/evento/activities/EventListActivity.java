@@ -60,7 +60,7 @@ public class EventListActivity extends BaseActivity {
         intent.putExtras(b);
         context.startActivity(intent);
     }
-    void getViews(){
+    private void getViews(){
         tabs = (TabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.viewpager_events);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
