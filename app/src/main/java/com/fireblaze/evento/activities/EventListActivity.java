@@ -60,7 +60,7 @@ public class EventListActivity extends BaseActivity {
         intent.putExtras(b);
         context.startActivity(intent);
     }
-    void getViews(){
+    private void getViews(){
         tabs = (TabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.viewpager_events);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -127,17 +127,9 @@ public class EventListActivity extends BaseActivity {
         if(item.bookmarks.containsKey(getUid())){
             handleBookmark(true);
         }
-        final Bundle bundle = new Bundle();
-        bundle.putString(EventFragment.ORGANIZER_ID_KEYWORD,organizer.getOrganizerID());
         fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            private Fragment f[] = {
-                    new EventFragment(),
-                    new EventFragment(),
-                    new EventFragment()
 
-            };
-
-            private String titles[] =
+            private final String titles[] =
                     getResources().getStringArray(R.array.event_categories);
 
             @Override
@@ -147,16 +139,12 @@ public class EventListActivity extends BaseActivity {
 
             @Override
             public Fragment getItem(int position) {
-                Log.d(TAG, "getItem: position: "+position+" title: "+titles[position]);
-                bundle.putString(EventFragment.CATEGORY_KEYWORD,titles[position]);
-                Log.d(TAG, "getItem: title"+bundle.getString(EventFragment.CATEGORY_KEYWORD));
-                f[position].setArguments(bundle);
-                return f[position];
+                return EventFragment.create(organizer.getOrganizerID(),titles[position]);
             }
 
             @Override
             public int getCount() {
-                return f.length;
+                return titles.length;
             }
         };
         mViewPager.setAdapter(fragmentPagerAdapter);
@@ -227,6 +215,7 @@ public class EventListActivity extends BaseActivity {
                 OrganizerDetailsActivity.navigate(this,organizer.getOrganizerID());
                 return true;
             case R.id.action_log_out:
+                logOut();
                 return true;
             case R.id.action_show_on_map:
                 MapsActivity.navigate(this,organizer.getLocation(),organizer.getName());

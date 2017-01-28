@@ -2,16 +2,19 @@ package com.fireblaze.evento.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
+import com.fireblaze.evento.databinding.ActivityEventDetailsBinding;
 import com.fireblaze.evento.models.Event;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,32 +26,42 @@ public class EventDetailsActivity extends BaseActivity {
 
     public static final String EVENT_ID_KEYWORD = "EVENT_ID";
     public static final String ORGANIZER_ID_KEYWORD = "ORGANIZER_ID";
-    private DatabaseReference mBookedEventsDatabase, mDatabase;
-    private TextView mDetailsTextView;
+    private DatabaseReference mDatabase;
     private Event myEvent;
+    private Toolbar toolbar;
+    ActivityEventDetailsBinding binding;
 
 
-    public static void navigate(@NonNull Context activity, @NonNull String eventID, @NonNull String organizerID){
+    public static void navigate(@NonNull Context activity, @NonNull String eventID){
         Intent i = new Intent(activity,EventDetailsActivity.class);
         i.putExtra(EVENT_ID_KEYWORD,eventID);
-        i.putExtra(ORGANIZER_ID_KEYWORD,organizerID);
         activity.startActivity(i);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_details);
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_event_details);
         getViews();
 
         final String eventID = getIntent().getStringExtra(EVENT_ID_KEYWORD);
-        final String organizerID = getIntent().getStringExtra(ORGANIZER_ID_KEYWORD);
+        if(eventID==null){
+            Toast.makeText(this,"Error",Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+
+        }
         showProgressDialog();
-        mDatabase.child(Constants.EVENTS_KEYWORD).child(organizerID).child(eventID)
+        mDatabase.child(Constants.EVENTS_KEYWORD).child(eventID)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         myEvent = dataSnapshot.getValue(Event.class);
-                        setupView();
+                        if(myEvent != null)
+                            setupView();
+                        else {
+                            Toast.makeText(EventDetailsActivity.this,"Error Occurred!",Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
                     }
 
                     @Override
@@ -61,15 +74,34 @@ public class EventDetailsActivity extends BaseActivity {
 
     }
 
-    private void setupView(){
-        mDetailsTextView.setText(myEvent.getDescription());
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+    private void setupView(){
+        binding.content.textName.setText(myEvent.getName());
+        binding.content.textBookingCount.setText(String.valueOf(myEvent.getBookingsCount()));
+        binding.content.textEventDetails.setText(myEvent.getDescription());
+        binding.content.textEventVenue.setText(myEvent.getVenue());
+        binding.content.textCreatedDate.setText(myEvent.getCreatedDateString());
+        binding.content.textCategory.setText(myEvent.getCategory());
+        String fees = "" + myEvent.getParticipationFees();
+        String prize = "Prizes:\\nFirst prize:" + myEvent.getPrizeAmount();
+        binding.content.textFees.setText(fees);
+        binding.content.textPrize.setText(prize);
+
+
+        Glide.with(this).load(myEvent.getImage()).into(binding.content.mainImage);
+
+        toolbar.setTitle("");
+        binding.content.btnBookNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String bookedStatus;
+                if(myEvent.getBookings().containsKey(getUid())){
+                    bookedStatus = "Event Unbooked!";
+                } else {
+                    bookedStatus = "Event Booked!";
+                }
                 myEvent.book(getUid());
-                Snackbar.make(view, getIntent().getStringExtra(EVENT_ID_KEYWORD), Snackbar.LENGTH_LONG)
+                Snackbar.make(view, bookedStatus, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -77,17 +109,30 @@ public class EventDetailsActivity extends BaseActivity {
     }
 
     private void getViews(){
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mBookedEventsDatabase = mDatabase.child(Constants.BOOKED_EVENTS);
+//        mBookedEventsDatabase = mDatabase.child(Constants.BOOKED_EVENTS);
 
-        mDetailsTextView = (TextView) findViewById(R.id.text_event_details);
+
 
     }
     @Override
     public View getContainer() {
-        return null;
+        return binding.getRoot();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

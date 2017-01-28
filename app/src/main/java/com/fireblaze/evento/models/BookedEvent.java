@@ -13,19 +13,22 @@ import java.util.Map;
  */
 
 public class BookedEvent {
-    public String eventID;
-    public String userID;
+    private String eventID;
+    private String userID;
+    private String organizerID;
 
 
-    public BookedEvent(String eventID, String userID) {
+    public BookedEvent(String eventID, String userID, String organizerID) {
         this.eventID = eventID;
         this.userID = userID;
+        this.organizerID = organizerID;
     }
     @Exclude
     public Map<String,Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
         result.put("eventID",eventID);
         result.put("userID",userID);
+        result.put("organizerID",organizerID);
         return result;
     }
 
@@ -33,10 +36,10 @@ public class BookedEvent {
         //Important
     }
 
-    public static String bookEvent(String eventID, String UID){
+    public static String bookEvent(String eventID, String UID, String organizerID){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Constants.BOOKED_EVENTS);
         String bookingID = ref.push().getKey();
-        ref.child(bookingID).setValue(new BookedEvent(eventID, UID));
+        ref.child(bookingID).setValue(new BookedEvent(eventID, UID, organizerID));
         return bookingID;
 
     }
@@ -45,6 +48,16 @@ public class BookedEvent {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Constants.BOOKED_EVENTS);
         ref.child(bookingID).setValue(null);
 
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+    public String getOrganizerID(){
+        return organizerID;
+    }
+    public String getUserID(){
+        return userID;
     }
 
 

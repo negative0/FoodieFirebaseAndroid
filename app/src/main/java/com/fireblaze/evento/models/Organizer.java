@@ -11,12 +11,15 @@ public class Organizer {
     private String name;
     private String email;
     private int bookmarkCount = 0;
+    private int volunteerCount = 0;
+    private Map<String, Boolean> volunteers = new HashMap<>();
     public Map<String ,Boolean> bookmarks = new HashMap<>();
     private String phone;
     private Location location;
     private String imageURL;
     private String website;
     private boolean isValid = false;
+    private long dateCreated;
 
     public boolean getIsValid() {
         return isValid;
@@ -54,12 +57,26 @@ public class Organizer {
         result.put("name",name);
         result.put("email",email);
         result.put("bookmarkCount",bookmarkCount);
+        result.put("volunteerCount",volunteerCount);
+        result.put("volunteers",volunteers);
         result.put("bookmarks",bookmarks);
         result.put("phone",phone);
         result.put("location",location);
         result.put("imageURL",imageURL);
         result.put("isValid",isValid);
         return result;
+    }
+
+    public int getVolunteerCount() {
+        return volunteerCount;
+    }
+
+    public Map<String, Boolean> getVolunteers() {
+        return volunteers;
+    }
+
+    public boolean isValid() {
+        return isValid;
     }
 
     public String getOrganizerID() {
@@ -123,10 +140,11 @@ public class Organizer {
         this.location = location;
         this.imageURL = imageURL;
         this.isValid = true;
+        dateCreated = System.currentTimeMillis();
     }
 
     public Organizer() {
-
+        // Important
     }
     public Organizer(String organizerID){
         this.organizerID = organizerID;
@@ -143,4 +161,15 @@ public class Organizer {
         }
     }
 
+    @Exclude
+    public void becomeVolunteer(String uid){
+        if(volunteers.containsKey(uid)){
+            volunteerCount -= 1;
+            volunteers.remove(uid);
+
+        } else {
+            volunteerCount += 1;
+            volunteers.put(uid,true);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.fireblaze.evento.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -14,16 +15,39 @@ import com.fireblaze.evento.databinding.ActivityNewEventBinding;
 import com.fireblaze.evento.models.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class NewEventActivity extends BaseActivity {
     public static final String TAG = NewEventActivity.class.getName();
     private DatabaseReference mDatabase;
     ActivityNewEventBinding binding;
     private final int REQ_UPLOAD_IMAGE = 4;
+    private static final String EVENT_ID = "eventID";
+    private Event myEvent;
+    private boolean isEdit;
 
     String imagePath;
+
+    public static void navigate(Context context, String eventID){
+        if(eventID == null || eventID.isEmpty()){
+            Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(context,NewEventActivity.class);
+        intent.putExtra(EVENT_ID,eventID);
+        intent.putExtra("isEdit",true);
+        context.startActivity(intent);
+
+    }
+    public static void navigate(Context context){
+        Intent intent = new Intent(context,NewEventActivity.class);
+        intent.putExtra("isEdit",false);
+        context.startActivity(intent);
+    }
 
     @Override
     public View getContainer() {
@@ -35,6 +59,11 @@ public class NewEventActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_new_event);
         getViews();
+        isEdit = getIntent().getBooleanExtra("isEdit",false);
+        if(isEdit){
+
+            editEvent(getIntent().getStringExtra(EVENT_ID));
+        }
         binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,7 +87,15 @@ public class NewEventActivity extends BaseActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         
      }
+    private void lockOkButton(boolean isLocked){
+        if(isLocked){
+            binding.btnUploadImage.setClickable(false);
+        } else {
+            binding.btnUploadImage.setClickable(true);
+        }
+    }
     private void submitForm(){
+
         if(!validateName())
             return;
         if(!validateDescription())
@@ -75,34 +112,73 @@ public class NewEventActivity extends BaseActivity {
             return;
         if(!validateImage())
             return;
-
+        lockOkButton(true);
         uploadNewEvent(imagePath);
     }
 
     private void uploadNewEvent(String imagePath){
-        String key = mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).push().getKey();
+        String key;
+        if(isEdit){
+            key = myEvent.getEventID();
+        } else
+           key = mDatabase.child(Constants.EVENTS_KEYWORD).push().getKey();
         Event event = new Event(key,getUid(),binding.inputName.getText().toString().trim(),
                 binding.inputDescription.getText().toString().trim(),
                 binding.inputCategory.getText().toString().trim(),
-                Integer.parseInt(binding.inputDuration.getText().toString().trim()),
                 imagePath,
                 binding.inputVenue.getText().toString().trim().toLowerCase(),
-                "NA", null,
+                "NA",
                 Double.parseDouble(binding.inputFees.getText().toString()),
                 Double.parseDouble(binding.inputPrize.getText().toString()),
-                binding.inputDuration.toString()
+                binding.inputDuration.getText().toString().trim()
         );
-        mDatabase.child(Constants.EVENTS_KEYWORD).child(getUid()).child(key).setValue(event)
+        mDatabase.child(Constants.EVENTS_KEYWORD).child(key).setValue(event)
         .addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     setResult(RESULT_OK);
                     finish();
-                } else
-                    Toast.makeText(NewEventActivity.this,"Error",Toast.LENGTH_LONG).show();
+                } else {
+                    lockOkButton(false);
+                    Toast.makeText(NewEventActivity.this, "Error", Toast.LENGTH_LONG).show();
+                }
             }
         });
+
+    }
+
+    private void editEvent(@NonNull String  eventID){
+        showProgressDialog();
+        mDatabase.child(Constants.EVENTS_KEYWORD).child(eventID)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Event event = dataSnapshot.getValue(Event.class);
+                        if(event != null)
+                            setupViewForEdit(event);
+                        else
+                            Toast.makeText(NewEventActivity.this,"Error!",Toast.LENGTH_SHORT).show();
+                        hideProgressDialog();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+    private void setupViewForEdit(Event e){
+        myEvent = e;
+        binding.inputName.setText(e.getName());
+        binding.inputDescription.setText(e.getDescription());
+        binding.inputCategory.setText(e.getCategory());
+        imagePath = e.getImage();
+        binding.inputVenue.setText(e.getVenue());
+        binding.inputFees.setText(String.valueOf(e.getParticipationFees()));
+        binding.inputPrize.setText(String.valueOf(e.getPrizeAmount()));
+        binding.inputDuration.setText(e.getDuration());
 
     }
     private boolean validateImage(){
@@ -177,7 +253,7 @@ public class NewEventActivity extends BaseActivity {
             binding.inputLayoutPrize.setError(getString(R.string.err_prize));
             requestFocus(binding.inputVenue);
             return false;
-        } else if(Integer.parseInt(input)==0){
+        } else if(Double.parseDouble(input)==0){
             binding.inputLayoutPrize.setError("Enter a non-zero value");
             requestFocus(binding.inputPrize);
             return false;
@@ -192,7 +268,7 @@ public class NewEventActivity extends BaseActivity {
             binding.inputLayoutFees.setError(getString(R.string.err_prize));
             requestFocus(binding.inputVenue);
             return false;
-        } else if(Integer.parseInt(input)==0){
+        } else if(Double.parseDouble(input)==0){
             binding.inputLayoutFees.setError("Enter a non-zero value");
             requestFocus(binding.inputFees);
             return false;

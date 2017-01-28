@@ -6,13 +6,16 @@
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
+         location permissions for the 'MyLocation' functionality.
     -->
     <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> -->
     <permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".MyApplication"
@@ -64,6 +67,7 @@
         <activity
             android:name=".activities.OrganizerMainActivity"
             android:label="@string/title_activity_organizer_main"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.NewOrganizerActivity"
@@ -79,11 +83,7 @@
         <activity
             android:name=".activities.SendNotificationActivity"
             android:label="@string/title_activity_send_notification"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="myServerKey"
-                android:value="AIzaSyCmhrSM9A8BOZvrRX9EwdRKOPWYHWwFf4A" />
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".MyMessagingService"
@@ -127,8 +127,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.UploadImageActivity"></activity>
-        <activity android:name=".activities.BookedEventsList"></activity>
+        <activity android:name=".activities.UploadImageActivity" />
+        <activity android:name=".activities.BookedEventsListActivity" />
+        <activity android:name=".activities.BookmarksDetailsActivity" />
+        <activity android:name=".activities.OrganizerListActivity" />
+        <activity android:name=".activities.NewUserActivity" />
+        <activity android:name=".activities.EventAttendeesListActivity" />
+        <activity android:name=".activities.QRCodeActivity" />
+        <activity android:name=".activities.QRCodeScanActivity"></activity>
     </application>
 
 </manifest>

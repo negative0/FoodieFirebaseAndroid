@@ -10,8 +10,8 @@ import java.util.Map;
  */
 
 public class NotificationToken {
-    public String token;
-    public boolean receiveNotifications;
+    private String token;
+    private boolean receiveNotifications;
 
     public String getToken() {
         return token;
@@ -42,4 +42,7 @@ public class NotificationToken {
         //Important
     }
 
+    public boolean isReceiveNotifications() {
+        return receiveNotifications;
+    }
 }

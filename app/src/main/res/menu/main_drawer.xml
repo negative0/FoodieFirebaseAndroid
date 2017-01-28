@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_bookmark_border_white_24dp"
+            android:title="Home"/>
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/ic_bookmark_border_white_24dp"
+            android:title="My Account"/>
+        <item
+            android:id="@+id/nav_booked_events"
+            android:icon="@drawable/ic_bookmark_border_white_24dp"
+            android:title="Booked Events"/>
+    </group>
+    <item android:title="Other">
+        <menu>
+            <item
+                android:id="@+id/nav_about_us"
+                android:title="About Us"/>
+        </menu>
+    </item>
+</menu>

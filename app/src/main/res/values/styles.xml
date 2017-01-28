@@ -6,14 +6,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:buttonStyle">@style/ButtonStyle</item>
+        <item name="buttonStyle">@style/ButtonStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:buttonStyle">@style/ButtonStyle</item>
+        <item name="buttonStyle">@style/ButtonStyle</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -24,5 +24,11 @@
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:layout_marginTop">@dimen/button_vertical_margin</item>
+    </style>
+    <style name="BlackCurvedButton" parent="android:Widget.Holo.Button">
+        <item name="android:background">@drawable/buttonshape</item>
+        <item name="android:shadowRadius">5</item>
+        <item name="android:shadowColor">#A8A8A8</item>
+
     </style>
 </resources>

@@ -16,30 +16,53 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
 public class Event {
-    public static class MyConstants{
-        public static final String ORGANIZER_ID = "organizerID";
+    private String eventID;
+    private String organizerID;
+    private String indexCategoryOrganizer;
+    private String name;
+    private String description;
+    private String category;
+    private int ratings;
+    private String image;
+    private String venue;
+    private String schedule;
+
+    private double participationFees;
+    private double prizeAmount;
+    //private CustomDate dateCreated;
+    private String duration;
+    private Map<String, String> bookings = new HashMap<>();
+    private Map<String, Boolean> presentMap = new HashMap<>();
+    private int presentCount=0;
+    private int bookingsCount=0;
+    private long dateScheduleStartTimestamp;
+
+    public long getDateScheduleEndTimestamp() {
+        return dateScheduleEndTimestamp;
     }
-    public String eventID;
-    public String organizerID;
-    public String name;
-    public String description;
-    public String category;
-    public int ratings;
-    public String image;
-    public String venue;
-    public String schedule;
-    public Map<String, Boolean> volunteers = new HashMap<>();
-    public double participationFees;
-    public double prizeAmount;
-    //public Date dateCreated;
-    public String duration;
-    Map<String, String> bookings = new HashMap<>();
-    public int bookingsCount;
+
+    public void setDateScheduleEndTimestamp(long dateScheduleEndTimestamp) {
+        this.dateScheduleEndTimestamp = dateScheduleEndTimestamp;
+    }
+
+    private long dateScheduleEndTimestamp;
+    private long dateCreatedTimestamp;
+
+    public Map<String, Boolean> getPresentMap() {
+        return presentMap;
+    }
+
+    public int getPresentCount() {
+        return presentCount;
+    }
 
     public String getEventID() {
         return eventID;
@@ -105,13 +128,7 @@ public class Event {
         this.schedule = schedule;
     }
 
-    public Map<String, Boolean> getVolunteers() {
-        return volunteers;
-    }
 
-    public void setVolunteers(Map<String, Boolean> volunteers) {
-        this.volunteers = volunteers;
-    }
 
     public double getParticipationFees() {
         return participationFees;
@@ -137,7 +154,17 @@ public class Event {
         this.duration = duration;
     }
 
+    public Map<String, String> getBookings() {
+        return bookings;
+    }
 
+    public int getBookingsCount() {
+        return bookingsCount;
+    }
+
+    public String getOrganizerID() {
+        return organizerID;
+    }
 
     @Exclude
     public Map<String ,Object> toMap(){
@@ -151,27 +178,26 @@ public class Event {
         result.put("image",image);
         result.put("venue",venue);
         result.put("schedule",schedule);
-        result.put("volunteers",volunteers);
         result.put("participationFees",participationFees);
         result.put("prizeAmount",prizeAmount);
         result.put("duration",duration);
         return result;
     }
 
-    public Event(String eventID, String organizerID, String name, String description, String category, int ratings, String image, String venue, String schedule, Map<String, Boolean> volunteers, double participationFees, double prizeAmount, String duration) {
+    public Event(String eventID, String organizerID, String name, String description, String category, String image, String venue, String schedule, double participationFees, double prizeAmount, String duration) {
         this.eventID = eventID;
         this.organizerID= organizerID;
+        this.indexCategoryOrganizer = category+"+"+organizerID;
         this.name = name;
         this.description = description;
         this.category = category;
-        this.ratings = ratings;
         this.image = image;
         this.venue = venue;
         this.schedule = schedule;
-        this.volunteers = volunteers;
         this.participationFees = participationFees;
         this.prizeAmount = prizeAmount;
         this.duration = duration;
+        dateCreatedTimestamp = System.currentTimeMillis();
     }
 
     public Event() {
@@ -185,16 +211,16 @@ public class Event {
             bookingsCount -= 1;
             bookings.remove(UID);
         } else {
-            String bookingID = BookedEvent.bookEvent(eventID,UID);
+            String bookingID = BookedEvent.bookEvent(eventID,UID,organizerID);
             bookingsCount += 1;
             bookings.put(UID,bookingID);
         }
 
     }
+
     public void book(final String UID){
         //Book the event
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Constants.EVENTS_KEYWORD)
-                .child(organizerID)
                 .child(eventID);
         ref.runTransaction(new Transaction.Handler() {
             @Override
@@ -214,6 +240,8 @@ public class Event {
             }
         });
     }
+
+
     public static void deleteEvent(final String eventID){
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         ref.child(Constants.EVENTS_KEYWORD)
@@ -239,5 +267,69 @@ public class Event {
 
             }
         });
+    }
+
+    public long getDateScheduleStartTimestamp() {
+        return dateScheduleStartTimestamp;
+    }
+
+    public void setDateScheduleStartTimestamp(long dateScheduleStartTimestamp) {
+        this.dateScheduleStartTimestamp = dateScheduleStartTimestamp;
+    }
+
+    public long getDateCreatedTimestamp() {
+        return dateCreatedTimestamp;
+    }
+
+    public void setDateCreatedTimestamp(long dateCreatedTimestamp) {
+        this.dateCreatedTimestamp = dateCreatedTimestamp;
+    }
+
+    public String getIndexCategoryOrganizer() {
+        return indexCategoryOrganizer;
+    }
+
+    @Exclude
+    public String getCreatedDateString(){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy | HH:mm", Locale.ENGLISH);
+        return simpleDateFormat.format(new Date(dateCreatedTimestamp));
+    }
+
+    @Exclude
+    public void present(String uid){
+        if(bookings.containsKey(uid)){
+            if(!presentMap.containsKey(uid)){
+                presentCount+=1;
+                presentMap.put(uid,true);
+            } else {
+                presentCount -=1;
+                presentMap.remove(uid);
+            }
+        }
+    }
+    @Exclude
+    public static void markPresent(String eventID, final String uid){
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ref.child(Constants.EVENTS_KEYWORD).child(eventID).runTransaction(
+                new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+                        Event event = mutableData.getValue(Event.class);
+                        if(event == null){
+                            return Transaction.success(mutableData);
+                        }
+                        event.present(uid);
+                        mutableData.setValue(event);
+                        return Transaction.success(mutableData);
+
+                    }
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                    }
+                }
+        );
+
     }
 }

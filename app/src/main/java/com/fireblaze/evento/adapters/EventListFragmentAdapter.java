@@ -18,7 +18,7 @@ public class EventListFragmentAdapter extends FirebaseRecyclerAdapter<Event, Eve
 
     @Override
     protected void populateViewHolder(EventViewHolder viewHolder, final Event model, int position) {
-        if(model.organizerID.equals(UserOperations.getUid())){
+        if(model.getOrganizerID().equals(UserOperations.getUid())){
             viewHolder.setOrganizer(true);
         }
         viewHolder.bindToPost(mContext, model);

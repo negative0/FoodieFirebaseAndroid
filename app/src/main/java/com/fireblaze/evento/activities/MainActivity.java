@@ -1,14 +1,13 @@
 package com.fireblaze.evento.activities;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +25,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.adapters.CategoryListAdapter;
+import com.fireblaze.evento.databinding.ActivityMainBinding;
 import com.fireblaze.evento.models.ImageItem;
 import com.fireblaze.evento.other.CircleTransform;
 import com.fireblaze.evento.viewholders.ImageItemHolder;
@@ -35,46 +35,48 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
 
-    private FragmentPagerAdapter mPagerAdapter;
     private FirebaseRecyclerAdapter<ImageItem, ImageItemHolder> organizerRecyclerAdapter;
-    private DrawerLayout mDrawerLayout;
+    //private DrawerLayout mDrawerLayout;
     private View navHeader;
-    NavigationView navigationView;
+    //private NavigationView navigationView;
     private ActionBarDrawerToggle mDrawerToggle;
-    RecyclerView organizerRecycler;
-    RecyclerView categoriesRecycler;
+   // private RecyclerView organizerRecycler;
+    //private RecyclerView categoriesRecycler;
+   // private Button btnShowAll;
     private DatabaseReference mDatabase;
+    private ActivityMainBinding binding;
     public static final int REQ_SETTINGS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_main);
+        if(getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getViews();
         setupNavigation();
         setupOrganizerList();
         setupCategoriesRecycler();
+
     }
     private void getViews(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        organizerRecycler = (RecyclerView) findViewById(R.id.recycler_organizers);
-        categoriesRecycler = (RecyclerView) findViewById(R.id.recycler_categories);
-
+        //mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         //Navigation menu
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navHeader = navigationView.getHeaderView(0);
+        navHeader = binding.navView.getHeaderView(0);
     }
     private void setupNavHeader(){
+        navHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(MainActivity.this,UserActivity.class),REQ_SETTINGS);
+            }
+        });
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
             String name = user.getDisplayName();
@@ -100,7 +102,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public View getContainer() {
-        return findViewById(R.id.drawer_layout);
+        return binding.getRoot();
     }
 
     @Override
@@ -115,7 +117,7 @@ public class MainActivity extends BaseActivity {
     private void setupNavigation() {
         setupNavHeader();
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        binding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
@@ -125,6 +127,11 @@ public class MainActivity extends BaseActivity {
                     case R.id.nav_account:
                         startActivityForResult(new Intent(MainActivity.this,UserActivity.class),REQ_SETTINGS);
                         return true;
+                    case R.id.nav_booked_events:
+                        BookedEventsListActivity.navigate(MainActivity.this);
+                        return true;
+                    case R.id.nav_about_us:
+                        startActivity(new Intent(MainActivity.this,AboutUsActivity.class));
                 }
                 if (item.isChecked()) {
                     item.setChecked(false);
@@ -135,7 +142,7 @@ public class MainActivity extends BaseActivity {
                 return true;
             }
         });
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+        mDrawerToggle = new ActionBarDrawerToggle(this, binding.drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             public void onDrawerClosed(View v) {
                 super.onDrawerClosed(v);
 
@@ -146,11 +153,18 @@ public class MainActivity extends BaseActivity {
 
             }
         };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        binding.drawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
     }
 
     private void setupOrganizerList(){
+       binding.content.btnShowAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OrganizerListActivity.navigate(MainActivity.this);
+               // startActivity(new Intent(MainActivity.this,OrganizerListActivity.class));
+            }
+        });
         //Show the progress dialog.
         setOrganizersProgressBar();
         LinearLayoutManager horizontalLayoutManager =
@@ -179,11 +193,12 @@ public class MainActivity extends BaseActivity {
                 organizerRecyclerAdapter.unregisterAdapterDataObserver(this);
             }
         });
-        organizerRecycler.setLayoutManager(horizontalLayoutManager);
-        organizerRecycler.setAdapter(organizerRecyclerAdapter);
+        binding.content.recyclerOrganizers.setLayoutManager(horizontalLayoutManager);
+        binding.content.recyclerOrganizers.setAdapter(organizerRecyclerAdapter);
 
     }
     public void setOrganizersProgressBar() {
+        RecyclerView organizerRecycler = binding.content.recyclerOrganizers;
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_organizer);
         if(progressBar == null){
             throw new RuntimeException("Progress bar is unexpectedly null");
@@ -202,21 +217,19 @@ public class MainActivity extends BaseActivity {
 
 
     private void setupCategoriesRecycler(){
+        RecyclerView categoriesRecycler = binding.content.recyclerCategories;
         if(categoriesRecycler == null)
             throw new RuntimeException("Categories Recycler is unexpectedly null");
 
         int[] img = {
-                R.drawable.ic_coding,
                 R.drawable.ic_arts,
+                R.drawable.ic_coding,
                 R.drawable.ic_adventure
         };
-        List<String> names = new ArrayList<>();
-        names.add("Coding");
-        names.add("Arts");
-        names.add("Adventure");
+        //List<String> names = new ArrayList<>();
+        String categories[] =  getResources().getStringArray(R.array.event_categories);
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
-//        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-        CategoryListAdapter adapter = new CategoryListAdapter(MainActivity.this,names,img);
+        CategoryListAdapter adapter = new CategoryListAdapter(MainActivity.this,categories,img);
 
         categoriesRecycler.setLayoutManager(layoutManager);
         categoriesRecycler.setAdapter(adapter);
@@ -237,7 +250,9 @@ public class MainActivity extends BaseActivity {
             case R.id.action_log_out:
                 logOut();
                 return true;
-            case R.id.action_add_data:
+            case R.id.action_generate_qr_code:
+                QRCodeActivity.navigate(this,getUid());
+                //startActivity(new Intent(this,QRCodeActivity.class));
                 //addData();
                 return true;
             case R.id.action_user:
@@ -258,8 +273,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
-            mDrawerLayout.closeDrawers();
+        if(binding.drawerLayout.isDrawerOpen(GravityCompat.START)){
+            binding.drawerLayout.closeDrawers();
             return;
         }
         exitApp();
