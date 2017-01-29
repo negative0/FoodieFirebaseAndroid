@@ -1,12 +1,16 @@
 package com.fireblaze.evento.activities;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.fireblaze.evento.Constants;
@@ -21,14 +25,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
+
 public class NewEventActivity extends BaseActivity {
     public static final String TAG = NewEventActivity.class.getName();
     private DatabaseReference mDatabase;
-    ActivityNewEventBinding binding;
+    public ActivityNewEventBinding binding;
     private final int REQ_UPLOAD_IMAGE = 4;
     private static final String EVENT_ID = "eventID";
     private Event myEvent;
     private boolean isEdit;
+    private DatePickerDialog dialog;
 
     String imagePath;
 
@@ -114,6 +121,9 @@ public class NewEventActivity extends BaseActivity {
             return;
         lockOkButton(true);
         uploadNewEvent(imagePath);
+    }
+    private void showDatePicker(){
+
     }
 
     private void uploadNewEvent(String imagePath){
@@ -293,6 +303,23 @@ public class NewEventActivity extends BaseActivity {
                     Toast.makeText(NewEventActivity.this,"Upload Complete",Toast.LENGTH_SHORT).show();
                 }
                 break;
+        }
+    }
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            return new DatePickerDialog(getActivity(),this, year, month, day);
+        }
+
+        @Override
+        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+
         }
     }
 

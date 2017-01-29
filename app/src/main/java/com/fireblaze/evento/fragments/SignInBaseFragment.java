@@ -12,8 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
-import com.google.firebase.auth.FirebaseAuth;
+import com.fireblaze.evento.UserOperations;
 
 /**
  * Created by chait on 6/7/2016.
@@ -25,7 +26,7 @@ public abstract class SignInBaseFragment extends Fragment {
     public Button mSignInButton;
     public TextView mForgotPasswordText;
     public TextInputEditText mEmailField;
-    public TextInputEditText mPasswordField;
+    public TextInputEditText mPasswordField, mOrganizerVerification;
     public Button mGoogleSignInButton;
     public Button mBecomeOrganizerButton;
     public boolean isOrganizer = false;
@@ -44,6 +45,7 @@ public abstract class SignInBaseFragment extends Fragment {
         mPasswordField = (TextInputEditText) rootView.findViewById(R.id.field_password);
         mGoogleSignInButton = (Button) rootView.findViewById(R.id.sign_in_google_button);
         mBecomeOrganizerButton = (Button) rootView.findViewById(R.id.become_an_organizer_button);
+        mOrganizerVerification = (TextInputEditText) rootView.findViewById(R.id.field_organizer_verification);
         return rootView;
     }
 
@@ -59,7 +61,7 @@ public abstract class SignInBaseFragment extends Fragment {
             result = false;
         }
         else{
-            mPasswordField.setError(null);
+            mEmailField.setError(null);
         }
         if(TextUtils.isEmpty(password)){
             mPasswordField.setError("Required");
@@ -69,12 +71,29 @@ public abstract class SignInBaseFragment extends Fragment {
             result = false;
         }
         else {
-            mEmailField.setError(null);
+            mPasswordField.setError(null);
+        }
+        if(isOrganizer) {
+            if (!validateOrganizer()) {
+                result = false;
+            }
         }
         return result;
     }
+    public boolean validateOrganizer(){
+        String verification = mOrganizerVerification.getText().toString().trim();
+        if(verification.isEmpty()){
+            mOrganizerVerification.setError("Please enter the code provided to you");
+            return false;
+        } else if(!verification.equals(Constants.VERIFICATION_CODE)){
+            mOrganizerVerification.setError("Plese enter the correct code");
+            return false;
+        }
+        mOrganizerVerification.setError(null);
+        return true;
+    }
 
     public String getUid(){
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+        return UserOperations.getUid();
     }
 }

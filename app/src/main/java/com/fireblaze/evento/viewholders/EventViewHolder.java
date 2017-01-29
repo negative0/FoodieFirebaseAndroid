@@ -44,7 +44,8 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
     public void bindToPost(final Context context, final Event event){
         title.setText(event.getName());
         Glide.with(context).load(event.getImage()).into(imageView);
-        subtitle.setText(event.getDuration());
+        String subtitleString = event.getScheduleString();
+        subtitle.setText(subtitleString);
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

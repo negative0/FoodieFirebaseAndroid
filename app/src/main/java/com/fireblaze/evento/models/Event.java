@@ -272,6 +272,13 @@ public class Event {
     public long getDateScheduleStartTimestamp() {
         return dateScheduleStartTimestamp;
     }
+    @Exclude
+    public String getScheduleString(){
+        if(dateScheduleStartTimestamp == 0)
+            return "";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy | HH:mm", Locale.ENGLISH);
+        return simpleDateFormat.format(new Date(dateScheduleStartTimestamp));
+    }
 
     public void setDateScheduleStartTimestamp(long dateScheduleStartTimestamp) {
         this.dateScheduleStartTimestamp = dateScheduleStartTimestamp;

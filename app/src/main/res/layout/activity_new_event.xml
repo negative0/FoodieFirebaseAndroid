@@ -91,6 +91,21 @@
                         android:maxLines="1"
                         android:hint="@string/duration"/>
                 </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <android.support.design.widget.TextInputEditText
+                        android:hint="Date"
+                        android:id="@+id/field_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:layout_marginTop="40dp"
+                    android:text="Set Date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
                 <Button android:id="@+id/btn_upload_image"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
