@@ -45,6 +45,7 @@ public class EventAttendeesListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_event_attendees_list);
+        setSupportActionBar(binding.toolbar);
         if(getSupportActionBar()!=null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -60,7 +61,7 @@ public class EventAttendeesListActivity extends AppCompatActivity {
         boolean[] presentArray = getIntent().getBooleanArrayExtra("present");
         AttendeesListAdapter mAdapter = new AttendeesListAdapter(this,items,presentArray);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
-        binding.recycler.setAdapter(mAdapter);
-        binding.recycler.setLayoutManager(layoutManager);
+        binding.content.recycler.setAdapter(mAdapter);
+        binding.content.recycler.setLayoutManager(layoutManager);
     }
 }

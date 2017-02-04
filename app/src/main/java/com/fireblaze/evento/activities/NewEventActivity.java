@@ -1,21 +1,21 @@
 package com.fireblaze.evento.activities;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.fireblaze.evento.Constants;
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.databinding.ActivityNewEventBinding;
+import com.fireblaze.evento.fragments.DatePickerFragment;
+import com.fireblaze.evento.fragments.TimePickerFragment;
 import com.fireblaze.evento.models.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,9 +25,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
-public class NewEventActivity extends BaseActivity {
+public class NewEventActivity extends BaseActivity implements DatePickerFragment.dateSetListener, TimePickerFragment.timeSetListener, View.OnClickListener {
     public static final String TAG = NewEventActivity.class.getName();
     private DatabaseReference mDatabase;
     public ActivityNewEventBinding binding;
@@ -35,9 +38,33 @@ public class NewEventActivity extends BaseActivity {
     private static final String EVENT_ID = "eventID";
     private Event myEvent;
     private boolean isEdit;
-    private DatePickerDialog dialog;
+    private long dateSchedule = 0;
+    Date date;
+    private String imagePath;
+    Calendar c = null;
 
-    String imagePath;
+    @Override
+    public void dateSet(int year, int month, int day, int hour, int min) {
+        if(c==null)
+            c = Calendar.getInstance();
+        if(year!=0&&month!=0&&day!=0)
+            c.set(year,month,day);
+        if(hour!=0&&min!=0) {
+            c.set(Calendar.HOUR_OF_DAY, hour);
+            c.set(Calendar.MINUTE, min);
+        }
+        dateSchedule = c.getTimeInMillis();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.ENGLISH);
+        binding.inputDate.setText(simpleDateFormat.format(new Date(dateSchedule)));
+    }
+    public void dateSet(long dateSchedule){
+        this.dateSchedule = dateSchedule;
+    }
+
+    @Override
+    public void timeSet(int hour, int min) {
+        dateSet(0,0,0,hour,min);
+    }
 
     public static void navigate(Context context, String eventID){
         if(eventID == null || eventID.isEmpty()){
@@ -68,21 +95,42 @@ public class NewEventActivity extends BaseActivity {
         getViews();
         isEdit = getIntent().getBooleanExtra("isEdit",false);
         if(isEdit){
-
             editEvent(getIntent().getStringExtra(EVENT_ID));
         }
-        binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        if(getSupportActionBar() != null ){
+            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        binding.btnSubmit.setOnClickListener(this);
+        binding.btnUploadImage.setOnClickListener(this);
+        binding.btnSetDate.setOnClickListener(this);
+        binding.inputDate.setOnClickListener(this);
+        binding.btnSetTime.setOnClickListener(this);
+    }
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.btn_submit:
                 submitForm();
-            }
-        });
-        binding.btnUploadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                break;
+            case R.id.btn_set_date:
+                showDatePicker();
+                break;
+            case R.id.btn_set_time:
+                showTimePicker();
+                break;
+            case R.id.input_date:
+                showTimePicker();
+                break;
+            case R.id.btn_upload_image:
                 getImageFromGallery();
-            }
-        });
+                break;
+
+        }
+    }
+    private void showTimePicker(){
+        DialogFragment fragment = new TimePickerFragment();
+        fragment.show(getSupportFragmentManager(),"TimePicker");
     }
     private void getImageFromGallery(){
         Intent i = new Intent(NewEventActivity.this,UploadImageActivity.class);
@@ -92,12 +140,14 @@ public class NewEventActivity extends BaseActivity {
     }
     private void getViews(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        
+
      }
     private void lockOkButton(boolean isLocked){
         if(isLocked){
+            binding.btnSubmit.setClickable(false);
             binding.btnUploadImage.setClickable(false);
         } else {
+            binding.btnSubmit.setClickable(false);
             binding.btnUploadImage.setClickable(true);
         }
     }
@@ -119,11 +169,16 @@ public class NewEventActivity extends BaseActivity {
             return;
         if(!validateImage())
             return;
+        if(!validateDate())
+            return;
+
         lockOkButton(true);
         uploadNewEvent(imagePath);
     }
-    private void showDatePicker(){
 
+    private void showDatePicker(){
+        DialogFragment fragment = new DatePickerFragment();
+        fragment.show(getSupportFragmentManager(),"DatePicker");
     }
 
     private void uploadNewEvent(String imagePath){
@@ -142,6 +197,7 @@ public class NewEventActivity extends BaseActivity {
                 Double.parseDouble(binding.inputPrize.getText().toString()),
                 binding.inputDuration.getText().toString().trim()
         );
+        event.setDateScheduleStartTimestamp(dateSchedule);
         mDatabase.child(Constants.EVENTS_KEYWORD).child(key).setValue(event)
         .addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -157,7 +213,6 @@ public class NewEventActivity extends BaseActivity {
         });
 
     }
-
     private void editEvent(@NonNull String  eventID){
         showProgressDialog();
         mDatabase.child(Constants.EVENTS_KEYWORD).child(eventID)
@@ -179,6 +234,7 @@ public class NewEventActivity extends BaseActivity {
                 });
 
     }
+
     private void setupViewForEdit(Event e){
         myEvent = e;
         binding.inputName.setText(e.getName());
@@ -189,7 +245,12 @@ public class NewEventActivity extends BaseActivity {
         binding.inputFees.setText(String.valueOf(e.getParticipationFees()));
         binding.inputPrize.setText(String.valueOf(e.getPrizeAmount()));
         binding.inputDuration.setText(e.getDuration());
+        dateSchedule = e.getDateScheduleStartTimestamp();
+        dateSet(e.getDateScheduleStartTimestamp());
+    }
 
+    private boolean validateDate(){
+        return dateSchedule != 0;
     }
     private boolean validateImage(){
         return imagePath!=null;
@@ -287,6 +348,7 @@ public class NewEventActivity extends BaseActivity {
         }
         return true;
     }
+
     private void requestFocus(View view){
         if(view.requestFocus()){
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -305,22 +367,14 @@ public class NewEventActivity extends BaseActivity {
                 break;
         }
     }
-    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
 
-            return new DatePickerDialog(getActivity(),this, year, month, day);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
         }
-
-        @Override
-        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-
-        }
+        return super.onOptionsItemSelected(item);
     }
-
 }

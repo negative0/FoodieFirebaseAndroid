@@ -27,8 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class OrganizerDetailsActivity extends BaseActivity implements View.OnClickListener{
 
-    ActivityOrganizerDetailsBinding binding;
-    DatabaseReference mDatabase;
+    private ActivityOrganizerDetailsBinding binding;
+    private DatabaseReference mDatabase;
+    private Organizer mOrganizer;
 
     public static final String ORGANIZER_ID = "organizerID";
     private String organizerID;
@@ -85,21 +86,20 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
 
     }
     private void setupView(Organizer o){
+        showProgressDialog();
+        mOrganizer = o;
         organizerID = o.getOrganizerID();
         binding.content.textTitle.setText(o.getName());
         binding.content.textEmail.setText(o.getEmail());
-        binding.content.contact.setText(o.getPhone());
-        binding.content.website.setText(o.getWebsite());
-        binding.content.textBookmarkCount.setText(String.valueOf(o.getBookmarkCount()));
+        binding.content.textContact.setText(o.getPhone());
+        binding.content.textWebsite.setText(o.getWebsite());
+        binding.content.textBookingCount.setText(String.valueOf(o.getBookmarkCount()));
         binding.content.btnBecomeVolunteer.setOnClickListener(this);
         setupImages();
-        final String emailId = o.getEmail();
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendMail(emailId);
-            }
-        });
+        binding.content.textEmail.setOnClickListener(this);
+        binding.fab.setOnClickListener(this);
+        updateVolunteerStatus();
+        hideProgressDialog();
     }
 
     private void sendMail(String email){
@@ -117,7 +117,7 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
         String [] images = {
                 "http://placekitten.com/300/400",
                 "http://placekitten.com/300/400",
-                "http://placekitten.com/300/500"
+                "http://placekitten.com/300/400"
         };
         OrganizerGalleryAdapter adapter = new OrganizerGalleryAdapter(this,images);
         LinearLayoutManager manager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
@@ -128,33 +128,53 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_become_volunteer){
-            mDatabase.child(Constants.ORGANIZER_KEYWORD).child(organizerID).runTransaction(
-                    new Transaction.Handler() {
-                        @Override
-                        public Transaction.Result doTransaction(MutableData mutableData) {
-                            Organizer o = mutableData.getValue(Organizer.class);
-                            if(o == null){
-                                return Transaction.success(mutableData);
-                            }
-                            if(o.getVolunteers().containsKey(getUid())){
-                                Snackbar.make(getContainer(), "Consider volunteering next time!",Snackbar.LENGTH_SHORT).show();
-                            } else {
-                                Snackbar.make(getContainer(),"You are now a volunteer", Snackbar.LENGTH_SHORT).show();
-                            }
-                            o.becomeVolunteer(getUid());
-                            mutableData.setValue(o);
+        switch(view.getId()){
+            case R.id.btn_become_volunteer:
+                becomeVolunteer();
+                break;
+            case R.id.text_email:
+                sendMail(mOrganizer.getEmail());
+                break;
+            case R.id.fab:
+                sendMail(mOrganizer.getEmail());
+                break;
+
+
+        }
+
+    }
+    private void becomeVolunteer(){
+        mDatabase.child(Constants.ORGANIZER_KEYWORD).child(organizerID).runTransaction(
+                new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+                        Organizer o = mutableData.getValue(Organizer.class);
+                        if(o == null){
                             return Transaction.success(mutableData);
                         }
-
-                        @Override
-                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
+                        if(o.getVolunteers().containsKey(getUid())){
+                            Snackbar.make(getContainer(), "Consider volunteering next time!",Snackbar.LENGTH_SHORT).show();
+                        } else {
+                            Snackbar.make(getContainer(),"You are now a volunteer", Snackbar.LENGTH_SHORT).show();
                         }
+                        o.becomeVolunteer(getUid());
+                        mutableData.setValue(o);
+                        return Transaction.success(mutableData);
                     }
-            );
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                    }
+                }
+        );
+    }
+    private void updateVolunteerStatus(){
+        if(mOrganizer.getVolunteers().containsKey(getUid())){
+            binding.content.btnBecomeVolunteer.setText(R.string.you_are_volunteer);
         }
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

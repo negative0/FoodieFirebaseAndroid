@@ -43,7 +43,11 @@ public class Event {
     private Map<String, Boolean> presentMap = new HashMap<>();
     private int presentCount=0;
     private int bookingsCount=0;
+
+    //Timestamps
     private long dateScheduleStartTimestamp;
+    private long dateScheduleEndTimestamp;
+    private long dateCreatedTimestamp;
 
     public long getDateScheduleEndTimestamp() {
         return dateScheduleEndTimestamp;
@@ -53,8 +57,7 @@ public class Event {
         this.dateScheduleEndTimestamp = dateScheduleEndTimestamp;
     }
 
-    private long dateScheduleEndTimestamp;
-    private long dateCreatedTimestamp;
+
 
     public Map<String, Boolean> getPresentMap() {
         return presentMap;

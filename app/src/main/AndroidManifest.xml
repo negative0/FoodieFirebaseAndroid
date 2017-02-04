@@ -132,7 +132,9 @@
         <activity android:name=".activities.BookmarksDetailsActivity" />
         <activity android:name=".activities.OrganizerListActivity" />
         <activity android:name=".activities.NewUserActivity" />
-        <activity android:name=".activities.EventAttendeesListActivity" />
+        <activity
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name=".activities.EventAttendeesListActivity" />
         <activity android:name=".activities.QRCodeActivity" />
         <activity android:name=".activities.QRCodeScanActivity"></activity>
     </application>
