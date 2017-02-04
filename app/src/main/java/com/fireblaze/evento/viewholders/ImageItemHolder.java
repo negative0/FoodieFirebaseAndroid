@@ -2,6 +2,7 @@ package com.fireblaze.evento.viewholders;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,7 +27,11 @@ public class ImageItemHolder extends RecyclerView.ViewHolder {
 
     }
     public void bindToPost(Context context, ImageItem imageItem, View.OnClickListener clickListener){
-        Glide.with(context).load(imageItem.getResourceURL()).error(R.drawable.logo_black).into(imageRes);
+        try {
+            Glide.with(context).load(imageItem.getResourceURL()).error(R.drawable.logo_black).into(imageRes);
+        }catch(IllegalArgumentException e){
+            Log.e("ImageItemViewHolder",e.getMessage());
+        }
         item.setOnClickListener(clickListener);
         title.setText(imageItem.getName());
 

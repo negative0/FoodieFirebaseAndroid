@@ -2,6 +2,7 @@ package com.fireblaze.evento.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -64,6 +65,7 @@ public class EventListActivity extends BaseActivity {
         tabs = (TabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.viewpager_events);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbar);
         mDatabase = FirebaseDatabase.getInstance().getReference();
