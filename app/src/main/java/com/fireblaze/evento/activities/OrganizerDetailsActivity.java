@@ -95,7 +95,7 @@ public class OrganizerDetailsActivity extends BaseActivity implements View.OnCli
         binding.content.textWebsite.setText(o.getWebsite());
         binding.content.textBookingCount.setText(String.valueOf(o.getBookmarkCount()));
         binding.content.btnBecomeVolunteer.setOnClickListener(this);
-        setupImages();
+       // TODO: setupImages();
         binding.content.textEmail.setOnClickListener(this);
         binding.fab.setOnClickListener(this);
         updateVolunteerStatus();

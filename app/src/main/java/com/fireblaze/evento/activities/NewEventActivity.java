@@ -43,6 +43,7 @@ public class NewEventActivity extends BaseActivity implements DatePickerFragment
     private String imagePath;
     Calendar c = null;
 
+
     @Override
     public void dateSet(int year, int month, int day, int hour, int min) {
         if(c==null)
@@ -134,8 +135,10 @@ public class NewEventActivity extends BaseActivity implements DatePickerFragment
     }
     private void getImageFromGallery(){
         Intent i = new Intent(NewEventActivity.this,UploadImageActivity.class);
+        String key = mDatabase.child(Constants.EVENTS_KEYWORD).push().getKey();
+
         i.putExtra(UploadImageActivity.UPLOAD_PATH_KEYWORD,
-                "/"+Constants.EVENT_IMAGE+"/"+getUid());
+                "/"+Constants.EVENT_IMAGE+"/"+getUid()+"/"+key);
         startActivityForResult(i,REQ_UPLOAD_IMAGE);
     }
     private void getViews(){
@@ -245,7 +248,6 @@ public class NewEventActivity extends BaseActivity implements DatePickerFragment
         binding.inputFees.setText(String.valueOf(e.getParticipationFees()));
         binding.inputPrize.setText(String.valueOf(e.getPrizeAmount()));
         binding.inputDuration.setText(e.getDuration());
-        dateSchedule = e.getDateScheduleStartTimestamp();
         dateSet(e.getDateScheduleStartTimestamp());
     }
 

@@ -93,7 +93,6 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
                 break;
             case 3:
                 QRCodeScanActivity.navigate(mContext,myEvent.getEventID());
-
                 break;
 
         }

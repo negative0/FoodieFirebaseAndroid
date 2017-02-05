@@ -31,18 +31,19 @@ import java.io.IOException;
 
 public class UploadImageActivity extends BaseActivity implements View.OnClickListener {
     public static final String TAG = UploadImageActivity.class.getName();
-    ActivityUploadImageBinding binding;
-    StorageReference mStorage;
-    DatabaseReference mDatabase;
-    Bitmap mainImageBitmap;
+    private ActivityUploadImageBinding binding;
+    private StorageReference mStorage;
+    private DatabaseReference mDatabase;
+    private Bitmap mainImageBitmap;
     private static final int  REQ_PERMISSION_EXTERNAL_STORAGE_FOR_IMAGE = 1;
     private final int REQ_SELECT_IMAGE = 2;
     public static final String UPLOAD_PATH_KEYWORD = "uploadPath";
     public static final String DOWNLOAD_URL_RESULT = "downloadUrl";
     public static final String REQ_UPLOAD_IMAGE = "uploadImage";
 
-    String path;
+    private String path;
     private boolean uploadUserImage = false;
+
 
     @Override
     public View getContainer() {
