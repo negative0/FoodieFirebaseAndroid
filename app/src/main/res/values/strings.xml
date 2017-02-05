@@ -236,4 +236,5 @@
     <string name="qr_hint">This is a unique code for you,\nask the organizer to scan this code to mark your attendance at the event you have already booked</string>
     <string name="hint_verification">Verification Code</string>
     <string name="you_are_volunteer">You are a volunteer</string>
+    <string name="title_activity_attendees">Attendees</string>
 </resources>

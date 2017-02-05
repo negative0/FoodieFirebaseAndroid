@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.fireblaze.evento.R;
-import com.fireblaze.evento.activities.EventAttendeesListActivity;
+import com.fireblaze.evento.activities.AttendeesActivity;
 import com.fireblaze.evento.activities.EventDetailsActivity;
 import com.fireblaze.evento.activities.NewEventActivity;
 import com.fireblaze.evento.activities.QRCodeScanActivity;
@@ -89,7 +89,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
                 Event.deleteEvent(myEvent.getEventID());
                 break;
             case 2:
-                EventAttendeesListActivity.navigate(mContext,myEvent.getBookings(),myEvent.getPresentMap());
+                AttendeesActivity.navigate(mContext,myEvent.getEventID(),myEvent.getBookings(),myEvent.getPresentMap());
                 break;
             case 3:
                 QRCodeScanActivity.navigate(mContext,myEvent.getEventID());

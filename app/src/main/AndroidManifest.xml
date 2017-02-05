@@ -10,12 +10,12 @@
     -->
     <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> -->
     <permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.CAMERA"/>
 
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".MyApplication"
@@ -133,10 +133,14 @@
         <activity android:name=".activities.OrganizerListActivity" />
         <activity android:name=".activities.NewUserActivity" />
         <activity
-            android:theme="@style/AppTheme.NoActionBar"
-            android:name=".activities.EventAttendeesListActivity" />
+            android:name=".activities.EventAttendeesListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.QRCodeActivity" />
-        <activity android:name=".activities.QRCodeScanActivity"></activity>
+        <activity android:name=".activities.QRCodeScanActivity" />
+        <activity
+            android:name=".activities.AttendeesActivity"
+            android:label="@string/title_activity_attendees"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

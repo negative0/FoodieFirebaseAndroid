@@ -295,6 +295,7 @@ public class UserActivity extends AppCompatPreferenceActivity {
         if (id == android.R.id.home) {
             setResult(RESULT_OK);
             finish();
+
         }
         return super.onOptionsItemSelected(item);
     }
