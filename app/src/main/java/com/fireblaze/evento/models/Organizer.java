@@ -15,7 +15,7 @@ public class Organizer {
     private Map<String, Boolean> volunteers = new HashMap<>();
     public Map<String ,Boolean> bookmarks = new HashMap<>();
     private String phone;
-    private Location location;
+    private MyLocation myLocation;
     private String imageURL;
     private String website;
     private boolean isValid = false;
@@ -61,7 +61,7 @@ public class Organizer {
         result.put("volunteers",volunteers);
         result.put("bookmarks",bookmarks);
         result.put("phone",phone);
-        result.put("location",location);
+        result.put("myLocation", myLocation);
         result.put("imageURL",imageURL);
         result.put("isValid",isValid);
         return result;
@@ -111,12 +111,12 @@ public class Organizer {
         this.phone = phone;
     }
 
-    public Location getLocation() {
-        return location;
+    public MyLocation getMyLocation() {
+        return myLocation;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setMyLocation(MyLocation myLocation) {
+        this.myLocation = myLocation;
     }
 
     public String getImageURL() {
@@ -131,13 +131,13 @@ public class Organizer {
         return bookmarkCount;
     }
 
-    public Organizer(String organizerID, String name, String email, String phone, String website, Location location, String imageURL) {
+    public Organizer(String organizerID, String name, String email, String phone, String website, MyLocation myLocation, String imageURL) {
         this.organizerID = organizerID;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.website = website;
-        this.location = location;
+        this.myLocation = myLocation;
         this.imageURL = imageURL;
         this.isValid = true;
         dateCreated = System.currentTimeMillis();

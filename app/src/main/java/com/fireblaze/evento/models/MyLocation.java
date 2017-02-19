@@ -7,17 +7,17 @@ import com.google.android.gms.maps.model.LatLng;
  * Created by fireblaze on 23/10/16.
  */
 
-public class Location {
+public class MyLocation {
     public double latitude;
     public double longitude;
 
-    public Location(double latitude, double longitude) {
+    public MyLocation(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-    Location(){}
+    MyLocation(){}
 
-    public Location(LatLng latLng){
+    public MyLocation(LatLng latLng){
         latitude = latLng.latitude;
         longitude = latLng.longitude;
     }

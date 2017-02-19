@@ -21,7 +21,7 @@ import com.fireblaze.evento.SelectLocation;
 import com.fireblaze.evento.UserOperations;
 import com.fireblaze.evento.databinding.ActivityNewOrganizerBinding;
 import com.fireblaze.evento.models.ImageItem;
-import com.fireblaze.evento.models.Location;
+import com.fireblaze.evento.models.MyLocation;
 import com.fireblaze.evento.models.Organizer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
@@ -38,7 +38,7 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
     public final String TAG = NewOrganizerActivity.class.getName();
     private ActivityNewOrganizerBinding binding;
     private DatabaseReference mDatabase;
-    private Location selectedLocation = null;
+    private MyLocation selectedMyLocation = null;
     private String imagePath;
 
     public static final String IS_EDIT = "isEdit";
@@ -156,7 +156,7 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
         binding.inputPhone.setText(o.getPhone());
         binding.inputWebsite.setText(o.getWebsite());
         imagePath = o.getImageURL();
-        selectedLocation = o.getLocation();
+        selectedMyLocation = o.getMyLocation();
 
     }
     @Override
@@ -165,7 +165,7 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
         switch (requestCode){
             case REQ_GET_LOCATION:
                 LatLng point = (LatLng) data.getExtras().get("point");
-                selectedLocation = new Location(point);
+                selectedMyLocation = new MyLocation(point);
                 Toast.makeText(this,"point:"+point.toString(),Toast.LENGTH_SHORT).show();
                 break;
             case REQ_UPLOAD_IMAGE:
@@ -187,7 +187,7 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
                 binding.inputEmail.getText().toString().trim(),
                 binding.inputPhone.getText().toString().trim(),
                 binding.inputWebsite.getText().toString().trim(),
-                selectedLocation,
+                selectedMyLocation,
                 imagePath);
 
         ImageItem imageItem = new ImageItem(getUid(),binding.inputName.getText().toString().trim(),
@@ -241,7 +241,7 @@ public class NewOrganizerActivity extends BaseActivity implements View.OnClickLi
         return true;
     }
     private boolean validateLocation(){
-        return selectedLocation != null;
+        return selectedMyLocation != null;
     }
 
     private boolean validateEmail(){

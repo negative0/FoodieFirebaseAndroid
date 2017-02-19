@@ -11,7 +11,7 @@ import android.view.View;
 
 import com.fireblaze.evento.R;
 import com.fireblaze.evento.SnackBarContainerInterface;
-import com.fireblaze.evento.models.Location;
+import com.fireblaze.evento.models.MyLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,10 +36,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return findViewById(R.id.map);
     }
 
-    public static void navigate(AppCompatActivity activity,Location location,String name){
+    public static void navigate(AppCompatActivity activity, MyLocation myLocation, String name){
         Intent i = new Intent(activity,MapsActivity.class);
-        i.putExtra("latitude",location.latitude);
-        i.putExtra("longitude",location.longitude);
+        i.putExtra("latitude", myLocation.latitude);
+        i.putExtra("longitude", myLocation.longitude);
         i.putExtra("name",name);
         activity.startActivity(i);
     }
@@ -50,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         switch (requestCode){
             case PERMISSION_ACCESS_COARSE_LOCATION:
                 if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Snackbar.make(getContainer(),"Need Your Location",Snackbar.LENGTH_INDEFINITE).show();
+                    Snackbar.make(getContainer(),"Need Your MyLocation",Snackbar.LENGTH_INDEFINITE).show();
                 }
         }
     }

@@ -220,7 +220,7 @@ public class EventListActivity extends BaseActivity {
                 logOut();
                 return true;
             case R.id.action_show_on_map:
-                MapsActivity.navigate(this,organizer.getLocation(),organizer.getName());
+                MapsActivity.navigate(this,organizer.getMyLocation(),organizer.getName());
                 return true;
         }
         return super.onOptionsItemSelected(item);
