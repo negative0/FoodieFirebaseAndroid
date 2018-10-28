@@ -3,8 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_user" app:showAsAction="never"
         android:title="Settings"/>
-    <item android:id="@+id/action_generate_qr_code" app:showAsAction="never"
-        android:title="Generate QRCode"/>
     <item android:id="@+id/action_log_out" app:showAsAction="never"
         android:title="@string/menu_log_out" />
 

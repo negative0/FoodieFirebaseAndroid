@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "312525195295",
-    "firebase_url": "https://evento-1843e.firebaseio.com",
-    "project_id": "evento-1843e",
-    "storage_bucket": "evento-1843e.appspot.com"
+    "project_number": "161650492580",
+    "firebase_url": "https://foodiee-a6bd3.firebaseio.com",
+    "project_id": "foodiee-a6bd3",
+    "storage_bucket": "foodiee-a6bd3.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:312525195295:android:2e08bde4596f075a",
+        "mobilesdk_app_id": "1:161650492580:android:0d5443ec77b11165",
         "android_client_info": {
-          "package_name": "com.fireblaze.evento"
+          "package_name": "com.fireblaze.foodiee"
         }
       },
       "oauth_client": [
         {
-          "client_id": "312525195295-fnfv323013tjou743qjn3i3rsshmp0t6.apps.googleusercontent.com",
+          "client_id": "161650492580-fnt7bdohmr3ci1j66socfi1upr7abt59.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.fireblaze.evento",
-            "certificate_hash": "45CCB9C4F2D7A827010F01F9877842D4E10AB1E1"
+            "package_name": "com.fireblaze.foodiee",
+            "certificate_hash": "2a1214b54f8d6256493e537c4ef518aa3f342405"
           }
         },
         {
-          "client_id": "312525195295-16ci29nklj1c5ssfkegm6r4pd6qmrh13.apps.googleusercontent.com",
+          "client_id": "161650492580-gkua6h1qbj1vbp1vo54e59k73psnbghp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA2x0rZemxHPduYkZilnOGVSh1OlMlsgEs"
+          "current_key": "AIzaSyBtI6b_BfXC43IL6ShQ28llv7WWzd4hveQ"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "312525195295-16ci29nklj1c5ssfkegm6r4pd6qmrh13.apps.googleusercontent.com",
+              "client_id": "161650492580-gkua6h1qbj1vbp1vo54e59k73psnbghp.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

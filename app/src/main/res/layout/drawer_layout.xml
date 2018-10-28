@@ -6,30 +6,4 @@
     android:paddingRight="16dp"
     android:paddingLeft="16dp">
 
-
-        <!--<RelativeLayout-->
-            <!--android:id="@+id/nav_header_container"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="140dp"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:background="@color/colorPrimary">-->
-
-            <!--<ImageView-->
-                <!--android:layout_width="70dp"-->
-                <!--android:layout_height="70dp"-->
-                <!--android:src="@drawable/ic_profile"-->
-                <!--android:scaleType="fitCenter"-->
-                <!--android:layout_centerInParent="true" />-->
-
-        <!--</RelativeLayout>-->
-
-        <!--<ListView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_gravity="start"-->
-            <!--android:divider="@android:color/transparent"-->
-            <!--android:dividerHeight="0dp"-->
-            <!--android:background="#111"-->
-            <!--android:id="@+id/left_drawer"-->
-            <!--/>-->
 </android.support.v4.widget.DrawerLayout>

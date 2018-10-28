@@ -6,17 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_height="150dp"
-        android:src="@mipmap/ic_launcher"
-        android:id="@+id/imageView"
-        tools:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:scaleType="centerInside"
-        android:layout_width="match_parent" />
+    <!--<ImageView-->
+        <!--android:layout_height="150dp"-->
+        <!--android:src="@mipmap/ic_launcher"-->
+        <!--android:id="@+id/imageView"-->
+        <!--tools:layout_gravity="center_horizontal"-->
+        <!--android:layout_marginTop="40dp"-->
+        <!--android:scaleType="centerInside"-->
+        <!--android:layout_width="match_parent" />-->
 
     <TextView
-        android:text="EventO"
+        android:text="Foodiee"
         android:layout_marginTop="20dp"
         android:textSize="30sp"
         android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
     <TextView
         android:textAlignment="center"
 
-        android:text="The Best Event Management App \n...Ever Created"
+        android:text="The Best Food Serving App \n...Ever Created"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"/>

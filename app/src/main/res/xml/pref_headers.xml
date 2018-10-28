@@ -3,14 +3,14 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="com.fireblaze.evento.activities.UserActivity$GeneralPreferenceFragment"
+        android:fragment="com.fireblaze.foodiee.activities.UserActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_general" />
 
-    <header
-        android:fragment="com.fireblaze.evento.activities.UserActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/pref_header_notifications" />
+    <!--<header-->
+        <!--android:fragment="com.fireblaze.foodiee.activities.UserActivity$NotificationPreferenceFragment"-->
+        <!--android:icon="@drawable/ic_notifications_black_24dp"-->
+        <!--android:title="@string/pref_header_notifications" />-->
 
 
 </preference-headers>

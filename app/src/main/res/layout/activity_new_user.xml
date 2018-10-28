@@ -2,8 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <LinearLayout
-        android:background="@drawable/login_back"
-
+        android:background="@drawable/buscuit"
         android:id="@+id/activity_new_user"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -12,7 +11,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:orientation="vertical"
-        tools:context="com.fireblaze.evento.activities.NewUserActivity">
+        tools:context="com.fireblaze.foodiee.activities.NewUserActivity">
         <TextView
             android:textColor="#ffffff"
             android:layout_width="match_parent"
@@ -47,10 +46,19 @@
             android:layout_height="wrap_content">
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/text_college"
-                android:hint="College Name"
+                android:hint="Address"
+                android:lines="3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </android.support.design.widget.TextInputLayout>
+        <Button
+            android:id="@+id/btn_select_location"
+            android:layout_marginTop="30dp"
+            android:text="Select Location"
+            style="@style/BlackCurvedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/submit"
             android:layout_marginTop="30dp"

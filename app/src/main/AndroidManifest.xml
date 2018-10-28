@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.fireblaze.evento">
+    package="com.fireblaze.foodiee">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -38,14 +38,13 @@
             android:name=".activities.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.EventListActivity"
+            android:name=".activities.ItemsListActivity"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activities.AboutUsActivity"
-            android:label="@string/title_activity_about_us"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.MapActivity" />
+        <!-- <activity -->
+        <!-- android:name=".activities.AboutUsActivity" -->
+        <!-- android:label="@string/title_activity_about_us" -->
+        <!-- android:theme="@style/AppTheme.NoActionBar" /> -->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -62,28 +61,20 @@
             android:name=".activities.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".activities.NewEventActivity"
+            android:name=".activities.NewFoodItemActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.OrganizerMainActivity"
+            android:name=".activities.RestaurantMainActivity"
             android:label="@string/title_activity_organizer_main"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.NewOrganizerActivity"
+            android:name=".activities.NewRestaurantActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SelectLocation"
+            android:name=".activities.SelectLocationActivity"
             android:label="@string/title_activity_select_location" />
         <activity android:name=".activities.CategoryActivity" />
-        <activity
-            android:name=".activities.EventDetailsActivity"
-            android:label="@string/title_activity_event_details"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activities.SendNotificationActivity"
-            android:label="@string/title_activity_send_notification"
-            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".MyMessagingService"
@@ -103,7 +94,7 @@
         </service>
 
         <activity
-            android:name=".activities.OrganizerDetailsActivity"
+            android:name=".activities.RestaurantDetailsActivity"
             android:label="@string/title_activity_organizer_details"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -128,19 +119,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.UploadImageActivity" />
-        <activity android:name=".activities.BookedEventsListActivity" />
-        <activity android:name=".activities.BookmarksDetailsActivity" />
-        <activity android:name=".activities.OrganizerListActivity" />
+        <activity android:name=".activities.RestaurantListActivity" />
         <activity android:name=".activities.NewUserActivity" />
-        <activity
-            android:name=".activities.EventAttendeesListActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.QRCodeActivity" />
-        <activity android:name=".activities.QRCodeScanActivity" />
-        <activity
-            android:name=".activities.AttendeesActivity"
-            android:label="@string/title_activity_attendees"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".activities.ShoppingCartActivity" />
+        <activity android:name=".activities.ShowOrdersActivity" />
+        <activity android:name=".activities.MyOrdersActivity" />
+        <activity android:name=".activities.UserShowOrdersActivity" />
+        <activity android:name=".activities.CheckoutActivity"></activity>
     </application>
 
 </manifest>

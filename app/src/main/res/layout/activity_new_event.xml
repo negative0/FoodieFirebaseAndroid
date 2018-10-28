@@ -44,17 +44,17 @@
                         android:maxLines="1"
                         android:hint="@string/category"/>
                 </android.support.design.widget.TextInputLayout>
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/input_layout_venue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:id="@+id/input_venue"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:hint="@string/lab_department_building_no"/>
-                </android.support.design.widget.TextInputLayout>
+                <!--<android.support.design.widget.TextInputLayout-->
+                    <!--android:id="@+id/input_layout_venue"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content">-->
+                    <!--<EditText-->
+                        <!--android:id="@+id/input_venue"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:maxLines="1"-->
+                        <!--android:hint="@string/lab_department_building_no"/>-->
+                <!--</android.support.design.widget.TextInputLayout>-->
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/input_layout_fees"
                     android:layout_width="match_parent"
@@ -65,58 +65,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
-                        android:hint="@string/fees"/>
+                        android:hint="Price"/>
                 </android.support.design.widget.TextInputLayout>
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/input_layout_prize"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:inputType="number"
-                        android:id="@+id/input_prize"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:hint="@string/prize_money"/>
-                </android.support.design.widget.TextInputLayout>
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/input_layout_duration"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:inputType="number"
-                        android:id="@+id/input_duration"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:hint="@string/duration"/>
-                </android.support.design.widget.TextInputLayout>
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <android.support.design.widget.TextInputEditText
-                        android:hint="Date"
-                        android:id="@+id/input_date"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <Button
-                        android:layout_weight="1"
-                        android:id="@+id/btn_set_date"
-                        android:text="Set Date"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                    <Button
-                        android:id="@+id/btn_set_time"
-                        android:text="Set Time"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+
 
                 <Button android:id="@+id/btn_upload_image"
                     android:layout_width="fill_parent"
@@ -126,7 +77,7 @@
                 <Button android:id="@+id/btn_submit"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/create_event"
+                    android:text="Create Item"
                     android:layout_marginTop="20dp" />
             </LinearLayout>
     </ScrollView>

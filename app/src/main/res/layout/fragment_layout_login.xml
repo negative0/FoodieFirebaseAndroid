@@ -91,7 +91,7 @@
         android:id="@+id/become_an_organizer_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Become an Organizer"
+        android:text="Register as Restaurant"
         />
     <Button
         style="@style/BlackCurvedButton"

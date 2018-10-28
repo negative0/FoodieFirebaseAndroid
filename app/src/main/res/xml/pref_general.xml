@@ -33,12 +33,12 @@
 
 
 
-    <com.fireblaze.evento.views.PasswordDialogPreference
+    <com.fireblaze.foodiee.views.PasswordDialogPreference
         android:title="Change Password"
         android:positiveButtonText="Change"
         android:negativeButtonText="@string/cancel"
         />
-    <com.fireblaze.evento.views.DeleteAccountDialogPreference
+    <com.fireblaze.foodiee.views.DeleteAccountDialogPreference
         android:title="Delete Account"
         android:positiveButtonText="Delete"
         android:negativeButtonText="@string/cancel" />

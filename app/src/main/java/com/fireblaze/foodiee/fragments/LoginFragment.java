@@ -1,0 +1,80 @@
+package com.fireblaze.foodiee.fragments;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Patterns;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.fireblaze.foodiee.R;
+
+
+public class LoginFragment extends SignInBaseFragment {
+
+    private onLoginListener loginListener;
+
+
+    public interface onLoginListener{
+        void onLogin(String email, String password);
+        void onGoogleSignIn();
+        void onForgotPassword(@Nullable String userName);
+    }
+    public LoginFragment(){}
+
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        Button mSignUpButton = (Button) rootView.findViewById(R.id.sign_up_button);
+        mSignUpButton.setVisibility(View.VISIBLE);
+        mBecomeOrganizerButton.setVisibility(View.GONE);
+        mSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(validateForm()){
+                   loginListener.onLogin(mEmailField.getText().toString(),mPasswordField.getText().toString());
+                }else {
+                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginListener.onGoogleSignIn();
+            }
+        });
+
+        mForgotPasswordText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(TextUtils.isEmpty(mEmailField.getText())){
+                    loginListener.onForgotPassword(null);
+                } else {
+                    loginListener.onForgotPassword(mEmailField.getText().toString());
+                }
+            }
+        });
+        return rootView;
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            loginListener = (onLoginListener) getActivity();
+        }catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString() + "must implement onLoginListener");
+        }
+    }
+    public static boolean isValidEmail(CharSequence target) {
+        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
+    }
+}
