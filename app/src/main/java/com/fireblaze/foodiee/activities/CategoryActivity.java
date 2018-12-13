@@ -56,11 +56,11 @@ public class CategoryActivity extends AppCompatActivity {
         }
         String[] allCategories = getResources().getStringArray(R.array.event_categories);
         Query query;
-        if(allCategories[0].equals(category)){
-            query = mDatabase.child(Constants.FOOD_ITEM_KEYWORD).limitToFirst(10);
-        } else {
+//        if(allCategories[0].equals(category)){
+//            query = mDatabase.child(Constants.FOOD_ITEM_KEYWORD).limitToFirst(10);
+//        } else {
             query = mDatabase.child(Constants.FOOD_ITEM_KEYWORD).orderByChild("category").equalTo(category);
-        }
+//        }
         mAdapter = new FirebaseRecyclerAdapter<FoodItem, EventViewHolder>(FoodItem.class,
                 R.layout.event_card, EventViewHolder.class,  query) {
             @Override

@@ -73,13 +73,13 @@ public class EventFragment extends Fragment {
             //Check if category is all events and if true, display all events
             String categories[] = getResources().getStringArray(R.array.event_categories);
             Log.d(TAG, "onCreateView: category = "+ category);
-            if(categories[0].equals(category))
-                query = mDatabase.child(Constants.FOOD_ITEM_KEYWORD).orderByChild("organizerID").equalTo(UID);
-            //query = mDatabase.child(Constants.FOOD_ITEM_KEYWORD).child(UID).limitToFirst(10);
-            else{
+//            if(categories[0].equals(category))
+//                query = mDatabase.child(Constants.FOOD_ITEM_KEYWORD).orderByChild("organizerID").equalTo(UID);
+//            //query = mDatabase.child(Constants.FOOD_ITEM_KEYWORD).child(UID).limitToFirst(10);
+//            else{
                 String queryString = category+"+"+UID;
                 query = mDatabase.child(Constants.FOOD_ITEM_KEYWORD).orderByChild("indexCategoryOrganizer").equalTo(queryString);
-            }
+//            }
                 //query = mDatabase.child(Constants.FOOD_ITEM_KEYWORD).child(UID).orderByChild("category").equalTo(category);
 
 
